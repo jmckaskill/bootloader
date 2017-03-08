@@ -1,0 +1,6 @@
+HOST = ../build/host-osx/bin
+
+rule host-cc
+ command = gcc -o $out $in
+
+include common.ninja
