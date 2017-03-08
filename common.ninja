@@ -1,18 +1,17 @@
-CFLAGS = -Iinclude -fno-unwind-tables -fno-exceptions -std=c11 -fdata-sections -ffunction-sections
+CFLAGS = --target=armv7---none-eabi -Iinclude -fno-unwind-tables -fno-exceptions -std=c11 -fdata-sections -ffunction-sections
 LDFLAGS = --nostdlib --whole-archive --gc-sections
-LIBC = ../build/target-arm/libc.a ../build/target-arm/libclang-rt.a
-TGT = --target=armv7---none-eabi
+LIBC = $TGT/libc.a $TGT/libclang-rt.a
 
 build tiimage.exe: host-cc tiimage.c
 
 rule cc
- command = $HOST/clang $TGT $CFLAGS -MMD -MF $out.d -c $in -o $out
+ command = $HOST/bin/clang $CTGT $CFLAGS -MMD -MF $out.d -c $in -o $out
  deps = gcc
  depfile = $out.d
  description = CC $in
 
 rule ld-script
- command = $HOST/ld.lld.exe $LIBC --script $in -o $out
+ command = $HOST/bin/ld.lld.exe $LIBC --script $in -o $out
  description = LD $out
 
 rule objcopy

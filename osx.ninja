@@ -1,4 +1,5 @@
-HOST = ../build/host-osx/bin
+HOST = ../gcs-core/build/host-osx/
+TGT = ../gcs-core/build/target-arm/
 
 rule host-cc
  command = gcc -o $out $in
