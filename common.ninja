@@ -1,4 +1,5 @@
-CFLAGS = -fdiagnostics-format=msvc --target=armv7---none-eabi -Iinclude -Iinclude/hw -I$TGT/include -fno-unwind-tables -fno-exceptions -std=c11 -fdata-sections -ffunction-sections
+INC = -Iinclude -I$TGT/include -Iinclude/hw -I.
+CFLAGS = $INC -fdiagnostics-format=msvc  --target=armv7---none-eabi -fno-unwind-tables -fno-exceptions -std=c11 -fdata-sections -ffunction-sections
 LDFLAGS = --nostdlib --whole-archive --gc-sections
 LIBC = $TGT/libc.a $TGT/libclang-rt.a
 
@@ -10,6 +11,10 @@ rule cc
  deps = gcc
  depfile = $out.d
  description = CC $in
+
+rule ar
+ command = $HOST/bin/llvm-ar.exe rcs $out $in
+ description = AR $out
 
 rule ld-script
  command = $HOST/bin/ld.lld.exe $LIBC --script $in -o $out
@@ -39,4 +44,3 @@ build bootloader.exe: ld-script $
 build bootloader.bin: objcopy bootloader.exe
 
 build bootloader.MLO: run tiimage.exe bootloader.bin
-

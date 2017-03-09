@@ -2,6 +2,9 @@ HOST = ../gcs-core/build/host-osx/
 TGT = ../gcs-core/build/target-arm/
 
 rule host-cc
+ command = gcc -c -o $out $in
+
+rule host-ld
  command = gcc -o $out $in
 
 include common.ninja
