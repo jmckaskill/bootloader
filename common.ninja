@@ -1,8 +1,9 @@
-CFLAGS = --target=armv7---none-eabi -Iinclude -fno-unwind-tables -fno-exceptions -std=c11 -fdata-sections -ffunction-sections
+CFLAGS = -fdiagnostics-format=msvc --target=armv7---none-eabi -Iinclude -Iinclude/hw -I$TGT/include -fno-unwind-tables -fno-exceptions -std=c11 -fdata-sections -ffunction-sections
 LDFLAGS = --nostdlib --whole-archive --gc-sections
 LIBC = $TGT/libc.a $TGT/libclang-rt.a
 
-build tiimage.exe: host-cc tiimage.c
+build tiimage.obj: host-cc tiimage.c
+build tiimage.exe: host-ld tiimage.obj
 
 rule cc
  command = $HOST/bin/clang $CTGT $CFLAGS -MMD -MF $out.d -c $in -o $out
@@ -15,19 +16,27 @@ rule ld-script
  description = LD $out
 
 rule objcopy
- command = arm-none-eabi-objcopy -O binary $in $out
+ command = $HOST/bin/llvm-objcopy.exe $in $out
 
 rule run
  command = ./$in $out
 
 build init.o: cc init.S
 build main.o: cc main.c
+build uart.o: cc uart.c
+build uartConsole.o: cc uartConsole.c
+build uart_irda_cir.o: cc uart_irda_cir.c
 
 build bootloader.exe: ld-script $
  linker.ld $
  init.o $
  main.o $
+ uart.o $
+ uartConsole.o $
+ uart_irda_cir.o $
+
 
 build bootloader.bin: objcopy bootloader.exe
 
 build bootloader.MLO: run tiimage.exe bootloader.bin
+

@@ -1,0 +1,10 @@
+HOST = ../gcs-core/build/host-msvc/
+TGT = ../gcs-core/build/target-arm/
+
+rule host-cc
+ command = cl /c /Fo$out /nologo $in
+
+rule host-ld
+ command = link /nologo /out:$out $in
+
+include common.ninja

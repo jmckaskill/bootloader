@@ -37,8 +37,8 @@
 //
 // ******************************************************************************
 
-#include <hw/hw_gpio_v2.h>
-#include <hw/hw_cm_per.h>
+#include <hw_gpio_v2.h>
+#include <hw_cm_per.h>
 
 // ****************************** Global Symbols*********************************
         .global _start
@@ -200,11 +200,11 @@ Loop:
 //
 Enter_main:
         push {r0}
-    
          LDR   r10,=main
          MOV   lr,pc                           @ Dummy return from start_boot
          BX    r10                             @ Branch to start_boot
          SUB   pc, pc, #0x08                   @ looping
+    b led2
 
 led2:
     ldr	r0, io1_base	// leds are 1.21-24

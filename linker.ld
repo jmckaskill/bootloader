@@ -64,7 +64,7 @@ SECTIONS {
     }
 
     .data : {
-        . = ALIGN(0x1000);
+		. = ALIGN(0x1000);
         *(.data*)
     }
 
@@ -78,8 +78,15 @@ SECTIONS {
 
     _stack = 0x4030fff0;
 
+	HW_CM_PER		= 0x44E00000;
+	HW_CM_WKUP		= 0x44E00400;
+	HW_GPIO0		= 0x4804c000;
+
     /DISCARD/ : {
         *(.ARM.exidx.*)
+		*(.comment .comment.*)
+		*(.symtab .symtab.*)
+		*(.strtab .strtab.*)
     }
 
 	/* catch any unknown sections and yell loudly about them */

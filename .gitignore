@@ -3,3 +3,11 @@
 *.MLO
 *.bin
 .ninja*
+*.obj
+*.user
+*.loaded
+*.opendb
+*.db
+.vs
+/Debug
+/Release
