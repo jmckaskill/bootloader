@@ -1,5 +1,6 @@
 #include "hw_mac.h"
 #include "tcp.h"
+#include <stdio.h>
 
 #define NUM_CONNECTIONS 32
 struct tcp_conn g_conns[NUM_CONNECTIONS];
@@ -17,8 +18,12 @@ struct tcp_conn *lookup_conn(struct eth_iface *ei, const struct addr_pair *ap) {
 
 char tcp_cookie_key[32] = "1234567890123456789012";
 
-int main() {
-	if (eth_init(&g_iface, "\\Device\\NPF_{957D5700-2A57-48E4-A82A-FFA84DD0FB13}", 0x34e6d72b4e3c)) {
+int main(int argc, char *argv[]) {
+	if (argc < 2) {
+		fprintf(stderr, "usage: ./eth_main netdev\n");
+		return 2;
+	}
+	if (eth_init(&g_iface, argv[1], 0x34e6d72b4e3c)) {
 		return 2;
 	}
 

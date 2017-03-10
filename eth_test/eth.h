@@ -1,4 +1,5 @@
 #pragma  once
+#include <stddef.h>
 #include <stdint.h>
 
 #define ETH_BUFFER_SIZE 1536
