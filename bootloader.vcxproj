@@ -71,6 +71,7 @@
     <NMakeOutput>bootloader.exe</NMakeOutput>
     <NMakePreprocessorDefinitions>WIN32;NDEBUG;$(NMakePreprocessorDefinitions)</NMakePreprocessorDefinitions>
     <NMakeBuildCommandLine>ninja -f msvc.ninja &amp;&amp; deploy.bat</NMakeBuildCommandLine>
+    <NMakeIncludeSearchPath>BearSSL/inc</NMakeIncludeSearchPath>
   </PropertyGroup>
   <ItemDefinitionGroup>
   </ItemDefinitionGroup>
