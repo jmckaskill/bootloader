@@ -34,6 +34,7 @@ struct tcp_header {
     uint8_t window[2];
     uint8_t checksum[2];
     uint8_t urgent[2];
+	uint8_t bytes[24];
 };
 struct icmp6_header {
     uint8_t type;
@@ -77,7 +78,7 @@ struct neighbor_advertisement {
 
 static_assert(sizeof(struct eth_header) == 14, "padding");
 static_assert(sizeof(struct ip6_header) == 40, "padding");
-static_assert(sizeof(struct tcp_header) == 20, "padding");
+//static_assert(sizeof(struct tcp_header) == 20, "padding");
 static_assert(sizeof(struct icmp6_header) == 4, "padding");
 
 #define TCP_MAX_MTU (1280 - sizeof(struct tcp_header))
@@ -248,6 +249,7 @@ static struct eth_buffer *next_tcp_buffer(struct eth_iface *ei, const struct add
 		write_big_16(tcp->window, TCP_RECV_WINDOW);
 		write_big_16(tcp->checksum, 0);
 		write_big_16(tcp->urgent, 0);
+		memcpy(tcp->bytes, "\x02\x04\x05\xa0\x01\x03\x03\x05\x01\x01\x08\x0A\x39\x51\xC4\x5E\x00\x00\x00\x00\x04\x02\x00\x00", 24);
 	}
 
 	return eb;

@@ -1,5 +1,7 @@
 #include "eth.h"
 #include "hw_mac.h"
+#include "endian.h"
+#include "crc.h"
 #include <stddef.h>
 #include <assert.h>
 
@@ -105,6 +107,12 @@ struct eth_buffer *eth_next_tx(struct eth_iface *ei, uint16_t len) {
 // eth_sched_tx schedules the next buffer to be sent
 // the supplied buffer must have been just retrieved from eth_next_tx
 void eth_sched_tx(struct eth_iface *ei, struct eth_buffer *eb, void *udata) {
+#if 0
+	uint8_t *pfcs = eb->data + eb->length - 4;
+	uint32_t fcs = crc32(eb->data, eb->length - 4);
+	write_little_32(pfcs, fcs);
+#endif
+
 	assert(eb == &ei->txq[(ei->txtail + 1) % ETH_TX_QUEUE_SIZE]);
 	eb->udata = udata;
 	if (ei->txtail >= 0) {
