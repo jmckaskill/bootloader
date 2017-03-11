@@ -1,6 +1,6 @@
 #include "hw_mac.h"
 #include <stdio.h>
-#ifdef _WIN32
+#if 0
 
 #include "../npcap-sdk/Include/Packet32.h"
 

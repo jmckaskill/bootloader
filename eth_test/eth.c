@@ -4,9 +4,9 @@
 #include <assert.h>
 
 // eth_init initializes a new ethernet interface
-int eth_init(struct eth_iface *ei, const char *port, uint64_t mac) {
+int eth_init(struct eth_iface *ei, const char *port, const uint64_t *mac, size_t macn) {
 	ei->hw_udata = NULL;
-	ei->local_mac = mac;
+	ei->local_mac = mac[0];
 	ei->txtail = -1;
 	ei->txhead = -1;
 	ei->rxnext = ei->rxq;
@@ -15,7 +15,7 @@ int eth_init(struct eth_iface *ei, const char *port, uint64_t mac) {
 
 	for (int i = 0; i < ETH_RX_QUEUE_SIZE; i++) {
 		struct eth_buffer *b = &ei->rxq[i];
-		b->next = (i == ETH_RX_QUEUE_SIZE ? NULL : b + 1);
+		b->next = (i == (ETH_RX_QUEUE_SIZE-1) ? NULL : (b + 1));
 		b->data = b->buf;
 		b->offset = 0;
 		b->length = ETH_BUFFER_SIZE;
@@ -24,7 +24,7 @@ int eth_init(struct eth_iface *ei, const char *port, uint64_t mac) {
 		prev = b;
 	}
 
-	if (hw_emac_open(ei, port)) {
+	if (hw_emac_open(ei, port, mac, macn)) {
 		return -1;
 	}
 
@@ -104,8 +104,9 @@ struct eth_buffer *eth_next_tx(struct eth_iface *ei, uint16_t len) {
 
 // eth_sched_tx schedules the next buffer to be sent
 // the supplied buffer must have been just retrieved from eth_next_tx
-void eth_sched_tx(struct eth_iface *ei, struct eth_buffer *eb) {
+void eth_sched_tx(struct eth_iface *ei, struct eth_buffer *eb, void *udata) {
 	assert(eb == &ei->txq[(ei->txtail + 1) % ETH_TX_QUEUE_SIZE]);
+	eb->udata = udata;
 	if (ei->txtail >= 0) {
 		ei->txq[ei->txtail].next = eb;
 		ei->txtail = (ei->txtail + 1) % ETH_TX_QUEUE_SIZE;

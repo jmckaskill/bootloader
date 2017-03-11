@@ -11,3 +11,6 @@
 .vs
 /Debug
 /Release
+/Debug No NetMon and AirPcap
+/eth_test/Debug
+/eth_test/Release

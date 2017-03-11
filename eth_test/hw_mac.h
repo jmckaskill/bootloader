@@ -2,7 +2,7 @@
 
 #include "eth.h"
 
-int hw_emac_open(struct eth_iface *ei, const char *port);
+int hw_emac_open(struct eth_iface *ei, const char *port, const uint64_t *mac, size_t macn);
 void hw_emac_close(struct eth_iface *ei);
 
 #define HW_EMAC_PENDING 1

@@ -53,13 +53,13 @@ struct eth_iface {
 #define ETH_INCLUDES_VLAN		0x0008
 #define ETH_FROM_SECOND_PORT	0x0001
 
-int eth_init(struct eth_iface *ei, const char *port, uint64_t mac);
+int eth_init(struct eth_iface *ei, const char *port, const uint64_t *mac, size_t macn);
 void eth_destroy(struct eth_iface *ei);
 
 struct eth_buffer *eth_tx_finished(struct eth_iface *ei);
 struct eth_buffer *eth_rx_finished(struct eth_iface *ei);
 
 struct eth_buffer *eth_next_tx(struct eth_iface *ei, uint16_t len);
-void eth_sched_tx(struct eth_iface *ei, struct eth_buffer *eb);
+void eth_sched_tx(struct eth_iface *ei, struct eth_buffer *eb, void *udata);
 
 
