@@ -43,7 +43,7 @@
 
 #include "uart_irda_cir.h"
 #include "soc_AM335x.h"
-//#include "beaglebone.h"
+#include "beaglebone.h"
 #include "hw_types.h"
 
 /******************************************************************************

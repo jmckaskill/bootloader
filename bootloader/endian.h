@@ -117,3 +117,31 @@ static inline void write_big_64(uint8_t *p, uint64_t v) {
     p[6] = (uint8_t) (v >> 8);
     p[7] = (uint8_t) (v);
 }
+
+static uint16_t ntohs(uint16_t v) {
+    union {
+        uint16_t v;
+        uint8_t b[2];
+    } u;
+    u.v = v;
+    return read_big_16(u.b);
+}
+
+static uint16_t htons(uint16_t v) {
+    return ntohs(v);
+}
+
+static uint32_t ntohl(uint32_t v) {
+    union {
+        uint32_t v;
+        uint8_t b[4];
+    } u;
+    u.v = v;
+    return read_big_32(u.b);
+}
+
+static uint32_t htonl(uint32_t v) {
+    return ntohl(v);
+}
+
+

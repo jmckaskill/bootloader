@@ -64,7 +64,7 @@ SECTIONS {
     }
 
     .data : {
-		. = ALIGN(0x1000);
+        . = ALIGN(4);
         *(.data*)
     }
 
@@ -76,18 +76,51 @@ SECTIONS {
         _bss_end = .;
     }
 
-    _stack = 0x4030fff0;
+    // SRAM is 0x402F0400 - 0x402FFFFF
+    // OCMC0 is 0x40300000 - 0x4030FFFF
+    // SRAM is used for the program (bottom) and stack (top)
+    // OCMC0 is used for the ethernet data buffers (top) and stack (bottom)
+    // ethernet data buffers is x20 * x600 = xC000
 
-	HW_CM_PER		= 0x44E00000;
-	HW_CM_WKUP		= 0x44E00400;
-	HW_GPIO0		= 0x4804c000;
+    _stack_top   = 0x402FFFFF;
+    g_eth_frames = 0x40304000;
 
+	HW_CM_PER		  = 0x44E00000;
+	HW_CM_WAKEUP      = 0x44E00400;
+    HW_CONTROL        = 0x44E10000;
+    HW_GPIO_0		  = 0x44E07000;
+    HW_GPIO_1		  = 0x4804C000;
+    HW_GPIO_2		  = 0x481AC000;
+    HW_GPIO_3		  = 0x481AE000;
+    HW_UART_4         = 0x481A8000;
+    HW_UART_4_CFGA    = 0x481A8000;
+    HW_UART_4_CFGB    = 0x481A8000;
+    HW_UART_4_OP      = 0x481A8000;
+    HW_DMTIMER_1MS    = 0x44E31000;
+    HW_CM_DPLL        = 0x44E00500;
+    HW_INTC           = 0x48200000;
+    HW_MDIO           = 0x4A101000;
+    HW_CPSW_WR        = 0x4A101200;
+    HW_CPSW_SS        = 0x4A100000;
+    HW_CPSW_PORT_0    = 0x4A100100;
+    HW_CPSW_PORT_1    = 0x4A100200;
+    HW_CPSW_PORT_2    = 0x4A100300;
+    HW_CPSW_CPDMA     = 0x4A100800;
+    HW_CPSW_STATERAM  = 0x4A100A00;
+    HW_CPSW_ALE       = 0x4A100D00;
+    HW_CPSW_SL_1      = 0x4A100D80;
+    HW_CPSW_SL_2      = 0x4A100DC0;
+    HW_ETH_BUFFER     = 0x4A102000;
+
+/*
     /DISCARD/ : {
-        *(.ARM.exidx.*)
+        //*(.ARM.exidx)
+        //*(.ARM.attributes)
 		*(.comment .comment.*)
 		*(.symtab .symtab.*)
 		*(.strtab .strtab.*)
     }
+    */
 
 	/* catch any unknown sections and yell loudly about them */
 	/*

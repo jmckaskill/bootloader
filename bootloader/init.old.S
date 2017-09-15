@@ -226,5 +226,53 @@ io2_base:
     
     
 
+#if 0
+    ldr	r0, prcm_base
 
+	movs	r1, 2
+	str	r1, [ r0, #CM_PER_L4LS_CLKSTCTRL ]
+	orrs	r1, 1 << 18		// debounce clock enable
+	str	r1, [ r0, #CM_PER_GPIO1_CLKCTRL ]
+	str	r1, [ r0, #CM_PER_GPIO2_CLKCTRL ]
+	str	r1, [ r0, #CM_PER_GPIO3_CLKCTRL ]
+
+    // wait for clocks to come online
+1:	ldr	r1, [ r0, #CM_PER_GPIO1_CLKCTRL ]
+	tst	r1, 3 << 16
+	bne	1b
+1:	ldr	r1, [ r0, #CM_PER_GPIO2_CLKCTRL ]
+	tst	r1, 3 << 16
+	bne	1b
+1:	ldr	r1, [ r0, #CM_PER_GPIO3_CLKCTRL ]
+	tst	r1, 3 << 16
+	bne	1b
+
+    ldr	r0, io3_base
+
+	movs	r1, 2
+	str	r1, [ r0, #GPIO_SYSCONFIG ] // enable wakeup on input
+1:	ldr	r1, [ r0, #GPIO_SYSSTATUS ]
+	tst	r1, 1 // check that the internal reset is finished
+	beq	1b
+
+	movs	r1, 0x10
+	str	r1, [ r0, #GPIO_SYSCONFIG ] // set smart-idle
+
+	movs	r1, 0
+	str	r1, [ r0, #GPIO_CTRL ] // disable clock gating
+
+	mvns	r1, 1 << 19
+	str	r1, [ r0, #GPIO_OE ] // set pins as output
+	movs	r1, 1 << 19
+	str	r1, [ r0, #GPIO_CLEARDATAOUT ] // set them
+
+    // clear bss
+    ldr r0, =_bss_start
+    ldr r1, =(_bss_end - 4)
+    mov r2, #0
+clear_bss_loop:
+    str r2, [r0], 4
+    cmp r0, r1
+    ble clear_bss_loop
+#endif
 

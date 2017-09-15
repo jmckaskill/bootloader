@@ -1,10 +1,11 @@
-HOST = ../gcs-core/build/host-msvc/
-TGT = ../gcs-core/build/target-arm/
+SRC_NINJA = src.ninja
+TOOLCHAIN_DIR = toolchain
+INCLUDES = -I include -I include/hw -I include/armv7a/am335x
 
-rule host-cc
- command = cl /c /Fo$out /nologo $in
-
-rule host-ld
- command = link /nologo /out:$out $in
-
+include toolchain/host-win32.ninja
 include common.ninja
+subninja toolchain/target-linux-arm.ninja
+subninja toolchain/target-win32-debug.ninja
+subninja toolchain/target-win32-release.ninja
+
+default bin/win32-debug/bootp-deploy-win32.exe

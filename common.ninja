@@ -1,46 +1,10 @@
-INC = -Iinclude -I$TGT/include -Iinclude/hw -I.
-CFLAGS = $INC -fdiagnostics-format=msvc  --target=armv7---none-eabi -fno-unwind-tables -fno-exceptions -std=c11 -fdata-sections -ffunction-sections
-LDFLAGS = --nostdlib --whole-archive --gc-sections
-LIBC = $TGT/libc.a $TGT/libclang-rt.a
-
-build tiimage.obj: host-cc tiimage.c
-build tiimage.exe: host-ld tiimage.obj
-
-rule cc
- command = $HOST/bin/clang $CTGT $CFLAGS -MMD -MF $out.d -c $in -o $out
- deps = gcc
- depfile = $out.d
- description = CC $in
-
-rule ar
- command = $HOST/bin/llvm-ar.exe rcs $out $in
- description = AR $out
+LIBC = toolchain/lib/arm/libclang-rt.a
 
 rule ld-script
- command = $HOST/bin/ld.lld.exe $LIBC --script $in -o $out
+ command = toolchain/host/bin/ld.lld.exe -g $LIBC --script $in -o $out
  description = LD $out
 
 rule objcopy
- command = $HOST/bin/llvm-objcopy.exe $in $out
+ command = toolchain/host/bin/llvm-objcopy.exe $in $out
 
-rule run
- command = ./$in $out
-
-build init.o: cc init.S
-build main.o: cc main.c
-build uart.o: cc uart.c
-build uartConsole.o: cc uartConsole.c
-build uart_irda_cir.o: cc uart_irda_cir.c
-
-build bootloader.exe: ld-script $
- linker.ld $
- init.o $
- main.o $
- uart.o $
- uartConsole.o $
- uart_irda_cir.o $
-
-
-build bootloader.bin: objcopy bootloader.exe
-
-build bootloader.MLO: run tiimage.exe bootloader.bin
+build bootp-deploy-win32/deploy-data.c: run bin/$HOST/create-cdata.exe bin/linux-arm/bootloader.bin

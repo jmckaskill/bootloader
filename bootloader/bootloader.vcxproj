@@ -1,0 +1,104 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="R2|Win32">
+      <Configuration>R2</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./init.old.S" />
+    <ClCompile Include="./init.S" />
+    <ClCompile Include="./main.c" />
+    <ClCompile Include="./uart.c" />
+    <ClCompile Include="./uartConsole.c" />
+    <ClCompile Include="./uart_irda_cir.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="./am335x.h" />
+  </ItemGroup>
+  <ItemGroup>
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{20B3434C-7FA3-4585-B923-3939F4B8CC04}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>bin - bootloader.exe</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R2|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='R2|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\win32-release\bootloader.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/win32-release/bootloader.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-release/bootloader.exe &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/win32-release/bootloader.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-release/bootloader.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\win32-debug\bootloader.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/win32-debug/bootloader.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-debug/bootloader.exe &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/win32-debug/bootloader.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-debug/bootloader.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='R2|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\linux-arm\bootloader.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>__linux__;__arm__</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/linux-arm/bootloader.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/linux-arm/bootloader.exe &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/linux-arm/bootloader.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/linux-arm/bootloader.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(SolutionDir);$(ProjectDir);$(SolutionDir)\toolchain\lib\arm\include;$(SolutionDir)\toolchain\host\lib\clang\4.0.1\include</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

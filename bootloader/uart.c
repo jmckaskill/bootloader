@@ -100,6 +100,8 @@ void UART0ModuleClkConfig(void)
           (HWREG(SOC_CM_PER_REGS + CM_PER_L3_INSTR_CLKCTRL) &
            CM_PER_L3_INSTR_CLKCTRL_MODULEMODE));
 
+
+
     /* Writing to CLKTRCTRL field of CM_PER_L3_CLKSTCTRL register. */
     HWREG(SOC_CM_PER_REGS + CM_PER_L3_CLKSTCTRL) |=
           CM_PER_L3_CLKSTCTRL_CLKTRCTRL_SW_WKUP;
@@ -126,6 +128,9 @@ void UART0ModuleClkConfig(void)
     while(CM_PER_L3S_CLKSTCTRL_CLKTRCTRL_SW_WKUP !=
           (HWREG(SOC_CM_PER_REGS + CM_PER_L3S_CLKSTCTRL) &
            CM_PER_L3S_CLKSTCTRL_CLKTRCTRL));
+
+
+           
 
     /* Checking fields for necessary values.  */
 

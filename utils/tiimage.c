@@ -70,15 +70,12 @@ int main (int argc, char *argv[])
     FILE *in_fp, *out_fp;
     long image_size = 0;
     ti_header    hdr;
-    int i = 0, len;
-    unsigned int extra;
-    char dummy[4] = {0,0,0,0};
-    char *boot; 
+    int i = 0;
 
 
-    if (argc < 3)
+    if (argc < 4 || strcmp(argv[2], "-o"))
     {
-        /* expect : tiimage </path/to/boot.bin> <path/to/place/modified/boot.bin> */
+        /* expect : tiimage </path/to/boot.bin> -o <path/to/place/modified/boot.bin> */
         printf("Usage : \n");
         printf("tiimage takes the input image and adds the TI Image Header \n");
         printf("The resulting output is placed in the output image path\n");
@@ -86,32 +83,17 @@ int main (int argc, char *argv[])
         return -1;
     }
 
-    FILE *in_hdr = fopen("raw-mmc-header.img", "rb");
-    if (!in_hdr) {
-        fprintf(stderr, "could not open raw-mmc-header.img\n");
-        return -1;
-    }
-
-    char buf[512];
-    memset(buf, 0, sizeof(buf));
-    fread(buf, 1, sizeof(buf), in_hdr);
-    fclose(in_hdr);
-
     in_fp = fopen(argv[1], "rb+");
     if(!in_fp) {
         printf("Error opening input image file!\n");
         return -1;
     }
 
-
-    out_fp = fopen(argv[2], "wb+");
+    out_fp = fopen(argv[3], "wb+");
     if(!out_fp) {
         printf("Error opening/creating out image file!\n");
         return -1;
     }
-
-    // write the image header
-    fwrite(buf, 1, sizeof(buf), out_fp);
 
     /* Calcualte the size of the input image and rewind to the begin of file */
     fseek(in_fp, 0, SEEK_END);
@@ -121,7 +103,6 @@ int main (int argc, char *argv[])
     /* Size of  new image is actual bin image size + header */
     hdr.image_size = image_size + sizeof(hdr);
     hdr.load_addr = 0x402f0400;
-  
 
     /* Insert the header first */
     fwrite(&hdr, sizeof(hdr), 1, out_fp);
