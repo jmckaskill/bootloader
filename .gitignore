@@ -19,3 +19,4 @@
 Debug
 /bin
 /.vscode
+/bootp-deploy-win32/deploy-data.c

@@ -141,7 +141,7 @@ static unsigned tick_count() {
 	return HW_DMTIMER_1MS->TCRR;
 }
 
-static unsigned timestamp_ms() {
+static unsigned tick_ms() {
 	// use uint64_t for increased range during the conversion
 	uint64_t tick = HW_DMTIMER_1MS->TCRR;
 	tick *= 1000;
@@ -207,69 +207,67 @@ static void write_mdio(int phy, int key, int val) {
 #define IP6_DEFAULT_HOP_LIMIT 255
 
 struct udp_frame {
-	uint16_t src_port;
-	uint16_t dst_port;
-	uint16_t length;
-	uint16_t checksum;
-	char data[1];
+	uint8_t src_port[2];
+	uint8_t dst_port[2];
+	uint8_t length[2];
+	uint8_t checksum[2];
+	uint8_t data[1];
 };
 
 struct tcp_frame {
-	uint16_t src_port;
-	uint16_t dst_port;
-	uint32_t seq_num;
-	uint32_t ack_num;
-	uint16_t flags;
-	uint16_t window;
-	uint16_t checksum;
-	uint16_t urgent;
-	char data[1];
+	uint8_t src_port[2];
+	uint8_t dst_port[2];
+	uint8_t seq_num[4];
+	uint8_t ack_num[4];
+	uint8_t flags[2];
+	uint8_t window[2];
+	uint8_t checksum[2];
+	uint8_t urgent[2];
+	uint8_t data[1];
 };
 
 #define ICMP6_NEIGHBOR_SOLICITATION 135
 #define ICMP6_NEIGHBOR_ADVERTISEMENT 136
 
-#define ADVERTISE_OVERRIDE 0x20000000
+#define ADVERTISE_OVERRIDE 0x20000000U
 
-#define ALL_NODES_0 0xFF020000
-#define ALL_NODES_1 0
-#define ALL_NODES_2 0
-#define ALL_NODES_3 1
+static const uint128_t ALL_NODES = UINT128_C(0xFF02000000000000, 1);
 
-#define LINK_LOCAL_0 0xFE800000
-#define LINK_LOCAL_1 0
+#define LINK_LOCAL_SUBNET UINT64_C(0xFE80000000000000)
 
-#define ETH_MCAST_0 0x3333
+#define ETH_MCAST      UINT64_C(0x333300000000)
+#define ETH_MCAST_MASK UINT64_C(0x0000FFFFFFFF)
+#define ETH_UL_BIT     UINT64_C(0x020000000000)
 
-#define ICMP6_OPTION_MAC 0x0208
+#define ICMP6_OPTION_MAC 2
 
 struct icmp6_frame {
 	uint8_t type;
 	uint8_t code;
-	uint16_t checksum;
-	uint32_t body;
+	uint8_t checksum[2];
+	uint8_t body[4];
 };
 
 struct icmp6_advertisement {
 	uint8_t type;
 	uint8_t code;
-	uint16_t checksum;
-	uint32_t flags;
-	uint32_t addr[4];
+	uint8_t checksum[2];
+	uint8_t flags[4];
+	uint8_t addr[16];
 };
 
 struct eth_frame {
 	uint16_t payloadsz; // padding for the driver, but used by the application
-	uint16_t eth_dst[3];
-	uint16_t eth_src[3];
-	uint16_t eth_type;
-	uint32_t ip6_header;
-	uint16_t ip6_length;
+	uint8_t eth_dst[6];
+	uint8_t eth_src[6];
+	uint8_t eth_type[2];
+	uint8_t ip6_header[4];
+	uint8_t ip6_length[2];
 	uint8_t ip6_next_header;
 	uint8_t ip6_hop_limit;
-	uint32_t ip6_src[4];
-	uint32_t ip6_dst[4];
-	char payload[0x5F0 - 40 - 14 - 2];
+	uint8_t ip6_src[16];
+	uint8_t ip6_dst[16];
+	uint8_t payload[0x5F0 - 40 - 14 - 2];
 };
 
 static_assert(sizeof(struct eth_frame) == 0x5F0, "padding");
@@ -293,9 +291,8 @@ static int g_tx_free; // next frame if we want to send
 // gives the next index in the circular buffer
 #define NEXT_TX_FRAME(idx) (((((idx) - TX_FRAME_FIRST) + 1) % (TX_FRAME_END - TX_FRAME_FIRST)) + TX_FRAME_FIRST)
 
-// in native byte order
-static uint16_t g_my_mac[3];
-static uint32_t g_my_ip[4];
+static uint64_t g_my_mac;
+static uint128_t g_my_ip;
 
 static struct eth_frame *get_next_frame() {
 	struct eth_frame *f = &HW_ETH_FRAMES[g_tx_free];
@@ -305,15 +302,10 @@ static struct eth_frame *get_next_frame() {
 	}
 
 	// fill out the default values
-	f->eth_src[0] = g_my_mac[0];
-	f->eth_src[1] = g_my_mac[1];
-	f->eth_src[2] = g_my_mac[2];
-	f->ip6_header = htonl(IP6_DEFAULT_HEADER);
+	write_big_48(f->eth_src, g_my_mac);
+	write_big_32(f->ip6_header, IP6_DEFAULT_HEADER);
 	f->ip6_hop_limit = IP6_DEFAULT_HOP_LIMIT;
-	f->ip6_src[0] = g_my_ip[0];
-	f->ip6_src[1] = g_my_ip[1];
-	f->ip6_src[2] = g_my_ip[2];
-	f->ip6_src[3] = g_my_ip[3];
+	write_big_128(f->ip6_src, g_my_ip);
 	
 	return f;
 }
@@ -321,8 +313,8 @@ static struct eth_frame *get_next_frame() {
 
 static void send_frame(struct eth_frame *f) {
 	// fill out the fixed fields
-	f->eth_type = htons(ETH_IP6);
-	f->ip6_length = htons(f->payloadsz);
+	write_big_16(f->eth_type, ETH_IP6);
+	write_big_16(f->ip6_length, f->payloadsz);
 
 	int idx = f - HW_ETH_FRAMES;
 	struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[idx];
@@ -346,37 +338,57 @@ static void send_frame(struct eth_frame *f) {
 	g_tx_free = NEXT_TX_FRAME(idx);
 }
 
+static uint16_t ones_checksum(struct eth_frame *f) {
+	uint32_t sum = 0;
+	int sz = f->payloadsz;
+
+	// add the psuedo headers
+	uint8_t *p = f->ip6_src;
+	for (int i = 0; i < 16; i++) {
+		sum += read_big_16(p + i * 2);
+	}
+	sum += sz;
+	sum += f->ip6_next_header;
+
+	// add the upper layer header
+	p = f->payload;
+	for (int i = 0; i < sz / 2; i++) {
+		sum += read_big_16(p + i * 2);
+	}
+
+	// zero fill the last byte if unaligned
+	if (sz & 1) {
+		sum += p[sz-1] << 8;
+	}
+
+	uint16_t sum16 = ((uint16_t) sum) + ((uint16_t) (sum >> 16));
+	return ~sum16;
+}
+
 static void send_neighbor_advertisement() {
 	struct eth_frame *f = get_next_frame();
 
-	f->eth_dst[0] = htons(ETH_MCAST_0);
-	f->eth_dst[1] = htons(hi16(ALL_NODES_3));
-	f->eth_dst[2] = htons(lo16(ALL_NODES_3));
-	f->ip6_dst[0] = htonl(ALL_NODES_0);
-	f->ip6_dst[1] = htonl(ALL_NODES_1);
-	f->ip6_dst[2] = htonl(ALL_NODES_2);
-	f->ip6_dst[3] = htonl(ALL_NODES_3);
+	write_big_48(f->eth_dst, ETH_MCAST | (ALL_NODES.low & ETH_MCAST_MASK));
+	write_big_128(f->ip6_dst, ALL_NODES);
 	f->ip6_next_header = IP6_ICMP;
 
 	struct icmp6_advertisement *a = (struct icmp6_advertisement*) f->payload;
 	a->type = ICMP6_NEIGHBOR_ADVERTISEMENT;
 	a->code = 0;
-	a->checksum = 0;
-	a->flags = htonl(ADVERTISE_OVERRIDE);
-	a->addr[0] = g_my_ip[0];
-	a->addr[1] = g_my_ip[1];
-	a->addr[2] = g_my_ip[2];
-	a->addr[3] = g_my_ip[3];
+	write_big_16(a->checksum, 0);
+	write_big_32(a->flags, ADVERTISE_OVERRIDE);
+	write_big_128(a->addr, g_my_ip);
+	
+	uint8_t *u = (uint8_t*) (a + 1);
+	u[0] = ICMP6_OPTION_MAC;
+	u[1] = 6; // length
+	write_big_48(u+2, g_my_mac);
+	u += 6;
 
-	uint16_t *u = (uint16_t*) (a + 1);
-	u[0] = htons(ICMP6_OPTION_MAC);
-	u[1] = g_my_mac[0];
-	u[2] = g_my_mac[1];
-	u[3] = g_my_mac[2];
+	f->payloadsz = u - f->payload;
+	write_big_16(a->checksum, ones_checksum(f));
 
-	f->payloadsz = 8 + sizeof(*a);
-
-	debugf("%u send\n", timestamp_ms());
+	debugf("%u send\n", tick_ms());
 	send_frame(f);
 }
 
@@ -384,6 +396,13 @@ static void clear_rx_descriptor(struct hw_buffer_descriptor *d) {
 	d->next = NULL;
 	d->offset_buf_len = HW_ETH_MAX_LEN;
 	d->flags_pkt_len = HW_ETH_OWNED_BY_PORT;
+}
+
+static uint64_t swap_48(unsigned hi32, unsigned lo16) {
+	uint8_t v[6];
+	write_big_32(v, hi32);
+	write_big_16(v+4, lo16);
+	return read_little_48(v);
 }
 
 static void enable_eth() {
@@ -421,21 +440,20 @@ static void enable_eth() {
 	HW_CPSW_PORT_1->SA_LO = HW_CONTROL->mac[0].lo;
 	HW_CPSW_PORT_1->SA_HI = HW_CONTROL->mac[0].hi;
 
-	g_my_mac[0] = lo16(HW_CONTROL->mac[0].hi);
-	g_my_mac[1] = hi16(HW_CONTROL->mac[0].hi);
-	g_my_mac[2] = HW_CONTROL->mac[0].lo;
+	// first byte on the wire is in hi bits 0-7
+	// so need to swap to native byte order
+	g_my_mac = swap_48(HW_CONTROL->mac[0].hi, HW_CONTROL->mac[0].lo);
 
-	// generate our link-local IP from the mac address
-	// these are in network order
-	uint32_t iid_hi = 0xFF000000 | (HW_CONTROL->mac[0].hi & 0xFFFFFF);
-	uint32_t iid_lo = (HW_CONTROL->mac[0].lo << 16) | ((HW_CONTROL->mac[0].hi >> 16) & 0xFF00) | 0xFE;
+	// now generate the interface ID from the mac
 	// complement the U/L bit position
-	iid_hi = (iid_hi & ~2U) | (~iid_hi & 2U);
+	uint64_t mac_ul = (g_my_mac & ~ETH_UL_BIT) | (~g_my_mac & ETH_UL_BIT);
+	// now split the bottom and top haves and put 0xFFFE in the middle
+	uint64_t iid = ((mac_ul & UINT64_C(0xFFFFFF000000)) << 16) 
+				 | UINT64_C(0xFFFE000000)
+				 | ((mac_ul & UINT64_C(0xFFFFFF)));
 
-	g_my_ip[0] = htonl(LINK_LOCAL_0);
-	g_my_ip[1] = htonl(LINK_LOCAL_1);
-	g_my_ip[2] = iid_hi;
-	g_my_ip[3] = iid_lo;
+	g_my_ip.low = iid;
+	g_my_ip.high = LINK_LOCAL_SUBNET;
 
 	// main CPSW clock is 125 MHz. this gives an MDIO frequency of 2.5 MHz
 	// which matches what the ROM does and the max frequency of the PHY
@@ -498,30 +516,66 @@ static void debug_putc(void* udata, char ch) {
 	HW_UART_4_OP->RHR_THR = ch;
 }
 
+static const char hex[] = "0123456789abcdef";
+
+#define ADDR_LEN (8*5)
+static char *print_addr(char *buf, const uint8_t *v) {
+	char *p = buf;
+	for (int i = 0; i < 16; i += 2) {
+		int acc = v[i] >> 4;
+		if (acc) {
+			*(p++) = hex[v[i] >> 4];
+		}
+		acc += v[i] & 15;
+		if (acc) {
+			*(p++) = hex[v[i] & 15];
+		}
+		acc += v[i+1] >> 4;
+		if (acc) {
+			*(p++) = hex[v[i+1] >> 4];
+		}
+		acc += v[i+1] & 15;
+		*(p++) = hex[v[i+1] & 15];
+		*(p++) = ':';
+	}
+	p[-1] = '\0';
+	return buf;
+}
+
+#define MAC_LEN (6*3)
+static char *print_mac(char *buf, const uint8_t *v) {
+	for (int i = 0; i < 6; i++) {
+		*(buf++) = hex[v[i] >> 4];
+		*(buf++) = hex[v[i] & 15];
+		*(buf++) = ':';
+	}
+	buf[-1] = '\0';
+	return buf - MAC_LEN;
+}
+
 static void process_frame(struct eth_frame *f, int sz) {
 	// sz does not include the padding bytes at the beginning
 	sz -= offsetof(struct eth_frame, payload) - offsetof(struct eth_frame, eth_dst);
-	if (sz < 0 || ntohs(f->eth_type) != ETH_IP6)  {
+	if (sz < 0 || read_big_16(f->eth_type) != ETH_IP6)  {
 		return;
 	}
 
-	debugf("%u have frame from %08x%08x%08x%08x to %08x%08x%08x%08x\n", 
-		timestamp_ms(),
-		ntohl(f->ip6_src[0]),
-		ntohl(f->ip6_src[1]),
-		ntohl(f->ip6_src[2]),
-		ntohl(f->ip6_src[3]),
-		ntohl(f->ip6_dst[0]),
-		ntohl(f->ip6_dst[1]),
-		ntohl(f->ip6_dst[2]),
-		ntohl(f->ip6_dst[3]));
+	char ip6_src[ADDR_LEN], ip6_dst[ADDR_LEN];
+	char mac_src[MAC_LEN], mac_dst[MAC_LEN];
+
+	debugf("%u have frame from %s/%s to %s/%s\n", 
+		tick_ms(),
+		print_mac(mac_src, f->eth_src),
+		print_addr(ip6_src, f->ip6_src),
+		print_mac(mac_dst, f->eth_dst),
+		print_addr(ip6_dst, f->ip6_dst));
 }
 
 void interrupt() {
 	switch (HW_INTC->SIR_IRQ & HW_INTC_ACTIVE_IRQ_MASK) {
 	case HW_INT_TINT1_1MS: {
 			int sts = read_mdio(0, MDIO_BASIC_STATUS);
-			debugf("%u timer %x\n", timestamp_ms(), sts);
+			debugf("%u timer %x\n", tick_ms(), sts);
 			send_neighbor_advertisement();
 			// reset the timer interrupt
 			HW_DMTIMER_1MS->TISR |= HW_1MS_INT_COMPARE;
@@ -529,7 +583,7 @@ void interrupt() {
 		}
 		break;
 	case HW_INT_ETH_TX: {
-			debugf("%u send complete\n", timestamp_ms());
+			debugf("%u send complete\n", tick_ms());
 			// update g_tx_next to wherever the mac got up to
 			struct hw_buffer_descriptor *d = g_tx_next;
 			struct hw_buffer_descriptor *last_processed = d;

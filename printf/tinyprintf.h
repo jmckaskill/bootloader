@@ -105,7 +105,8 @@ regs Kusti, 23.10.2004
 #define DEBUG_LOG_SUPPORT
 
 #ifndef DEBUG_LOG_SUPPORT
-static inline void debugf(const char *fmt, ...) {}
+static inline void do_debugf(const char *fmt, ...) {}
+#define debugf if (1) {} else do_debugf
 #else
 
 /* Global configuration */

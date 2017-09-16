@@ -28,13 +28,13 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
  */
 
 /* Enable long int support */
-//#define PRINTF_LONG_SUPPORT
+#define PRINTF_LONG_SUPPORT
 
 /* Enable long long int support (implies long int support) */
-//#define PRINTF_LONG_LONG_SUPPORT
+#define PRINTF_LONG_LONG_SUPPORT
 
 /* Enable %z (size_t) support */
-//#define PRINTF_SIZE_T_SUPPORT
+#define PRINTF_SIZE_T_SUPPORT
 
 /*
  * Configuration adjustments
@@ -171,27 +171,15 @@ static void i2a(int num, struct param *p)
     ui2a(num, p);
 }
 
-static int a2d(char ch)
-{
-    if (ch >= '0' && ch <= '9')
-        return ch - '0';
-    else if (ch >= 'a' && ch <= 'f')
-        return ch - 'a' + 10;
-    else if (ch >= 'A' && ch <= 'F')
-        return ch - 'A' + 10;
-    else
-        return -1;
-}
-
-static char a2u(char ch, const char **src, int base, unsigned int *nump)
+static char a2u(char ch, const char **src, unsigned int *nump)
 {
     const char *p = *src;
     unsigned int num = 0;
-    int digit;
-    while ((digit = a2d(ch)) >= 0) {
-        if (digit > base)
+    for (;;) {
+        int digit = ch - '0';
+        if (digit < 0 || digit > 10)
             break;
-        num = num * base + digit;
+        num = num * 10 + digit;
         ch = *p++;
     }
     *src = p;
@@ -296,7 +284,7 @@ void tfp_format(void *putp, putcf putf, const char *fmt, va_list va)
 
             /* Width */
             if (ch >= '0' && ch <= '9') {
-                ch = a2u(ch, &fmt, 10, &(p.width));
+                ch = a2u(ch, &fmt, &(p.width));
             }
 
             /* We accept 'x.y' format but don't support it completely:
