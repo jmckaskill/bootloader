@@ -70,7 +70,7 @@
 #define HW_CM_IDLEST_IDLE (2 << 16)
 #define HW_CM_IDLEST_DISABLED (3 << 16)
 
-struct HW_CM_PER {
+struct hw_cm_per {
 	volatile unsigned L4LS_status;
 	volatile unsigned L3S_status;
 	char pad1[4];
@@ -144,8 +144,8 @@ struct HW_CM_PER {
 	volatile unsigned CLK_24MHZ;
 };
 
-static_assert(sizeof(struct HW_CM_PER) == 0x154, "padding");
-extern struct HW_CM_PER HW_CM_PER;
+static_assert(sizeof(struct hw_cm_per) == 0x154, "padding");
+#define HW_CM_PER ((struct hw_cm_per*) 0x44E00000)
 
 // wakeup clocks
 #define HW_CM_WAKEUP_ADC_FCLK (1 << 14)
@@ -166,7 +166,7 @@ extern struct HW_CM_PER HW_CM_PER;
 // L4 always on clocks
 #define HW_CM_L4_AON_GCLK (1 << 2)
 
-struct HW_CM_WAKEUP {
+struct hw_cm_wakeup {
 	volatile unsigned CLKSTCTRL; //   (0x0)
 	volatile unsigned CONTROL_CLKCTRL; //   (0x4)
 	volatile unsigned GPIO0_CLKCTRL; //   (0x8)
@@ -224,12 +224,12 @@ struct HW_CM_WAKEUP {
 	volatile unsigned DIV_M6_DPLL_CORE; //   (0xd8)
 };
 
-static_assert(sizeof(struct HW_CM_WAKEUP) == 0xDC, "padding");
-extern struct HW_CM_WAKEUP HW_CM_WAKEUP;
+static_assert(sizeof(struct hw_cm_wakeup) == 0xDC, "padding");
+#define HW_CM_WAKEUP ((struct hw_cm_wakeup*) 0x44E00400)
 
 #define HW_CLKSEL_TIMER1MS_32K_EXT (4 << 0)
 
-struct HW_CM_DPLL {
+struct hw_cm_dpll {
     char pad0[4];
     volatile unsigned CLKSEL_TIMER7_CLK; // 0x4
     volatile unsigned CLKSEL_TIMER2_CLK; // 0x8
@@ -248,8 +248,8 @@ struct HW_CM_DPLL {
     volatile unsigned CLKSEL_GPIO0_DBCLK; // 0x3c
 };
 
-static_assert(sizeof(struct HW_CM_DPLL) == 0x40, "padding");
-extern struct HW_CM_DPLL HW_CM_DPLL;
+static_assert(sizeof(struct hw_cm_dpll) == 0x40, "padding");
+#define HW_CM_DPLL ((struct hw_cm_dpll*)0x44E00500)
 
 #define HW_CONTROL_MUXMODE_MASK 7
 #define HW_CONTROL_MUXMODE_0 0
@@ -271,7 +271,7 @@ extern struct HW_CM_DPLL HW_CM_DPLL;
 #define HW_CONTROL_GMII_1 (0 << 0)
 #define HW_CONTROL_GMII_2 (0 << 2)
 
-struct HW_CONTROL {
+struct hw_control {
     volatile unsigned revision; // 0x0)
     volatile unsigned hwinfo; // 0x4)
     char pad0[8];
@@ -465,8 +465,8 @@ struct HW_CONTROL {
     volatile unsigned ddr_data_ioctrl[2]; // 0x1440-0x1448
 };
 
-static_assert(sizeof(struct HW_CONTROL) == 0x1448, "padding");
-extern struct HW_CONTROL HW_CONTROL;
+static_assert(sizeof(struct hw_control) == 0x1448, "padding");
+#define HW_CONTROL ((struct hw_control*) 0x44E10000)
 
 #define HW_UART_SYSC_SOFTRESET (1 << 1)
 #define HW_UART_SYSS_RESETDONE (1 << 0)
@@ -500,7 +500,7 @@ extern struct HW_CONTROL HW_CONTROL;
 
 #define HW_UART_MCR_LOOPBACK_EN (1 << 4)
 
-struct HW_UART {
+struct hw_uart {
     char pad0[0x0C];
     volatile unsigned LCR; // 0x0C line control register
     char pad1[0x10];
@@ -525,10 +525,10 @@ struct HW_UART {
     volatile unsigned TX_DMA_THRESHOLD; // 0x84
 };
 
-static_assert(sizeof(struct HW_UART) == 0x88, "padding");
-extern struct HW_UART HW_UART_4;
+static_assert(sizeof(struct hw_uart) == 0x88, "padding");
+#define HW_UART_4 ((struct hw_uart*)0x481A8000)
 
-struct HW_UART_CFGA {
+struct hw_uart_cfga {
     volatile unsigned DLL; // 0x00 divisor latches low
     volatile unsigned DLH; // 0x04 divisor latches high
     volatile unsigned IIR_FCR; // 0x08 interrupt identification register & FIFO control register
@@ -541,10 +541,10 @@ struct HW_UART_CFGA {
     volatile unsigned UASR; // 0x38 UART autobauding status register
 };
 
-static_assert(sizeof(struct HW_UART_CFGA) == 0x3C, "padding");
-extern struct HW_UART_CFGA HW_UART_4_CFGA;
+static_assert(sizeof(struct hw_uart_cfga) == 0x3C, "padding");
+#define HW_UART_4_CFGA ((struct hw_uart_cfga*)0x481A8000)
 
-struct HW_UART_CFGB {
+struct hw_uart_cfgb {
     volatile unsigned DLL; // 0x00 divisor latches low
     volatile unsigned DLH; // 0x04 divisor latches high
     volatile unsigned EFR; // 0x08 enhanced feature register
@@ -557,10 +557,10 @@ struct HW_UART_CFGB {
     volatile unsigned UASR; // 0x38 UART autobauding status register
 };
 
-static_assert(sizeof(struct HW_UART_CFGB) == 0x3C, "padding");
-extern struct HW_UART_CFGB HW_UART_4_CFGB;
+static_assert(sizeof(struct hw_uart_cfgb) == 0x3C, "padding");
+#define HW_UART_4_CFGB ((struct hw_uart_cfgb*)0x481A8000)
 
-struct HW_UART_OP {
+struct hw_uart_op {
     volatile unsigned RHR_THR; // 0x00 receive/transmit holding register
     volatile unsigned IER; // 0x04 interrupt enable register
     volatile unsigned IIR_FCR; // 0x08 interrupt identification register & FIFO control register
@@ -571,8 +571,8 @@ struct HW_UART_OP {
     volatile unsigned SPR_TLR; // 0x1C scratchpad register & trigger level register
 };
 
-static_assert(sizeof(struct HW_UART_OP) == 0x20, "padding");
-extern struct HW_UART_OP HW_UART_4_OP;
+static_assert(sizeof(struct hw_uart_op) == 0x20, "padding");
+#define HW_UART_4_OP ((struct hw_uart_op*)0x481A8000)
 
 #define HW_ALE_CONTROL_EN (1 << 31)
 #define HW_ALE_CONTROL_CLEAR (1 << 30)
@@ -580,7 +580,7 @@ extern struct HW_UART_OP HW_UART_4_OP;
 
 #define HW_ALE_PORT_FORWARD (3 << 0)
 
-struct HW_CPSW_ALE {
+struct hw_cpsw_ale {
     volatile unsigned IDVER; // 0x0
     char pad1[4];
     volatile unsigned CONTROL; // 0x8
@@ -597,8 +597,8 @@ struct HW_CPSW_ALE {
     volatile unsigned PORTCTL[6]; // 0x40-0x58
 };
 
-static_assert(sizeof(struct HW_CPSW_ALE) == 0x58, "padding");
-extern struct HW_CPSW_ALE HW_CPSW_ALE;
+static_assert(sizeof(struct hw_cpsw_ale) == 0x58, "padding");
+#define HW_CPSW_ALE ((struct hw_cpsw_ale*)0x4A100D00)
 
 #define HW_CPDMA_TX_EN (1 << 0)
 #define HW_CPDMA_RX_EN (1 << 0)
@@ -614,7 +614,7 @@ extern struct HW_CPSW_ALE HW_CPSW_ALE;
 #define HW_CPDMA_EOI_RX 1
 #define HW_CPDMA_EOI_TX 2
 
-struct HW_CPSW_CPDMA {
+struct hw_cpsw_cpdma {
     volatile unsigned TX_IDVER; // 0x0
     volatile unsigned TX_CONTROL; // 0x4
     volatile unsigned TX_TEARDOWN; // 0x8
@@ -648,8 +648,8 @@ struct HW_CPSW_CPDMA {
     volatile unsigned RX_FREEBUFFER[8]; // 0xe0-0x100
 };
 
-static_assert(sizeof(struct HW_CPSW_CPDMA) == 0x100, "padding");
-static struct HW_CPSW_CPDMA *HW_CPSW_CPDMA = (struct HW_CPSW_CPDMA*) 0x4A100800;
+static_assert(sizeof(struct hw_cpsw_cpdma) == 0x100, "padding");
+#define HW_CPSW_CPDMA ((struct hw_cpsw_cpdma*)0x4A100800)
 
 // flags for both rx & tx
 #define HW_ETH_START_OF_PKT (1 << 31)
@@ -690,21 +690,20 @@ struct hw_buffer_descriptor {
     volatile unsigned flags_pkt_len;
 };
 
-extern struct hw_buffer_descriptor HW_BUFFER_DESCRIPTORS[512];
+#define HW_BUFFER_DESCRIPTORS ((struct hw_buffer_descriptor*)0x4A102000)
 static_assert(sizeof(struct hw_buffer_descriptor) == 16, "padding");
-static_assert(sizeof(HW_BUFFER_DESCRIPTORS) == 0x2000, "padding");
 
-struct HW_CPSW_STATERAM {
+struct hw_cpsw_stateram {
     volatile struct hw_buffer_descriptor * volatile TX_HDP[8]; // 0-0x20
     volatile struct hw_buffer_descriptor * volatile RX_HDP[8]; // 0x20-0x40
     volatile struct hw_buffer_descriptor * volatile TX_CP[8]; // 0x40-0x60
     volatile struct hw_buffer_descriptor * volatile RX_CP[8]; // 0x60-0x80
 };
 
-static_assert(sizeof(struct HW_CPSW_STATERAM) == 0x80, "padding");
-extern struct HW_CPSW_STATERAM HW_CPSW_STATERAM;
+static_assert(sizeof(struct hw_cpsw_stateram) == 0x80, "padding");
+#define HW_CPSW_STATERAM ((struct hw_cpsw_stateram*)0x4A100A00)
 
-struct HW_CPSW_CPTS {
+struct hw_cpsw_cpts {
     volatile unsigned IDVER; // 0x00
     volatile unsigned CONTROL; // 0x04
     volatile unsigned RFTCLK_SEL; // 0x08
@@ -721,10 +720,9 @@ struct HW_CPSW_CPTS {
     volatile unsigned EVENT_HIGH; // 0x38
 };
 
-static_assert(sizeof(struct HW_CPSW_CPTS) == 0x3C, "padding");
-extern struct HW_CPSW_CPTS HW_CPSW_CPTS;
+static_assert(sizeof(struct hw_cpsw_cpts) == 0x3C, "padding");
 
-struct HW_CPSW_PORT_0 {
+struct hw_cpsw_port_0 {
     volatile unsigned CONTROL; // 0x0
     char pad1[4];
     volatile unsigned MAX_BLKS; // 0x8
@@ -738,7 +736,7 @@ struct HW_CPSW_PORT_0 {
     volatile unsigned RX_DSCP_PRI_MAP[8]; // 0x30-0x50
 };
 
-struct HW_CPSW_PORT {
+struct hw_cpsw_port {
     volatile unsigned CONTROL; // 0x0
     char pad1[4];
     volatile unsigned MAX_BLKS; // 0x8
@@ -754,11 +752,11 @@ struct HW_CPSW_PORT {
     volatile unsigned RX_DSCP_PRI_MAP[8]; // 0x30-0x50
 };
 
-static_assert(sizeof(struct HW_CPSW_PORT_0) == 0x50, "padding");
-static_assert(sizeof(struct HW_CPSW_PORT) == 0x50, "padding");
-extern struct HW_CPSW_PORT_0 HW_CPSW_PORT_0;
-extern struct HW_CPSW_PORT HW_CPSW_PORT_1;
-extern struct HW_CPSW_PORT HW_CPSW_PORT_2;
+static_assert(sizeof(struct hw_cpsw_port_0) == 0x50, "padding");
+static_assert(sizeof(struct hw_cpsw_port) == 0x50, "padding");
+#define HW_CPSW_PORT_0 ((struct hw_cpsw_port_0*)0x4A100100)
+#define HW_CPSW_PORT_1 ((struct hw_cpsw_port*)0x4A100200)
+#define HW_CPSW_PORT_2 ((struct hw_cpsw_port*)0x4A100300)
 
 #define HW_SL_MACCONTROL_GIGABIT (1 << 7)
 #define HW_SL_MACCONTROL_TX_PACE (1 << 6)
@@ -775,7 +773,7 @@ extern struct HW_CPSW_PORT HW_CPSW_PORT_2;
 
 #define HW_SL_SOFT_RESET (1 << 0)
 
-struct HW_CPSW_SL {
+struct hw_cpsw_sl {
     volatile unsigned IDVER; // 0x0
     volatile unsigned MACCONTROL; // 0x4
     volatile unsigned MACSTATUS; // 0x8
@@ -789,16 +787,16 @@ struct HW_CPSW_SL {
     volatile unsigned TX_GAP; // 0x28
 };
 
-static_assert(sizeof(struct HW_CPSW_SL) == 0x2C, "padding");
-extern struct HW_CPSW_SL HW_CPSW_SL_1;
-extern struct HW_CPSW_SL HW_CPSW_SL_2;
+static_assert(sizeof(struct hw_cpsw_sl) == 0x2C, "padding");
+#define HW_CPSW_SL_1 ((struct hw_cpsw_sl*)0x4A100D80)
+#define HW_CPSW_SL_2 ((struct hw_cpsw_sl*)0x4A100DC0)
 
 #define HW_SS_SOFT_RESET (1 << 0)
 #define HW_SS_STAT_EN_PORT_0 (1 << 0)
 #define HW_SS_STAT_EN_PORT_1 (1 << 1)
 #define HW_SS_STAT_EN_PORT_2 (1 << 2)
 
-struct HW_CPSW_SS {
+struct hw_cpsw_ss {
     volatile unsigned ID_VER; // 0x0
     volatile unsigned CONTROL; // 0x4
     volatile unsigned SOFT_RESET; // 0x8
@@ -814,8 +812,8 @@ struct HW_CPSW_SS {
     volatile unsigned DLR_LTYPE; // 0x30
 };
 
-static_assert(sizeof(struct HW_CPSW_SS) == 0x34, "padding");
-extern struct HW_CPSW_SS HW_CPSW_SS;
+static_assert(sizeof(struct hw_cpsw_ss) == 0x34, "padding");
+#define HW_CPSW_SS ((struct hw_cpsw_ss*)0x4A100000)
 
 // these are only valid for phys using RGMII in-band status
 // MACCONTROL.EXT_EN needs to be enabled
@@ -851,7 +849,7 @@ extern struct HW_CPSW_SS HW_CPSW_SS;
 
 #define HW_WR_INT_PACE_RX_0 (1 << 16)
 
-struct HW_CPSW_WR {
+struct hw_cpsw_wr {
     volatile unsigned IDVER; // 0x0
     volatile unsigned SOFT_RESET; // 0x04
     volatile unsigned CONTROL; // 0x08
@@ -875,8 +873,8 @@ struct HW_CPSW_WR {
     volatile unsigned RGMII_CTL; // 0x88
 };
 
-static_assert(sizeof(struct HW_CPSW_WR) == 0x8C, "padding");
-extern struct HW_CPSW_WR HW_CPSW_WR;
+static_assert(sizeof(struct hw_cpsw_wr) == 0x8C, "padding");
+#define HW_CPSW_WR ((struct hw_cpsw_wr*)0x4A101200)
 
 
 #define HW_MDIO_CONTROL_IDLE (1 << 31)
@@ -896,7 +894,7 @@ extern struct HW_CPSW_WR HW_CPSW_WR;
 #define HW_MDIO_LINK_INT_EN (1 << 6)
 #define HW_MDIO_USERPHYSEL_ADDR(x) ((x) & 0xF)
 
-struct HW_MDIO {
+struct hw_mdio {
     volatile unsigned REVID; // 0x0
     volatile unsigned CONTROL; // 0x4
     volatile unsigned ALIVE; // 0x8
@@ -925,8 +923,8 @@ struct HW_MDIO {
 #define MDIO_STS_AUTO_COMPLETE (1 << 5)
 #define MDIO_STS_LINK_UP (1 << 2)
 
-static_assert(sizeof(struct HW_MDIO) == 0x90, "padding");
-extern struct HW_MDIO HW_MDIO;
+static_assert(sizeof(struct hw_mdio) == 0x90, "padding");
+#define HW_MDIO ((struct hw_mdio*)0x4A101000)
 
 #define HW_INTC_NEXT_IRQ (1 << 0)
 #define HW_INTC_ACTIVE_IRQ_MASK 0xFF
@@ -939,7 +937,7 @@ enum hw_interrupt {
     HW_INT_TINT1_1MS = 67,
 };
 
-struct HW_INTC {
+struct hw_intc {
     volatile unsigned REVISION; // 0x0
     char pad[12];
     volatile unsigned SYSCONFIG; // 0x10
@@ -969,10 +967,10 @@ struct HW_INTC {
     volatile unsigned ILR[128]; // 0x100-0x300
 };
 
-static_assert(sizeof(struct HW_INTC) == 0x300, "padding");
-extern struct HW_INTC HW_INTC;
+static_assert(sizeof(struct hw_intc) == 0x300, "padding");
+#define HW_INTC ((struct hw_intc*)0x48200000)
 
-struct HW_GPIO {
+struct hw_gpio {
     volatile unsigned REVISION; // 0x0
     char pad1[12];
     volatile unsigned SYSCONFIG; // 0x10
@@ -1000,11 +998,11 @@ struct HW_GPIO {
     volatile unsigned SETDATAOUT; // 0x194
 };
 
-static_assert(sizeof(struct HW_GPIO) == 0x198, "padding");
-extern struct HW_GPIO HW_GPIO_0;
-extern struct HW_GPIO HW_GPIO_1;
-extern struct HW_GPIO HW_GPIO_2;
-extern struct HW_GPIO HW_GPIO_3;
+static_assert(sizeof(struct hw_gpio) == 0x198, "padding");
+#define HW_GPIO_0 ((struct hw_gpio*)0x44E07000) 
+#define HW_GPIO_1 ((struct hw_gpio*)0x4804C000)
+#define HW_GPIO_2 ((struct hw_gpio*)0x481AC000)
+#define HW_GPIO_3 ((struct hw_gpio*)0x481AE000)
 
 #define HW_1MS_CFG_SOFT_RESET (1 << 1)
 #define HW_1MS_TISTAT_RESET_DONE (1 << 0)
@@ -1013,7 +1011,7 @@ extern struct HW_GPIO HW_GPIO_3;
 #define HW_1MS_TCLR_COMPARE_EN (1 << 6)
 #define HW_1MS_TCLR_START (1 << 0)
 
-struct HW_DMTIMER_1MS {
+struct hw_dmtimer_1ms {
     volatile unsigned TIDR; // 0x0
     char pad1[12];
     volatile unsigned TIOCP_CFG; // 0x10
@@ -1037,6 +1035,6 @@ struct HW_DMTIMER_1MS {
     volatile unsigned TOWR; // 0x58
 };
 
-static_assert(sizeof(struct HW_DMTIMER_1MS) == 0x5C, "padding");
-extern struct HW_DMTIMER_1MS HW_DMTIMER_1MS;
+static_assert(sizeof(struct hw_dmtimer_1ms) == 0x5C, "padding");
+#define HW_DMTIMER_1MS ((struct hw_dmtimer_1ms*)0x44E31000)
 

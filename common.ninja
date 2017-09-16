@@ -1,11 +1,12 @@
 LIBC = toolchain/lib/arm/libclang-rt.a
+LDFLAGS = --script bootloader/AM335x.lds -g
 
-rule ld-script
- command = toolchain/host/bin/ld.lld.exe -g $LIBC --script $in -o $out
+rule rawlink
+ command = toolchain/host/bin/ld.lld.exe $LDFLAGS $LIBC $in -o $out
  description = LD $out
 
 rule objcopy
  command = toolchain/host/bin/llvm-objcopy.exe $in $out
 
 build bootp-deploy-win32/deploy-data.c: run bin/$HOST/create-cdata.exe $
- bin/arm-debug/bootloader.bin
+ bin/arm-release/bootloader.bin

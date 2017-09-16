@@ -1,19 +1,19 @@
 OBJ = obj/$TGT
 
-build $OBJ/create-cdata.o: cc utils/create-cdata.c
+build $OBJ/create-cdata.o: ccdll utils/create-cdata.c
 build bin/$TGT/create-cdata.exe: clink $OBJ/create-cdata.o
 
-build $OBJ/tiimage.o: cc utils/tiimage.c
+build $OBJ/tiimage.o: ccdll utils/tiimage.c
 build bin/$TGT/tiimage.exe: clink $OBJ/tiimage.o
 
-build $OBJ/init.o: cc bootloader/init.S
-build $OBJ/main.o: cc bootloader/main.c
-build $OBJ/uart.o: cc bootloader/uart.c
-build $OBJ/uartConsole.o: cc bootloader/uartConsole.c
-build $OBJ/uart_irda_cir.o: cc bootloader/uart_irda_cir.c
-build $OBJ/tinyprintf.o: cc tinyprintf/tinyprintf.c
+build $OBJ/init.o: ccdll bootloader/init.S
+build $OBJ/main.o: ccdll bootloader/main.c
+build $OBJ/uart.o: ccdll bootloader/uart.c
+build $OBJ/uartConsole.o: ccdll bootloader/uartConsole.c
+build $OBJ/uart_irda_cir.o: ccdll bootloader/uart_irda_cir.c
+build $OBJ/tinyprintf.o: ccdll tinyprintf/tinyprintf.c
 
-build bin/$TGT/bootloader.exe: ld-script bootloader/linker.ld $
+build bin/$TGT/bootloader.exe: rawlink $
  $OBJ/init.o $
  $OBJ/main.o $
  $OBJ/tinyprintf.o $
@@ -21,9 +21,9 @@ build bin/$TGT/bootloader.exe: ld-script bootloader/linker.ld $
 build bin/$TGT/bootloader.bin: objcopy bin/$TGT/bootloader.exe
 build bin/$TGT/bootloader.MLO: run bin/$HOST/tiimage.exe bin/$TGT/bootloader.bin
 
-build $OBJ/deploy-data.o: cc bootp-deploy-win32/deploy-data.c
-build $OBJ/bootp.o: cc bootp-deploy-win32/bootp.c
-build $OBJ/bootp-deploy-win32.o: cc bootp-deploy-win32/bootp-deploy-win32.c
+build $OBJ/deploy-data.o: ccdll bootp-deploy-win32/deploy-data.c
+build $OBJ/bootp.o: ccdll bootp-deploy-win32/bootp.c
+build $OBJ/bootp-deploy-win32.o: ccdll bootp-deploy-win32/bootp-deploy-win32.c
 
 build bin/$TGT/bootp-deploy-win32.exe: clink $
  $OBJ/bootp.o $

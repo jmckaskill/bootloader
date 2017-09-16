@@ -38,13 +38,19 @@ int main(int argc, char *argv[])
             break;
         }
 
-        fprintf(w, "\\\n\"");
+        fprintf(w, "\n\"");
         for (int i = 0; i < sz; i++)
         {
             fprintf(w, "\\x%02x", buf[i]);
         }
         fprintf(w, "\"");
         totalsz += sz;
+
+        fprintf(w, "/* ");
+        for (int i = 0; i < sz; i++) {
+            fprintf(w, "%c", (' ' <= buf[i] && buf[i] < 0x7F) ? buf[i] : '.');
+        }
+        fprintf(w, " */");
     }
     fprintf(w, ";\n\n");
     fprintf(w, "unsigned long g_datasz = %u;\n", totalsz);

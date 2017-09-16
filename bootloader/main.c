@@ -1,5 +1,5 @@
 #include "am335x.h"
-#include "../tinyprintf/tinyprintf.h"
+#include "../printf/tinyprintf.h"
 #include <stdint.h>
 #include <assert.h>
 #include <stddef.h>
@@ -9,13 +9,13 @@ extern void interrupt();
 extern void setup();
 
 void led_wobble(void) {
-	HW_GPIO_1.SETDATAOUT = 1 << 23;
+	HW_GPIO_1->SETDATAOUT = 1 << 23;
 
     for (;;) {
         for (int i = 0; i < 1000000; i++) {
 
         }
-		HW_GPIO_1.DATAOUT = ~HW_GPIO_1.DATAOUT;
+		HW_GPIO_1->DATAOUT = ~HW_GPIO_1->DATAOUT;
     }
 }
 
@@ -38,42 +38,42 @@ static void wait_for_functional(volatile unsigned *ctrl) {
 
 static void enable_interconnects() {
 	// enable L3 & L3S clocks in the peripheral power domain
-	enable_module(&HW_CM_PER.L3);
-	enable_module(&HW_CM_PER.L3_instr);
-	sw_wakeup(&HW_CM_PER.L3_status);
-	sw_wakeup(&HW_CM_PER.OCPWP_status);
-	sw_wakeup(&HW_CM_PER.L3S_status);
-	wait_for_functional(&HW_CM_PER.L3);
-	wait_for_functional(&HW_CM_PER.L3_instr);
-	while (!(HW_CM_PER.L3_status & HW_CM_L3_GCLK)) {}
-	while (!(HW_CM_PER.OCPWP_status & HW_CM_OCPWP_L3_GCLK)) {}
-	while (!(HW_CM_PER.L3S_status & HW_CM_L3S_GCLK)) {}
+	enable_module(&HW_CM_PER->L3);
+	enable_module(&HW_CM_PER->L3_instr);
+	sw_wakeup(&HW_CM_PER->L3_status);
+	sw_wakeup(&HW_CM_PER->OCPWP_status);
+	sw_wakeup(&HW_CM_PER->L3S_status);
+	wait_for_functional(&HW_CM_PER->L3);
+	wait_for_functional(&HW_CM_PER->L3_instr);
+	while (!(HW_CM_PER->L3_status & HW_CM_L3_GCLK)) {}
+	while (!(HW_CM_PER->OCPWP_status & HW_CM_OCPWP_L3_GCLK)) {}
+	while (!(HW_CM_PER->L3S_status & HW_CM_L3S_GCLK)) {}
 
 	// enable L3 clocks in the wakeup power domain
-	enable_module(&HW_CM_WAKEUP.CONTROL_CLKCTRL);
-	sw_wakeup(&HW_CM_WAKEUP.CLKSTCTRL);
-	sw_wakeup(&HW_CM_WAKEUP.L3_AON_CLKSTCTRL);
-	wait_for_functional(&HW_CM_WAKEUP.CONTROL_CLKCTRL);
-	while (!(HW_CM_WAKEUP.L3_AON_CLKSTCTRL & HW_CM_L3_AON_GCLK)) {}
+	enable_module(&HW_CM_WAKEUP->CONTROL_CLKCTRL);
+	sw_wakeup(&HW_CM_WAKEUP->CLKSTCTRL);
+	sw_wakeup(&HW_CM_WAKEUP->L3_AON_CLKSTCTRL);
+	wait_for_functional(&HW_CM_WAKEUP->CONTROL_CLKCTRL);
+	while (!(HW_CM_WAKEUP->L3_AON_CLKSTCTRL & HW_CM_L3_AON_GCLK)) {}
 
 	// enable L4 clocks in the wakeup power domain
 	// no need to enable the L4 wakeup module - it can't be disabled
-	wait_for_functional(&HW_CM_WAKEUP.L4WKUP_CLKCTRL);
-	while (!(HW_CM_WAKEUP.CLKSTCTRL & HW_CM_WAKEUP_L4_GCLK)) {}
-	while (!(HW_CM_WAKEUP.L4_WKUP_AON_CLKSTCTRL & HW_CM_L4_AON_GCLK)) {}
-	//while (!(HW_CM_PER.OCPWP_status & HW_CM_OCPWP_L4_GCLK)) {}
+	wait_for_functional(&HW_CM_WAKEUP->L4WKUP_CLKCTRL);
+	while (!(HW_CM_WAKEUP->CLKSTCTRL & HW_CM_WAKEUP_L4_GCLK)) {}
+	while (!(HW_CM_WAKEUP->L4_WKUP_AON_CLKSTCTRL & HW_CM_L4_AON_GCLK)) {}
+	//while (!(HW_CM_PER->OCPWP_status & HW_CM_OCPWP_L4_GCLK)) {}
 
 	// enable L4LS clocks in the peripheral power domain
-	enable_module(&HW_CM_PER.L4LS);
-	sw_wakeup(&HW_CM_PER.L4LS_status);
-	wait_for_functional(&HW_CM_PER.L4LS);
-	while (!(HW_CM_PER.L4LS_status & HW_CM_L4LS_GCLK)) {}
+	enable_module(&HW_CM_PER->L4LS);
+	sw_wakeup(&HW_CM_PER->L4LS_status);
+	wait_for_functional(&HW_CM_PER->L4LS);
+	while (!(HW_CM_PER->L4LS_status & HW_CM_L4LS_GCLK)) {}
 
 	// enable L4HS clocks in the peripheral power domain
-	enable_module(&HW_CM_PER.L4HS);
-	sw_wakeup(&HW_CM_PER.L4HS_status);
-	wait_for_functional(&HW_CM_PER.L4HS);
-	while (!(HW_CM_PER.L4HS_status & HW_CM_L4HS_GCLK)) {}
+	enable_module(&HW_CM_PER->L4HS);
+	sw_wakeup(&HW_CM_PER->L4HS_status);
+	wait_for_functional(&HW_CM_PER->L4HS);
+	while (!(HW_CM_PER->L4HS_status & HW_CM_L4HS_GCLK)) {}
 }
 
 enum uart_tx_select {
@@ -82,18 +82,18 @@ enum uart_tx_select {
 };
 
 static void set_tx_uart(enum uart_tx_select tx) {
-	enable_module(&HW_CM_WAKEUP.GPIO0_CLKCTRL);
-	wait_for_functional(&HW_CM_WAKEUP.GPIO0_CLKCTRL);
+	enable_module(&HW_CM_WAKEUP->GPIO0_CLKCTRL);
+	wait_for_functional(&HW_CM_WAKEUP->GPIO0_CLKCTRL);
 
-	HW_CONTROL.conf_gpmc_ad[11] = HW_CONTROL_MUXMODE_7 | HW_CONTROL_DISABLE_PULL;
-	HW_GPIO_0.INPUT_EN &= ~(1 << 27);
+	HW_CONTROL->conf_gpmc_ad[11] = HW_CONTROL_MUXMODE_7 | HW_CONTROL_DISABLE_PULL;
+	HW_GPIO_0->INPUT_EN &= ~(1 << 27);
 
 	switch (tx) {
 	case TX_UART4:
-		HW_GPIO_0.CLEARDATAOUT |= (1 << 27);
+		HW_GPIO_0->CLEARDATAOUT |= (1 << 27);
 		break;
 	case TX_UART5:
-		HW_GPIO_0.SETDATAOUT |= (1 << 27);
+		HW_GPIO_0->SETDATAOUT |= (1 << 27);
 		break;
 	}
 }
@@ -101,89 +101,89 @@ static void set_tx_uart(enum uart_tx_select tx) {
 static void enable_uart4() {
 	set_tx_uart(TX_UART4);
 
-	HW_CONTROL.conf_uart[0].rtsn = HW_CONTROL_MUXMODE_1 | HW_CONTROL_PULL_UP;
-	HW_CONTROL.conf_uart[0].ctsn = HW_CONTROL_MUXMODE_1 | HW_CONTROL_PULL_UP | HW_CONTROL_RX_ACTIVE;
+	HW_CONTROL->conf_uart[0].rtsn = HW_CONTROL_MUXMODE_1 | HW_CONTROL_PULL_UP;
+	HW_CONTROL->conf_uart[0].ctsn = HW_CONTROL_MUXMODE_1 | HW_CONTROL_PULL_UP | HW_CONTROL_RX_ACTIVE;
 
 	// enable the module
-	enable_module(&HW_CM_PER.UART4);
-	wait_for_functional(&HW_CM_PER.UART4);
-	while (!(HW_CM_PER.L4LS_status & HW_CM_L4LS_UART_GFCLK)) {}
+	enable_module(&HW_CM_PER->UART4);
+	wait_for_functional(&HW_CM_PER->UART4);
+	while (!(HW_CM_PER->L4LS_status & HW_CM_L4LS_UART_GFCLK)) {}
 
 	// reset the module
-	HW_UART_4.SYSC |= HW_UART_SYSC_SOFTRESET;
-	while (!(HW_UART_4.SYSS & HW_UART_SYSS_RESETDONE)) {}
+	HW_UART_4->SYSC |= HW_UART_SYSC_SOFTRESET;
+	while (!(HW_UART_4->SYSS & HW_UART_SYSS_RESETDONE)) {}
 
 	// enable the output to 115200 8N1
-	HW_UART_4.LCR = HW_UART_LCR_CFGB;
-	HW_UART_4_CFGB.DLH = 0x00;
-	HW_UART_4_CFGB.DLL = 0x1A;
-	HW_UART_4.LCR = HW_UART_LCR_LENGTH_8 | HW_UART_LCR_STOP_1;
-	//HW_UART_4_OP.MCR |= HW_UART_MCR_LOOPBACK_EN;
-	HW_UART_4.MDR1 = HW_UART_MDR1_MODE_UART16X;
+	HW_UART_4->LCR = HW_UART_LCR_CFGB;
+	HW_UART_4_CFGB->DLH = 0x00;
+	HW_UART_4_CFGB->DLL = 0x1A;
+	HW_UART_4->LCR = HW_UART_LCR_LENGTH_8 | HW_UART_LCR_STOP_1;
+	//HW_UART_4_OP->MCR |= HW_UART_MCR_LOOPBACK_EN;
+	HW_UART_4->MDR1 = HW_UART_MDR1_MODE_UART16X;
 
 	// at this point we are in operational mode
 }
 
 static void enable_gpio3() {
-	enable_module(&HW_CM_PER.GPIO3);
-	wait_for_functional(&HW_CM_PER.GPIO3);
+	enable_module(&HW_CM_PER->GPIO3);
+	wait_for_functional(&HW_CM_PER->GPIO3);
 }
 
 static void set_switch_to_ground() {
-	HW_CONTROL.conf_mcasp0_fsr = HW_CONTROL_MUXMODE_7 | HW_CONTROL_DISABLE_PULL;
-	HW_GPIO_3.INPUT_EN &= ~(1 << 19);
-	HW_GPIO_3.SETDATAOUT |= (1 << 19);
+	HW_CONTROL->conf_mcasp0_fsr = HW_CONTROL_MUXMODE_7 | HW_CONTROL_DISABLE_PULL;
+	HW_GPIO_3->INPUT_EN &= ~(1 << 19);
+	HW_GPIO_3->SETDATAOUT |= (1 << 19);
 }
 
 #define MS_TO_TICKS(ms) ((ms)*32768/1000)
 
 static unsigned tick_count() {
-	return HW_DMTIMER_1MS.TCRR;
+	return HW_DMTIMER_1MS->TCRR;
 }
 
 static unsigned timestamp_ms() {
 	// use uint64_t for increased range during the conversion
-	uint64_t tick = HW_DMTIMER_1MS.TCRR;
+	uint64_t tick = HW_DMTIMER_1MS->TCRR;
 	tick *= 1000;
 	tick /= 32768;
 	return (unsigned) tick;
 }
 
 static void set_sleep(unsigned target) {
-	HW_DMTIMER_1MS.TMAR = target;
+	HW_DMTIMER_1MS->TMAR = target;
 }
 
 static void enable_interrupt(enum hw_interrupt idx) {
-	HW_INTC.BANK[idx >> 5].MIR_CLEAR |= 1 << ((unsigned)idx & 0x1F);
+	HW_INTC->BANK[idx >> 5].MIR_CLEAR |= 1 << ((unsigned)idx & 0x1F);
 }
 
 static void enable_dmtimer_1ms() {
-	enable_module(&HW_CM_WAKEUP.TIMER1_CLKCTRL);
-	wait_for_functional(&HW_CM_WAKEUP.TIMER1_CLKCTRL);
-	while (!(HW_CM_WAKEUP.CLKSTCTRL & HW_CM_WAKEUP_TIMER1_GCLK)) {}
+	enable_module(&HW_CM_WAKEUP->TIMER1_CLKCTRL);
+	wait_for_functional(&HW_CM_WAKEUP->TIMER1_CLKCTRL);
+	while (!(HW_CM_WAKEUP->CLKSTCTRL & HW_CM_WAKEUP_TIMER1_GCLK)) {}
 
-	HW_DMTIMER_1MS.TIOCP_CFG |= HW_1MS_CFG_SOFT_RESET;
-	while (!(HW_DMTIMER_1MS.TISTAT & HW_1MS_TISTAT_RESET_DONE)) {}
+	HW_DMTIMER_1MS->TIOCP_CFG |= HW_1MS_CFG_SOFT_RESET;
+	while (!(HW_DMTIMER_1MS->TISTAT & HW_1MS_TISTAT_RESET_DONE)) {}
 
 	// Setup the clock to use the 32k external clock with no division
-	HW_CM_DPLL.CLKSEL_TIMER1MS_CLK = HW_CLKSEL_TIMER1MS_32K_EXT;
+	HW_CM_DPLL->CLKSEL_TIMER1MS_CLK = HW_CLKSEL_TIMER1MS_32K_EXT;
 
 	// enable the interrupt
-	HW_DMTIMER_1MS.TIER |= HW_1MS_INT_COMPARE;
+	HW_DMTIMER_1MS->TIER |= HW_1MS_INT_COMPARE;
 	enable_interrupt(HW_INT_TINT1_1MS);
 
 	set_sleep(tick_count() + MS_TO_TICKS(1000));
 
 	// enable the timer in compare mode. this will trigger an interrupt whenever
 	// the internal timer matches the comparison register
-	HW_DMTIMER_1MS.TCLR |= HW_1MS_TCLR_COMPARE_EN | HW_1MS_TCLR_START;
+	HW_DMTIMER_1MS->TCLR |= HW_1MS_TCLR_COMPARE_EN | HW_1MS_TCLR_START;
 }
 
 static int read_mdio(int phy, int key) {
-	HW_MDIO.USERACCESS0 = HW_MDIO_READ(phy, key);
+	HW_MDIO->USERACCESS0 = HW_MDIO_READ(phy, key);
 	unsigned reg;
 	do {
-		reg = HW_MDIO.USERACCESS0;
+		reg = HW_MDIO->USERACCESS0;
 	} while (reg & HW_MDIO_GO);
 
 	if (reg & HW_MDIO_ACK) {
@@ -194,8 +194,8 @@ static int read_mdio(int phy, int key) {
 }
 
 static void write_mdio(int phy, int key, int val) {
-	HW_MDIO.USERACCESS0 = HW_MDIO_WRITE(phy, key, val);
-	while (!(HW_MDIO.USERACCESS0 & HW_MDIO_GO)) {}
+	HW_MDIO->USERACCESS0 = HW_MDIO_WRITE(phy, key, val);
+	while (!(HW_MDIO->USERACCESS0 & HW_MDIO_GO)) {}
 }
 
 #define ETH_OFFSET (2 << 16)
@@ -280,8 +280,8 @@ static_assert(sizeof(struct eth_frame) == 0x5F0, "padding");
 #define RX_FRAME_FIRST 16
 #define RX_FRAME_END 43
 
-extern struct eth_frame g_eth_frames[RX_FRAME_END];
-static_assert(sizeof(g_eth_frames) <= 64*1024, "too many packets");
+#define HW_ETH_FRAMES ((struct eth_frame*)0x40300000)
+static_assert(sizeof(struct eth_frame) * RX_FRAME_END <= 64*1024, "too many packets");
 
 static struct hw_buffer_descriptor *g_rx_next; // next frame to be received
 static struct hw_buffer_descriptor *g_rx_last;
@@ -298,7 +298,7 @@ static uint16_t g_my_mac[3];
 static uint32_t g_my_ip[4];
 
 static struct eth_frame *get_next_frame() {
-	struct eth_frame *f = &g_eth_frames[g_tx_free];
+	struct eth_frame *f = &HW_ETH_FRAMES[g_tx_free];
 	volatile struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[g_tx_free];
 	if (d == g_tx_next) {
 		return NULL; // we've run out of buffers to send
@@ -324,7 +324,7 @@ static void send_frame(struct eth_frame *f) {
 	f->eth_type = htons(ETH_IP6);
 	f->ip6_length = htons(f->payloadsz);
 
-	int idx = f - g_eth_frames;
+	int idx = f - HW_ETH_FRAMES;
 	struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[idx];
 
 	int framesz = f->payloadsz + offsetof(struct eth_frame, payload) - offsetof(struct eth_frame, eth_dst);
@@ -338,7 +338,7 @@ static void send_frame(struct eth_frame *f) {
 		g_tx_last->next = d;
 	} else {
 		// tx queue is empty
-		HW_CPSW_STATERAM.TX_HDP[0] = d;
+		HW_CPSW_STATERAM->TX_HDP[0] = d;
 		g_tx_next = d;
 	}
 	
@@ -376,7 +376,7 @@ static void send_neighbor_advertisement() {
 
 	f->payloadsz = 8 + sizeof(*a);
 
-	printf("%u send\n", timestamp_ms());
+	debugf("%u send\n", timestamp_ms());
 	send_frame(f);
 }
 
@@ -387,48 +387,48 @@ static void clear_rx_descriptor(struct hw_buffer_descriptor *d) {
 }
 
 static void enable_eth() {
-	HW_CONTROL.gmii_sel = HW_CONTROL_GMII_1 | HW_CONTROL_GMII_2;
+	HW_CONTROL->gmii_sel = HW_CONTROL_GMII_1 | HW_CONTROL_GMII_2;
 
-	enable_module(&HW_CM_PER.CPGMAC0);
-	sw_wakeup(&HW_CM_PER.CPSW_status);
-	wait_for_functional(&HW_CM_PER.CPGMAC0);
-	while (!(HW_CM_PER.CPSW_status & HW_CM_CPSW_125MHZ_GCLK)) {}
-	while (!(HW_CM_PER.L4HS_status & HW_CM_L4HS_CPSW_5MHZ_GCLK)) {}
-	while (!(HW_CM_PER.L4HS_status & HW_CM_L4HS_CPSW_50MHZ_GCLK)) {}
-	while (!(HW_CM_PER.L4HS_status & HW_CM_L4HS_CPSW_25MHZ_GCLK)) {}
+	enable_module(&HW_CM_PER->CPGMAC0);
+	sw_wakeup(&HW_CM_PER->CPSW_status);
+	wait_for_functional(&HW_CM_PER->CPGMAC0);
+	while (!(HW_CM_PER->CPSW_status & HW_CM_CPSW_125MHZ_GCLK)) {}
+	while (!(HW_CM_PER->L4HS_status & HW_CM_L4HS_CPSW_5MHZ_GCLK)) {}
+	while (!(HW_CM_PER->L4HS_status & HW_CM_L4HS_CPSW_50MHZ_GCLK)) {}
+	while (!(HW_CM_PER->L4HS_status & HW_CM_L4HS_CPSW_25MHZ_GCLK)) {}
 
 	// reset the various ethernet subsystems
 	// resetting the wrapper also resets the MDIO module
-	HW_CPSW_WR.SOFT_RESET = 1;
-	HW_CPSW_WR.CONTROL = HW_WR_CONTROL_NO_STANDBY | HW_WR_CONTROL_NO_IDLE;
+	HW_CPSW_WR->SOFT_RESET = 1;
+	HW_CPSW_WR->CONTROL = HW_WR_CONTROL_NO_STANDBY | HW_WR_CONTROL_NO_IDLE;
 	
 	HW_CPSW_CPDMA->CPDMA_SOFT_RESET = 1;
 	while (HW_CPSW_CPDMA->CPDMA_SOFT_RESET) {}
 	
-	HW_CPSW_SL_1.SOFT_RESET = 1;
-	HW_CPSW_SL_2.SOFT_RESET = 1;
-	while (HW_CPSW_SL_1.SOFT_RESET) {}
-	while (HW_CPSW_SL_2.SOFT_RESET) {}
+	HW_CPSW_SL_1->SOFT_RESET = 1;
+	HW_CPSW_SL_2->SOFT_RESET = 1;
+	while (HW_CPSW_SL_1->SOFT_RESET) {}
+	while (HW_CPSW_SL_2->SOFT_RESET) {}
 
-	HW_CPSW_SS.SOFT_RESET = 1;
-	while (HW_CPSW_SS.SOFT_RESET) {}
+	HW_CPSW_SS->SOFT_RESET = 1;
+	while (HW_CPSW_SS->SOFT_RESET) {}
 
 	// start setting stuff back up
-	HW_CPSW_ALE.CONTROL = HW_ALE_CONTROL_CLEAR | HW_ALE_CONTROL_EN;
-	HW_CPSW_ALE.PORTCTL[0] = HW_ALE_PORT_FORWARD;
-	HW_CPSW_ALE.PORTCTL[1] = HW_ALE_PORT_FORWARD;
+	HW_CPSW_ALE->CONTROL = HW_ALE_CONTROL_CLEAR | HW_ALE_CONTROL_EN;
+	HW_CPSW_ALE->PORTCTL[0] = HW_ALE_PORT_FORWARD;
+	HW_CPSW_ALE->PORTCTL[1] = HW_ALE_PORT_FORWARD;
 
-	HW_CPSW_PORT_1.SA_LO = HW_CONTROL.mac[0].lo;
-	HW_CPSW_PORT_1.SA_HI = HW_CONTROL.mac[0].hi;
+	HW_CPSW_PORT_1->SA_LO = HW_CONTROL->mac[0].lo;
+	HW_CPSW_PORT_1->SA_HI = HW_CONTROL->mac[0].hi;
 
-	g_my_mac[0] = lo16(HW_CONTROL.mac[0].hi);
-	g_my_mac[1] = hi16(HW_CONTROL.mac[0].hi);
-	g_my_mac[2] = HW_CONTROL.mac[0].lo;
+	g_my_mac[0] = lo16(HW_CONTROL->mac[0].hi);
+	g_my_mac[1] = hi16(HW_CONTROL->mac[0].hi);
+	g_my_mac[2] = HW_CONTROL->mac[0].lo;
 
 	// generate our link-local IP from the mac address
 	// these are in network order
-	uint32_t iid_hi = 0xFF000000 | (HW_CONTROL.mac[0].hi & 0xFFFFFF);
-	uint32_t iid_lo = (HW_CONTROL.mac[0].lo << 16) | ((HW_CONTROL.mac[0].hi >> 16) & 0xFF00) | 0xFE;
+	uint32_t iid_hi = 0xFF000000 | (HW_CONTROL->mac[0].hi & 0xFFFFFF);
+	uint32_t iid_lo = (HW_CONTROL->mac[0].lo << 16) | ((HW_CONTROL->mac[0].hi >> 16) & 0xFF00) | 0xFE;
 	// complement the U/L bit position
 	iid_hi = (iid_hi & ~2U) | (~iid_hi & 2U);
 
@@ -440,8 +440,8 @@ static void enable_eth() {
 	// main CPSW clock is 125 MHz. this gives an MDIO frequency of 2.5 MHz
 	// which matches what the ROM does and the max frequency of the PHY
 	// this also puts the other fields back to default values
-	HW_MDIO.CONTROL = (HW_MDIO.CONTROL &~ HW_MDIO_CLKDIV_MASK) | HW_MDIO_CLKDIV(49);
-	HW_MDIO.CONTROL |= HW_MDIO_CONTROL_EN;
+	HW_MDIO->CONTROL = (HW_MDIO->CONTROL &~ HW_MDIO_CLKDIV_MASK) | HW_MDIO_CLKDIV(49);
+	HW_MDIO->CONTROL |= HW_MDIO_CONTROL_EN;
 	
 	// setup the phy
 	write_mdio(0, MDIO_BASIC_CONTROL, MDIO_CTL_SOFT_RESET);
@@ -450,7 +450,7 @@ static void enable_eth() {
 	// setup rx frames
 	for (int i = RX_FRAME_FIRST; i < RX_FRAME_END; i++) {
 		struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[i];
-		struct eth_frame *f = &g_eth_frames[i];
+		struct eth_frame *f = &HW_ETH_FRAMES[i];
 		d->buffer = f;
 		clear_rx_descriptor(d);
 		
@@ -465,15 +465,15 @@ static void enable_eth() {
 	g_tx_free = TX_FRAME_FIRST;
 
 	HW_CPSW_CPDMA->RX_BUFFER_OFFSET = offsetof(struct eth_frame, eth_dst);
-	HW_CPSW_STATERAM.RX_HDP[0] = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
+	HW_CPSW_STATERAM->RX_HDP[0] = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
 
 	// enable rx interrupt
-	HW_CPSW_WR.PORT_INT_ENABLE[0].RX = 1;
+	HW_CPSW_WR->PORT_INT_ENABLE[0].RX = 1;
 	HW_CPSW_CPDMA->RX_INTMASK_SET = HW_CPDMA_RX_PEND_0;
 	enable_interrupt(HW_INT_ETH_RX);
 
 	// enable tx interrupt
-	HW_CPSW_WR.PORT_INT_ENABLE[0].TX = 1;
+	HW_CPSW_WR->PORT_INT_ENABLE[0].TX = 1;
 	HW_CPSW_CPDMA->TX_INTMASK_SET = HW_CPDMA_TX_PEND_0;
 	enable_interrupt(HW_INT_ETH_TX);
 
@@ -488,14 +488,14 @@ static void wait_for_link() {
 		sts = read_mdio(0, MDIO_BASIC_STATUS);
 	} while (!(sts & MDIO_STS_LINK_UP));
 
-	printf("mdio link changed 0x%x %x %x\n", sts, HW_MDIO.LINK, HW_MDIO.ALIVE);
-	HW_CPSW_SL_1.MACCONTROL = HW_SL_MACCONTROL_MII_EN | HW_SL_MACCONTROL_FULL_DUPLEX;
-	while (!(HW_CPSW_SL_1.MACCONTROL & HW_SL_MACCONTROL_MII_EN)) {}
+	debugf("mdio link changed 0x%x %x %x\n", sts, HW_MDIO->LINK, HW_MDIO->ALIVE);
+	HW_CPSW_SL_1->MACCONTROL = HW_SL_MACCONTROL_MII_EN | HW_SL_MACCONTROL_FULL_DUPLEX;
+	while (!(HW_CPSW_SL_1->MACCONTROL & HW_SL_MACCONTROL_MII_EN)) {}
 }
 
 static void debug_putc(void* udata, char ch) {
-	while ((HW_UART_4_OP.LSR & HW_UART_LSR_TX_EMPTY) != HW_UART_LSR_TX_EMPTY) {}
-	HW_UART_4_OP.RHR_THR = ch;
+	while ((HW_UART_4_OP->LSR & HW_UART_LSR_TX_EMPTY) != HW_UART_LSR_TX_EMPTY) {}
+	HW_UART_4_OP->RHR_THR = ch;
 }
 
 static void process_frame(struct eth_frame *f, int sz) {
@@ -505,7 +505,7 @@ static void process_frame(struct eth_frame *f, int sz) {
 		return;
 	}
 
-	printf("%u have frame from %08x%08x%08x%08x to %08x%08x%08x%08x\n", 
+	debugf("%u have frame from %08x%08x%08x%08x to %08x%08x%08x%08x\n", 
 		timestamp_ms(),
 		ntohl(f->ip6_src[0]),
 		ntohl(f->ip6_src[1]),
@@ -518,18 +518,18 @@ static void process_frame(struct eth_frame *f, int sz) {
 }
 
 void interrupt() {
-	switch (HW_INTC.SIR_IRQ & HW_INTC_ACTIVE_IRQ_MASK) {
+	switch (HW_INTC->SIR_IRQ & HW_INTC_ACTIVE_IRQ_MASK) {
 	case HW_INT_TINT1_1MS: {
 			int sts = read_mdio(0, MDIO_BASIC_STATUS);
-			printf("%u timer %x\n", timestamp_ms(), sts);
+			debugf("%u timer %x\n", timestamp_ms(), sts);
 			send_neighbor_advertisement();
 			// reset the timer interrupt
-			HW_DMTIMER_1MS.TISR |= HW_1MS_INT_COMPARE;
+			HW_DMTIMER_1MS->TISR |= HW_1MS_INT_COMPARE;
 			set_sleep(tick_count() + MS_TO_TICKS(1000));
 		}
 		break;
 	case HW_INT_ETH_TX: {
-			printf("%u send complete\n", timestamp_ms());
+			debugf("%u send complete\n", timestamp_ms());
 			// update g_tx_next to wherever the mac got up to
 			struct hw_buffer_descriptor *d = g_tx_next;
 			struct hw_buffer_descriptor *last_processed = d;
@@ -544,12 +544,12 @@ void interrupt() {
 				if (d && (flags & HW_ETH_END_OF_QUEUE)) {
 					// port ran out before we added the next one
 					// add it back in and keep on processing
-					HW_CPSW_STATERAM.TX_HDP[0] = d;
+					HW_CPSW_STATERAM->TX_HDP[0] = d;
 				}
 			}
 
 			g_tx_next = d;
-			HW_CPSW_STATERAM.TX_CP[0] = last_processed;
+			HW_CPSW_STATERAM->TX_CP[0] = last_processed;
 			HW_CPSW_CPDMA->CPDMA_EOI_VECTOR = HW_CPDMA_EOI_TX;
 		}
 		break;
@@ -566,7 +566,7 @@ void interrupt() {
 				}
 				if (flags & HW_ETH_END_OF_QUEUE) {
 					// receiver ran out of packets, reinitiate the queue
-					HW_CPSW_STATERAM.RX_HDP[0] = d->next;
+					HW_CPSW_STATERAM->RX_HDP[0] = d->next;
 				}
 
 				if ((flags & (HW_ETH_FULL_PKT | HW_ETH_ERROR_MASK)) == (HW_ETH_FULL_PKT | HW_ETH_NO_ERROR)) {
@@ -598,12 +598,16 @@ void interrupt() {
 
 void setup() {
 	enable_interconnects();
+
+#ifdef DEBUG_LOG_SUPPORT
 	enable_uart4();
 	init_printf(NULL, &debug_putc);
-	enable_gpio3();
-	set_switch_to_ground();
+#endif
+
+	//enable_gpio3();
+	//set_switch_to_ground();
 	enable_dmtimer_1ms();
 	enable_eth();
 	wait_for_link();
-	printf("setup done\n");
+	debugf("setup done\n");
 }
