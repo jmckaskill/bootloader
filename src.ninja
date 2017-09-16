@@ -11,15 +11,14 @@ build $OBJ/main.o: cc bootloader/main.c
 build $OBJ/uart.o: cc bootloader/uart.c
 build $OBJ/uartConsole.o: cc bootloader/uartConsole.c
 build $OBJ/uart_irda_cir.o: cc bootloader/uart_irda_cir.c
+build $OBJ/tinyprintf.o: cc tinyprintf/tinyprintf.c
 
-build bin/$TGT/bootloader2.exe: ld-script bootloader/linker.ld $
+build bin/$TGT/bootloader.exe: ld-script bootloader/linker.ld $
  $OBJ/init.o $
  $OBJ/main.o $
- $OBJ/uart.o $
- $OBJ/uartConsole.o $
- $OBJ/uart_irda_cir.o $
+ $OBJ/tinyprintf.o $
 
-build bin/$TGT/bootloader.bin: objcopy ../ti/bootloader/Debug/bootloader.out
+build bin/$TGT/bootloader.bin: objcopy bin/$TGT/bootloader.exe
 build bin/$TGT/bootloader.MLO: run bin/$HOST/tiimage.exe bin/$TGT/bootloader.bin
 
 build $OBJ/deploy-data.o: cc bootp-deploy-win32/deploy-data.c

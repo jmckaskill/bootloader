@@ -23,7 +23,7 @@ _start:
 
     // setup irq stack
     msr cpsr_c, #MODE_IRQ|MODE_MASK
-    ldr r0, =_irq_stack
+    ldr r0, =_stack_top
     mov sp, r0
     msr cpsr_c, #MODE_SUPER|MODE_MASK
 

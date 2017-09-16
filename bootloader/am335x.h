@@ -71,77 +71,77 @@
 #define HW_CM_IDLEST_DISABLED (3 << 16)
 
 struct HW_CM_PER {
-	volatile uint32_t L4LS_status;
-	volatile uint32_t L3S_status;
+	volatile unsigned L4LS_status;
+	volatile unsigned L3S_status;
 	char pad1[4];
-	volatile uint32_t L3_status;
+	volatile unsigned L3_status;
 	char pad2[4];
-	volatile uint32_t CPGMAC0;
-	volatile uint32_t LCDC;
-	volatile uint32_t USB0;
+	volatile unsigned CPGMAC0;
+	volatile unsigned LCDC;
+	volatile unsigned USB0;
 	char pad3[4];
-	volatile uint32_t TPTC0;
-	volatile uint32_t EMIF;
-	volatile uint32_t OCMCRAM;
-	volatile uint32_t GPMC;
-	volatile uint32_t MCASP0;
-	volatile uint32_t UART5;
-	volatile uint32_t MMC0;
-	volatile uint32_t ELM;
-	volatile uint32_t I2C2;
-	volatile uint32_t I2C1;
-	volatile uint32_t SPI0;
-	volatile uint32_t SPI1;
+	volatile unsigned TPTC0;
+	volatile unsigned EMIF;
+	volatile unsigned OCMCRAM;
+	volatile unsigned GPMC;
+	volatile unsigned MCASP0;
+	volatile unsigned UART5;
+	volatile unsigned MMC0;
+	volatile unsigned ELM;
+	volatile unsigned I2C2;
+	volatile unsigned I2C1;
+	volatile unsigned SPI0;
+	volatile unsigned SPI1;
 	char pad4[12];
-	volatile uint32_t L4LS;
+	volatile unsigned L4LS;
 	char pad5[4];
-	volatile uint32_t MCASP1;
-	volatile uint32_t UART1;
-	volatile uint32_t UART2;
-	volatile uint32_t UART3;
-	volatile uint32_t UART4;
-	volatile uint32_t TIMER7;
-	volatile uint32_t TIMER2;
-	volatile uint32_t TIMER3;
-	volatile uint32_t TIMER4;
+	volatile unsigned MCASP1;
+	volatile unsigned UART1;
+	volatile unsigned UART2;
+	volatile unsigned UART3;
+	volatile unsigned UART4;
+	volatile unsigned TIMER7;
+	volatile unsigned TIMER2;
+	volatile unsigned TIMER3;
+	volatile unsigned TIMER4;
 	char pad6[0x20];
-	volatile uint32_t GPIO1;
-	volatile uint32_t GPIO2;
-	volatile uint32_t GPIO3;
+	volatile unsigned GPIO1;
+	volatile unsigned GPIO2;
+	volatile unsigned GPIO3;
 	char pad7[4];
-	volatile uint32_t TPCC;
-	volatile uint32_t DCAN0;
-	volatile uint32_t DCAN1;
+	volatile unsigned TPCC;
+	volatile unsigned DCAN0;
+	volatile unsigned DCAN1;
 	char pad8[4];
-	volatile uint32_t EPWMSS1;
+	volatile unsigned EPWMSS1;
 	char pad9[4];
-	volatile uint32_t EPWMSS0;
-	volatile uint32_t EPWMSS2;
-	volatile uint32_t L3_instr;
-	volatile uint32_t L3;
-	volatile uint32_t IEEE5000;
-	volatile uint32_t PRU_ICSS;
-	volatile uint32_t TIMER5;
-	volatile uint32_t TIMER6;
-	volatile uint32_t MMC1;
-	volatile uint32_t MMC2;
-	volatile uint32_t TPTC1;
-	volatile uint32_t TPTC2;
+	volatile unsigned EPWMSS0;
+	volatile unsigned EPWMSS2;
+	volatile unsigned L3_instr;
+	volatile unsigned L3;
+	volatile unsigned IEEE5000;
+	volatile unsigned PRU_ICSS;
+	volatile unsigned TIMER5;
+	volatile unsigned TIMER6;
+	volatile unsigned MMC1;
+	volatile unsigned MMC2;
+	volatile unsigned TPTC1;
+	volatile unsigned TPTC2;
 	char pad10[8];
-	volatile uint32_t SPINLOCK;
-	volatile uint32_t MAILBOX0;
+	volatile unsigned SPINLOCK;
+	volatile unsigned MAILBOX0;
 	char pad11[8];
-	volatile uint32_t L4HS_status;
-	volatile uint32_t L4HS;
+	volatile unsigned L4HS_status;
+	volatile unsigned L4HS;
 	char pad12[8];
-	volatile uint32_t OCPWP_status;
-	volatile uint32_t OCPWP;
+	volatile unsigned OCPWP_status;
+	volatile unsigned OCPWP;
 	char pad[12];
-	volatile uint32_t PRU_ICSS_status;
-	volatile uint32_t CPSW_status;
-	volatile uint32_t LCDC_status;
-	volatile uint32_t CLKDIV32K;
-	volatile uint32_t CLK_24MHZ;
+	volatile unsigned PRU_ICSS_status;
+	volatile unsigned CPSW_status;
+	volatile unsigned LCDC_status;
+	volatile unsigned CLKDIV32K;
+	volatile unsigned CLK_24MHZ;
 };
 
 static_assert(sizeof(struct HW_CM_PER) == 0x154, "padding");
@@ -167,61 +167,61 @@ extern struct HW_CM_PER HW_CM_PER;
 #define HW_CM_L4_AON_GCLK (1 << 2)
 
 struct HW_CM_WAKEUP {
-	volatile uint32_t CLKSTCTRL; //   (0x0)
-	volatile uint32_t CONTROL_CLKCTRL; //   (0x4)
-	volatile uint32_t GPIO0_CLKCTRL; //   (0x8)
-	volatile uint32_t L4WKUP_CLKCTRL; //   (0xc)
-	volatile uint32_t TIMER0_CLKCTRL; //   (0x10)
-	volatile uint32_t DEBUGSS_CLKCTRL; //   (0x14)
-	volatile uint32_t L3_AON_CLKSTCTRL; //   (0x18)
-	volatile uint32_t AUTOIDLE_DPLL_MPU; //   (0x1c)
-	volatile uint32_t IDLEST_DPLL_MPU; //   (0x20)
-	volatile uint32_t SSC_DELTAMSTEP_DPLL_MPU; //   (0x24)
-	volatile uint32_t SSC_MODFREQDIV_DPLL_MPU; //   (0x28)
-	volatile uint32_t CLKSEL_DPLL_MPU; //   (0x2c)
-	volatile uint32_t AUTOIDLE_DPLL_DDR; //   (0x30)
-	volatile uint32_t IDLEST_DPLL_DDR; //   (0x34)
-	volatile uint32_t SSC_DELTAMSTEP_DPLL_DDR; //   (0x38)
-	volatile uint32_t SSC_MODFREQDIV_DPLL_DDR; //   (0x3c)
-	volatile uint32_t CLKSEL_DPLL_DDR; //   (0x40)
-	volatile uint32_t AUTOIDLE_DPLL_DISP; //   (0x44)
-	volatile uint32_t IDLEST_DPLL_DISP; //   (0x48)
-	volatile uint32_t SSC_DELTAMSTEP_DPLL_DISP; //   (0x4c)
-	volatile uint32_t SSC_MODFREQDIV_DPLL_DISP; //   (0x50)
-	volatile uint32_t CLKSEL_DPLL_DISP; //   (0x54)
-	volatile uint32_t AUTOIDLE_DPLL_CORE; //   (0x58)
-	volatile uint32_t IDLEST_DPLL_CORE; //   (0x5c)
-	volatile uint32_t SSC_DELTAMSTEP_DPLL_CORE; //   (0x60)
-	volatile uint32_t SSC_MODFREQDIV_DPLL_CORE; //   (0x64)
-	volatile uint32_t CLKSEL_DPLL_CORE; //   (0x68)
-	volatile uint32_t AUTOIDLE_DPLL_PER; //   (0x6c)
-	volatile uint32_t IDLEST_DPLL_PER; //   (0x70)
-	volatile uint32_t SSC_DELTAMSTEP_DPLL_PER; //   (0x74)
-	volatile uint32_t SSC_MODFREQDIV_DPLL_PER; //   (0x78)
-	volatile uint32_t CLKDCOLDO_DPLL_PER; //   (0x7c)
-	volatile uint32_t DIV_M4_DPLL_CORE; //   (0x80)
-	volatile uint32_t DIV_M5_DPLL_CORE; //   (0x84)
-	volatile uint32_t CLKMODE_DPLL_MPU; //   (0x88)
-	volatile uint32_t CLKMODE_DPLL_PER; //   (0x8c)
-	volatile uint32_t CLKMODE_DPLL_CORE; //   (0x90)
-	volatile uint32_t CLKMODE_DPLL_DDR; //   (0x94)
-	volatile uint32_t CLKMODE_DPLL_DISP; //   (0x98)
-	volatile uint32_t CLKSEL_DPLL_PERIPH; //   (0x9c)
-	volatile uint32_t DIV_M2_DPLL_DDR; //   (0xa0)
-	volatile uint32_t DIV_M2_DPLL_DISP; //   (0xa4)
-	volatile uint32_t DIV_M2_DPLL_MPU; //   (0xa8)
-	volatile uint32_t DIV_M2_DPLL_PER; //   (0xac)
-	volatile uint32_t WKUP_M3_CLKCTRL; //   (0xb0)
-	volatile uint32_t UART0_CLKCTRL; //   (0xb4)
-	volatile uint32_t I2C0_CLKCTRL; //   (0xb8)
-	volatile uint32_t ADC_TSC_CLKCTRL; //   (0xbc)
-	volatile uint32_t SMARTREFLEX0_CLKCTRL; //   (0xc0)
-	volatile uint32_t TIMER1_CLKCTRL; //   (0xc4)
-	volatile uint32_t SMARTREFLEX1_CLKCTRL; //   (0xc8)
-	volatile uint32_t L4_WKUP_AON_CLKSTCTRL; //   (0xcc)
-	volatile uint32_t WDT0_CLKCTRL; //   (0xd0)
-	volatile uint32_t WDT1_CLKCTRL; //   (0xd4)
-	volatile uint32_t DIV_M6_DPLL_CORE; //   (0xd8)
+	volatile unsigned CLKSTCTRL; //   (0x0)
+	volatile unsigned CONTROL_CLKCTRL; //   (0x4)
+	volatile unsigned GPIO0_CLKCTRL; //   (0x8)
+	volatile unsigned L4WKUP_CLKCTRL; //   (0xc)
+	volatile unsigned TIMER0_CLKCTRL; //   (0x10)
+	volatile unsigned DEBUGSS_CLKCTRL; //   (0x14)
+	volatile unsigned L3_AON_CLKSTCTRL; //   (0x18)
+	volatile unsigned AUTOIDLE_DPLL_MPU; //   (0x1c)
+	volatile unsigned IDLEST_DPLL_MPU; //   (0x20)
+	volatile unsigned SSC_DELTAMSTEP_DPLL_MPU; //   (0x24)
+	volatile unsigned SSC_MODFREQDIV_DPLL_MPU; //   (0x28)
+	volatile unsigned CLKSEL_DPLL_MPU; //   (0x2c)
+	volatile unsigned AUTOIDLE_DPLL_DDR; //   (0x30)
+	volatile unsigned IDLEST_DPLL_DDR; //   (0x34)
+	volatile unsigned SSC_DELTAMSTEP_DPLL_DDR; //   (0x38)
+	volatile unsigned SSC_MODFREQDIV_DPLL_DDR; //   (0x3c)
+	volatile unsigned CLKSEL_DPLL_DDR; //   (0x40)
+	volatile unsigned AUTOIDLE_DPLL_DISP; //   (0x44)
+	volatile unsigned IDLEST_DPLL_DISP; //   (0x48)
+	volatile unsigned SSC_DELTAMSTEP_DPLL_DISP; //   (0x4c)
+	volatile unsigned SSC_MODFREQDIV_DPLL_DISP; //   (0x50)
+	volatile unsigned CLKSEL_DPLL_DISP; //   (0x54)
+	volatile unsigned AUTOIDLE_DPLL_CORE; //   (0x58)
+	volatile unsigned IDLEST_DPLL_CORE; //   (0x5c)
+	volatile unsigned SSC_DELTAMSTEP_DPLL_CORE; //   (0x60)
+	volatile unsigned SSC_MODFREQDIV_DPLL_CORE; //   (0x64)
+	volatile unsigned CLKSEL_DPLL_CORE; //   (0x68)
+	volatile unsigned AUTOIDLE_DPLL_PER; //   (0x6c)
+	volatile unsigned IDLEST_DPLL_PER; //   (0x70)
+	volatile unsigned SSC_DELTAMSTEP_DPLL_PER; //   (0x74)
+	volatile unsigned SSC_MODFREQDIV_DPLL_PER; //   (0x78)
+	volatile unsigned CLKDCOLDO_DPLL_PER; //   (0x7c)
+	volatile unsigned DIV_M4_DPLL_CORE; //   (0x80)
+	volatile unsigned DIV_M5_DPLL_CORE; //   (0x84)
+	volatile unsigned CLKMODE_DPLL_MPU; //   (0x88)
+	volatile unsigned CLKMODE_DPLL_PER; //   (0x8c)
+	volatile unsigned CLKMODE_DPLL_CORE; //   (0x90)
+	volatile unsigned CLKMODE_DPLL_DDR; //   (0x94)
+	volatile unsigned CLKMODE_DPLL_DISP; //   (0x98)
+	volatile unsigned CLKSEL_DPLL_PERIPH; //   (0x9c)
+	volatile unsigned DIV_M2_DPLL_DDR; //   (0xa0)
+	volatile unsigned DIV_M2_DPLL_DISP; //   (0xa4)
+	volatile unsigned DIV_M2_DPLL_MPU; //   (0xa8)
+	volatile unsigned DIV_M2_DPLL_PER; //   (0xac)
+	volatile unsigned WKUP_M3_CLKCTRL; //   (0xb0)
+	volatile unsigned UART0_CLKCTRL; //   (0xb4)
+	volatile unsigned I2C0_CLKCTRL; //   (0xb8)
+	volatile unsigned ADC_TSC_CLKCTRL; //   (0xbc)
+	volatile unsigned SMARTREFLEX0_CLKCTRL; //   (0xc0)
+	volatile unsigned TIMER1_CLKCTRL; //   (0xc4)
+	volatile unsigned SMARTREFLEX1_CLKCTRL; //   (0xc8)
+	volatile unsigned L4_WKUP_AON_CLKSTCTRL; //   (0xcc)
+	volatile unsigned WDT0_CLKCTRL; //   (0xd0)
+	volatile unsigned WDT1_CLKCTRL; //   (0xd4)
+	volatile unsigned DIV_M6_DPLL_CORE; //   (0xd8)
 };
 
 static_assert(sizeof(struct HW_CM_WAKEUP) == 0xDC, "padding");
@@ -231,21 +231,21 @@ extern struct HW_CM_WAKEUP HW_CM_WAKEUP;
 
 struct HW_CM_DPLL {
     char pad0[4];
-    volatile uint32_t CLKSEL_TIMER7_CLK; // 0x4
-    volatile uint32_t CLKSEL_TIMER2_CLK; // 0x8
-    volatile uint32_t CLKSEL_TIMER3_CLK; // 0xc
-    volatile uint32_t CLKSEL_TIMER4_CLK; // 0x10
-    volatile uint32_t CM_MAC_CLKSEL; // 0x14
-    volatile uint32_t CLKSEL_TIMER5_CLK; // 0x18
-    volatile uint32_t CLKSEL_TIMER6_CLK; // 0x1c
-    volatile uint32_t CM_CPTS_RFT_CLKSEL; // 0x20
+    volatile unsigned CLKSEL_TIMER7_CLK; // 0x4
+    volatile unsigned CLKSEL_TIMER2_CLK; // 0x8
+    volatile unsigned CLKSEL_TIMER3_CLK; // 0xc
+    volatile unsigned CLKSEL_TIMER4_CLK; // 0x10
+    volatile unsigned CM_MAC_CLKSEL; // 0x14
+    volatile unsigned CLKSEL_TIMER5_CLK; // 0x18
+    volatile unsigned CLKSEL_TIMER6_CLK; // 0x1c
+    volatile unsigned CM_CPTS_RFT_CLKSEL; // 0x20
     char pad1[4];
-    volatile uint32_t CLKSEL_TIMER1MS_CLK; // 0x28
-    volatile uint32_t CLKSEL_GFX_FCLK; // 0x2c
-    volatile uint32_t CLKSEL_ICSS_OCP_CLK; // 0x30
-    volatile uint32_t CLKSEL_LCDC_PIXEL_CLK; // 0x34
-    volatile uint32_t CLKSEL_WDT1_CLK; // 0x38
-    volatile uint32_t CLKSEL_GPIO0_DBCLK; // 0x3c
+    volatile unsigned CLKSEL_TIMER1MS_CLK; // 0x28
+    volatile unsigned CLKSEL_GFX_FCLK; // 0x2c
+    volatile unsigned CLKSEL_ICSS_OCP_CLK; // 0x30
+    volatile unsigned CLKSEL_LCDC_PIXEL_CLK; // 0x34
+    volatile unsigned CLKSEL_WDT1_CLK; // 0x38
+    volatile unsigned CLKSEL_GPIO0_DBCLK; // 0x3c
 };
 
 static_assert(sizeof(struct HW_CM_DPLL) == 0x40, "padding");
@@ -272,197 +272,197 @@ extern struct HW_CM_DPLL HW_CM_DPLL;
 #define HW_CONTROL_GMII_2 (0 << 2)
 
 struct HW_CONTROL {
-    volatile uint32_t revision; // 0x0)
-    volatile uint32_t hwinfo; // 0x4)
+    volatile unsigned revision; // 0x0)
+    volatile unsigned hwinfo; // 0x4)
     char pad0[8];
-    volatile uint32_t sysconfig; // 0x10)
+    volatile unsigned sysconfig; // 0x10)
     char pad1[0x2C];
-    volatile uint32_t status; // 0x40)
-    volatile uint32_t bootstat; // 0x44)
+    volatile unsigned status; // 0x40)
+    volatile unsigned bootstat; // 0x44)
     char pad2[0xB8];
-    volatile uint32_t sec_ctrl; // 0x100)
-    volatile uint32_t sec_sw; // 0x104)
-    volatile uint32_t sec_emu; // 0x108)
+    volatile unsigned sec_ctrl; // 0x100)
+    volatile unsigned sec_sw; // 0x104)
+    volatile unsigned sec_emu; // 0x108)
     char pad3[4];
-    volatile uint32_t secure_emif_sdram_config; // 0x110)
+    volatile unsigned secure_emif_sdram_config; // 0x110)
     char pad4[0x314];
-    volatile uint32_t core_sldo_ctrl; // 0x428)
-    volatile uint32_t mpu_sldo_ctrl; // 0x42c)
+    volatile unsigned core_sldo_ctrl; // 0x428)
+    volatile unsigned mpu_sldo_ctrl; // 0x42c)
     char pad5[0x14];
-    volatile uint32_t clk32kdivratio_ctrl; // 0x444)
-    volatile uint32_t bandgap_ctrl; // 0x448)
-    volatile uint32_t bandgap_trim; // 0x44c)
+    volatile unsigned clk32kdivratio_ctrl; // 0x444)
+    volatile unsigned bandgap_ctrl; // 0x448)
+    volatile unsigned bandgap_trim; // 0x44c)
     char pad6[8];
-    volatile uint32_t pll_clkinpulow_ctrl; // 0x458)
+    volatile unsigned pll_clkinpulow_ctrl; // 0x458)
     char pad7[12];
-    volatile uint32_t mosc_ctrl; // 0x468)
+    volatile unsigned mosc_ctrl; // 0x468)
     char pad8[4];
-    volatile uint32_t deepsleep_ctrl; // 0x470)
+    volatile unsigned deepsleep_ctrl; // 0x470)
     char pad9[0x98];
-    volatile uint32_t dpll_pwr_sw_state; // 0x50C
+    volatile unsigned dpll_pwr_sw_state; // 0x50C
     char pad10[0xF0];
-    volatile uint32_t device_id; // 0x600)
-    volatile uint32_t dev_feature; // 0x604)
-    volatile uint32_t init_priority[2]; // 0x608,0x60C
+    volatile unsigned device_id; // 0x600)
+    volatile unsigned dev_feature; // 0x604)
+    volatile unsigned init_priority[2]; // 0x608,0x60C
     char pad11[4];
-    volatile uint32_t tptc_cfg; // 0x614)
+    volatile unsigned tptc_cfg; // 0x614)
     char pad12[8];
     struct {
-        volatile uint32_t ctrl;
-        volatile uint32_t sts;
+        volatile unsigned ctrl;
+        volatile unsigned sts;
     } usb[2]; // 0x620 - 0x630
     struct {
-        volatile uint32_t lo;
-        volatile uint32_t hi;
+        volatile unsigned lo;
+        volatile unsigned hi;
     } mac[2]; // 0x630 - 0x640
     char pad13[4];
-    volatile uint32_t dcan_raminit; // 0x644)
-    volatile uint32_t usb_wkup_ctrl; // 0x648)
+    volatile unsigned dcan_raminit; // 0x644)
+    volatile unsigned usb_wkup_ctrl; // 0x648)
     char pad14[4];
-    volatile uint32_t gmii_sel; // 0x650)
+    volatile unsigned gmii_sel; // 0x650)
     char pad15[0x10];
-    volatile uint32_t pwmss_ctrl; // 0x664)
+    volatile unsigned pwmss_ctrl; // 0x664)
     char pad16[8];
-    volatile uint32_t mreqprio[2]; // 0x670-0x678
+    volatile unsigned mreqprio[2]; // 0x670-0x678
     char pad17[0x18];
-    volatile uint32_t hw_event_sel_grp[4]; // 0x690-0x6A0
-    volatile uint32_t smrt_ctrl; // 0x6a0)
-    volatile uint32_t sabtooth_hw_debug_sel; // 0x6a4)
-    volatile uint32_t sabtooth_hw_dbg_info; // 0x6a8)
+    volatile unsigned hw_event_sel_grp[4]; // 0x690-0x6A0
+    volatile unsigned smrt_ctrl; // 0x6a0)
+    volatile unsigned sabtooth_hw_debug_sel; // 0x6a4)
+    volatile unsigned sabtooth_hw_dbg_info; // 0x6a8)
     char pad18[0xC4];
-    volatile uint32_t vdd_mpu_opp_050; // 0x770
-    volatile uint32_t vdd_mpu_opp_100; // 0x774
-    volatile uint32_t vdd_mpu_opp_120; // 0x778
-    volatile uint32_t vdd_mpu_opp_turbo; // 0x77c)
+    volatile unsigned vdd_mpu_opp_050; // 0x770
+    volatile unsigned vdd_mpu_opp_100; // 0x774
+    volatile unsigned vdd_mpu_opp_120; // 0x778
+    volatile unsigned vdd_mpu_opp_turbo; // 0x77c)
     char pad19[0x38];
-    volatile uint32_t vdd_core_opp_050; // 0x7B8
-    volatile uint32_t vdd_core_opp_100; // 0x7BC
+    volatile unsigned vdd_core_opp_050; // 0x7B8
+    volatile unsigned vdd_core_opp_100; // 0x7BC
     char pad20[0x10];
-    volatile uint32_t bb_scale; // 0x7d0)
+    volatile unsigned bb_scale; // 0x7d0)
     char pad21[0x20];
-    volatile uint32_t usb_vid_pid; // 0x7f4)
+    volatile unsigned usb_vid_pid; // 0x7f4)
     char pad50[4];
-    volatile uint32_t efuse_sma; // 0x7fc)
-    volatile uint32_t conf_gpmc_ad[16]; // 0x800-0x840
-    volatile uint32_t conf_gpmc_a[12]; // 0x840-0x870
-    volatile uint32_t conf_gpmc_wait0; // 0x870)
-    volatile uint32_t conf_gpmc_wpn; // 0x874)
-    volatile uint32_t conf_gpmc_be1n; // 0x878)
-    volatile uint32_t conf_gpmc_csn[4]; // 0x87c-0x88C
-    volatile uint32_t conf_gpmc_clk; // 0x88c)
-    volatile uint32_t conf_gpmc_advn_ale; // 0x890)
-    volatile uint32_t conf_gpmc_oen_ren; // 0x894)
-    volatile uint32_t conf_gpmc_wen; // 0x898)
-    volatile uint32_t conf_gpmc_be0n_cle; // 0x89c)
-    volatile uint32_t conf_lcd_data[16]; //0x8a0-0x8E0
-    volatile uint32_t conf_lcd_vsync; // 0x8e0)
-    volatile uint32_t conf_lcd_hsync; // 0x8e4)
-    volatile uint32_t conf_lcd_pclk; // 0x8e8)
-    volatile uint32_t conf_lcd_ac_bias_en; // 0x8ec)
-    volatile uint32_t conf_mmc0_dat3; // 0x8f0)
-    volatile uint32_t conf_mmc0_dat2; // 0x8f4)
-    volatile uint32_t conf_mmc0_dat1; // 0x8f8)
-    volatile uint32_t conf_mmc0_dat0; // 0x8fc)
-    volatile uint32_t conf_mmc0_clk; // 0x900)
-    volatile uint32_t conf_mmc0_cmd; // 0x904)
-    volatile uint32_t conf_mii1_col; // 0x908)
-    volatile uint32_t conf_mii1_crs; // 0x90c)
-    volatile uint32_t conf_mii1_rxerr; // 0x910)
-    volatile uint32_t conf_mii1_txen; // 0x914)
-    volatile uint32_t conf_mii1_rxdv; // 0x918)
-    volatile uint32_t conf_mii1_txd3; // 0x91c)
-    volatile uint32_t conf_mii1_txd2; // 0x920)
-    volatile uint32_t conf_mii1_txd1; // 0x924)
-    volatile uint32_t conf_mii1_txd0; // 0x928)
-    volatile uint32_t conf_mii1_txclk; // 0x92c)
-    volatile uint32_t conf_mii1_rxclk; // 0x930)
-    volatile uint32_t conf_mii1_rxd3; // 0x934)
-    volatile uint32_t conf_mii1_rxd2; // 0x938)
-    volatile uint32_t conf_mii1_rxd1; // 0x93c)
-    volatile uint32_t conf_mii1_rxd0; // 0x940)
-    volatile uint32_t conf_rmii1_refclk; // 0x944)
-    volatile uint32_t conf_mdio_data; // 0x948)
-    volatile uint32_t conf_mdio_clk; // 0x94c)
-    volatile uint32_t conf_spi0_sclk; // 0x950)
-    volatile uint32_t conf_spi0_d0; // 0x954)
-    volatile uint32_t conf_spi0_d1; // 0x958)
-    volatile uint32_t conf_spi0_cs0; // 0x95c)
-    volatile uint32_t conf_spi0_cs1; // 0x960)
-    volatile uint32_t conf_ecap0_in_pwm0_out; // 0x964)
+    volatile unsigned efuse_sma; // 0x7fc)
+    volatile unsigned conf_gpmc_ad[16]; // 0x800-0x840
+    volatile unsigned conf_gpmc_a[12]; // 0x840-0x870
+    volatile unsigned conf_gpmc_wait0; // 0x870)
+    volatile unsigned conf_gpmc_wpn; // 0x874)
+    volatile unsigned conf_gpmc_be1n; // 0x878)
+    volatile unsigned conf_gpmc_csn[4]; // 0x87c-0x88C
+    volatile unsigned conf_gpmc_clk; // 0x88c)
+    volatile unsigned conf_gpmc_advn_ale; // 0x890)
+    volatile unsigned conf_gpmc_oen_ren; // 0x894)
+    volatile unsigned conf_gpmc_wen; // 0x898)
+    volatile unsigned conf_gpmc_be0n_cle; // 0x89c)
+    volatile unsigned conf_lcd_data[16]; //0x8a0-0x8E0
+    volatile unsigned conf_lcd_vsync; // 0x8e0)
+    volatile unsigned conf_lcd_hsync; // 0x8e4)
+    volatile unsigned conf_lcd_pclk; // 0x8e8)
+    volatile unsigned conf_lcd_ac_bias_en; // 0x8ec)
+    volatile unsigned conf_mmc0_dat3; // 0x8f0)
+    volatile unsigned conf_mmc0_dat2; // 0x8f4)
+    volatile unsigned conf_mmc0_dat1; // 0x8f8)
+    volatile unsigned conf_mmc0_dat0; // 0x8fc)
+    volatile unsigned conf_mmc0_clk; // 0x900)
+    volatile unsigned conf_mmc0_cmd; // 0x904)
+    volatile unsigned conf_mii1_col; // 0x908)
+    volatile unsigned conf_mii1_crs; // 0x90c)
+    volatile unsigned conf_mii1_rxerr; // 0x910)
+    volatile unsigned conf_mii1_txen; // 0x914)
+    volatile unsigned conf_mii1_rxdv; // 0x918)
+    volatile unsigned conf_mii1_txd3; // 0x91c)
+    volatile unsigned conf_mii1_txd2; // 0x920)
+    volatile unsigned conf_mii1_txd1; // 0x924)
+    volatile unsigned conf_mii1_txd0; // 0x928)
+    volatile unsigned conf_mii1_txclk; // 0x92c)
+    volatile unsigned conf_mii1_rxclk; // 0x930)
+    volatile unsigned conf_mii1_rxd3; // 0x934)
+    volatile unsigned conf_mii1_rxd2; // 0x938)
+    volatile unsigned conf_mii1_rxd1; // 0x93c)
+    volatile unsigned conf_mii1_rxd0; // 0x940)
+    volatile unsigned conf_rmii1_refclk; // 0x944)
+    volatile unsigned conf_mdio_data; // 0x948)
+    volatile unsigned conf_mdio_clk; // 0x94c)
+    volatile unsigned conf_spi0_sclk; // 0x950)
+    volatile unsigned conf_spi0_d0; // 0x954)
+    volatile unsigned conf_spi0_d1; // 0x958)
+    volatile unsigned conf_spi0_cs0; // 0x95c)
+    volatile unsigned conf_spi0_cs1; // 0x960)
+    volatile unsigned conf_ecap0_in_pwm0_out; // 0x964)
     struct {
-        volatile uint32_t ctsn;
-        volatile uint32_t rtsn;
-        volatile uint32_t rxd;
-        volatile uint32_t txd;
+        volatile unsigned ctsn;
+        volatile unsigned rtsn;
+        volatile unsigned rxd;
+        volatile unsigned txd;
     } conf_uart[2]; // 0x968-0x988
-    volatile uint32_t conf_i2c0_sda; // 0x988)
-    volatile uint32_t conf_i2c0_scl; // 0x98c)
-    volatile uint32_t conf_mcasp0_aclkx; // 0x990)
-    volatile uint32_t conf_mcasp0_fsx; // 0x994)
-    volatile uint32_t conf_mcasp0_axr0; // 0x998)
-    volatile uint32_t conf_mcasp0_ahclkr; // 0x99c)
-    volatile uint32_t conf_mcasp0_aclkr; // 0x9a0)
-    volatile uint32_t conf_mcasp0_fsr; // 0x9a4)
-    volatile uint32_t conf_mcasp0_axr1; // 0x9a8)
-    volatile uint32_t conf_mcasp0_ahclkx; // 0x9ac)
-    volatile uint32_t conf_xdma_event_intr[2]; // 0x9b0-0x9B8
-    volatile uint32_t conf_nresetin_out; // 0x9b8)
-    volatile uint32_t conf_porz; // 0x9bc)
-    volatile uint32_t conf_nnmi; // 0x9c0)
+    volatile unsigned conf_i2c0_sda; // 0x988)
+    volatile unsigned conf_i2c0_scl; // 0x98c)
+    volatile unsigned conf_mcasp0_aclkx; // 0x990)
+    volatile unsigned conf_mcasp0_fsx; // 0x994)
+    volatile unsigned conf_mcasp0_axr0; // 0x998)
+    volatile unsigned conf_mcasp0_ahclkr; // 0x99c)
+    volatile unsigned conf_mcasp0_aclkr; // 0x9a0)
+    volatile unsigned conf_mcasp0_fsr; // 0x9a4)
+    volatile unsigned conf_mcasp0_axr1; // 0x9a8)
+    volatile unsigned conf_mcasp0_ahclkx; // 0x9ac)
+    volatile unsigned conf_xdma_event_intr[2]; // 0x9b0-0x9B8
+    volatile unsigned conf_nresetin_out; // 0x9b8)
+    volatile unsigned conf_porz; // 0x9bc)
+    volatile unsigned conf_nnmi; // 0x9c0)
     char pad23[12];
-    volatile uint32_t conf_tms; // 0x9d0)
-    volatile uint32_t conf_tdi; // 0x9d4)
-    volatile uint32_t conf_tdo; // 0x9d8)
-    volatile uint32_t conf_tck; // 0x9dc)
-    volatile uint32_t conf_ntrst; // 0x9e0)
-    volatile uint32_t conf_emu[2]; // 0x9e4-0x9EC
+    volatile unsigned conf_tms; // 0x9d0)
+    volatile unsigned conf_tdi; // 0x9d4)
+    volatile unsigned conf_tdo; // 0x9d8)
+    volatile unsigned conf_tck; // 0x9dc)
+    volatile unsigned conf_ntrst; // 0x9e0)
+    volatile unsigned conf_emu[2]; // 0x9e4-0x9EC
     char pad24[12];
-    volatile uint32_t conf_rtc_porz; // 0x9f8)
-    volatile uint32_t conf_pmic_power_en; // 0x9fc)
-    volatile uint32_t conf_ext_wakeup; // 0xa00)
+    volatile unsigned conf_rtc_porz; // 0x9f8)
+    volatile unsigned conf_pmic_power_en; // 0x9fc)
+    volatile unsigned conf_ext_wakeup; // 0xa00)
     char pad25[0x18];
-    volatile uint32_t conf_usb0_drvvbus; // 0xa1c
+    volatile unsigned conf_usb0_drvvbus; // 0xa1c
     char pad26[0x14];
-    volatile uint32_t conf_usb1_drvvbus; // 0xa34
+    volatile unsigned conf_usb1_drvvbus; // 0xa34
     char pad27[0x3C8];
-    volatile uint32_t cqdetect_status; // 0xe00)
-    volatile uint32_t ddr_io_ctrl; // 0xe04)
+    volatile unsigned cqdetect_status; // 0xe00)
+    volatile unsigned ddr_io_ctrl; // 0xe04)
     char pad28[4];
-    volatile uint32_t vtp_ctrl; // 0xe0c)
+    volatile unsigned vtp_ctrl; // 0xe0c)
     char pad29[4];
-    volatile uint32_t vref_ctrl; // 0xe14)
+    volatile unsigned vref_ctrl; // 0xe14)
     char pad30[0x178];
-    volatile uint32_t tpcc_evt_mux_0_3; // 0xf90)
-    volatile uint32_t tpcc_evt_mux_4_7; // 0xf94)
-    volatile uint32_t tpcc_evt_mux_8_11; // 0xf98)
-    volatile uint32_t tpcc_evt_mux_12_15; // 0xf9c)
-    volatile uint32_t tpcc_evt_mux_16_19; // 0xfa0)
-    volatile uint32_t tpcc_evt_mux_20_23; // 0xfa4)
-    volatile uint32_t tpcc_evt_mux_24_27; // 0xfa8)
-    volatile uint32_t tpcc_evt_mux_28_31; // 0xfac)
-    volatile uint32_t tpcc_evt_mux_32_35; // 0xfb0)
-    volatile uint32_t tpcc_evt_mux_36_39; // 0xfb4)
-    volatile uint32_t tpcc_evt_mux_40_43; // 0xfb8)
-    volatile uint32_t tpcc_evt_mux_44_47; // 0xfbc)
-    volatile uint32_t tpcc_evt_mux_48_51; // 0xfc0)
-    volatile uint32_t tpcc_evt_mux_52_55; // 0xfc4)
-    volatile uint32_t tpcc_evt_mux_56_59; // 0xfc8)
-    volatile uint32_t tpcc_evt_mux_60_63; // 0xfcc)
-    volatile uint32_t timer_evt_capt; // 0xfd0)
-    volatile uint32_t ecap_evt_capt; // 0xfd4)
-    volatile uint32_t adc_evt_capt; // 0xfd8)
+    volatile unsigned tpcc_evt_mux_0_3; // 0xf90)
+    volatile unsigned tpcc_evt_mux_4_7; // 0xf94)
+    volatile unsigned tpcc_evt_mux_8_11; // 0xf98)
+    volatile unsigned tpcc_evt_mux_12_15; // 0xf9c)
+    volatile unsigned tpcc_evt_mux_16_19; // 0xfa0)
+    volatile unsigned tpcc_evt_mux_20_23; // 0xfa4)
+    volatile unsigned tpcc_evt_mux_24_27; // 0xfa8)
+    volatile unsigned tpcc_evt_mux_28_31; // 0xfac)
+    volatile unsigned tpcc_evt_mux_32_35; // 0xfb0)
+    volatile unsigned tpcc_evt_mux_36_39; // 0xfb4)
+    volatile unsigned tpcc_evt_mux_40_43; // 0xfb8)
+    volatile unsigned tpcc_evt_mux_44_47; // 0xfbc)
+    volatile unsigned tpcc_evt_mux_48_51; // 0xfc0)
+    volatile unsigned tpcc_evt_mux_52_55; // 0xfc4)
+    volatile unsigned tpcc_evt_mux_56_59; // 0xfc8)
+    volatile unsigned tpcc_evt_mux_60_63; // 0xfcc)
+    volatile unsigned timer_evt_capt; // 0xfd0)
+    volatile unsigned ecap_evt_capt; // 0xfd4)
+    volatile unsigned adc_evt_capt; // 0xfd8)
     char pad31[0x24];
-    volatile uint32_t reset_iso; // 0x1000)
+    volatile unsigned reset_iso; // 0x1000)
     char pad32[0x314];
-    volatile uint32_t dpll_pwr_sw_ctrl; // 0x1318
-    volatile uint32_t ddr_cke_ctrl; // 0x131c)
-    volatile uint32_t sma2; // 0x1320
-    volatile uint32_t m3_txev_eoi; // 0x1324)
-    volatile uint32_t ipc_msg_reg[8]; // 0x1328-0x1348
+    volatile unsigned dpll_pwr_sw_ctrl; // 0x1318
+    volatile unsigned ddr_cke_ctrl; // 0x131c)
+    volatile unsigned sma2; // 0x1320
+    volatile unsigned m3_txev_eoi; // 0x1324)
+    volatile unsigned ipc_msg_reg[8]; // 0x1328-0x1348
     char pad33[0xBC];
-    volatile uint32_t ddr_cmd_ioctrl[3]; // 0x1404-0x1410
+    volatile unsigned ddr_cmd_ioctrl[3]; // 0x1404-0x1410
     char pad34[0x30];
-    volatile uint32_t ddr_data_ioctrl[2]; // 0x1440-0x1448
+    volatile unsigned ddr_data_ioctrl[2]; // 0x1440-0x1448
 };
 
 static_assert(sizeof(struct HW_CONTROL) == 0x1448, "padding");
@@ -502,73 +502,73 @@ extern struct HW_CONTROL HW_CONTROL;
 
 struct HW_UART {
     char pad0[0x0C];
-    volatile uint32_t LCR; // 0x0C line control register
+    volatile unsigned LCR; // 0x0C line control register
     char pad1[0x10];
-    volatile uint32_t MDR1; // 0x20 mode definition register 1
-    volatile uint32_t MDR2; // 0x24 mode definition register 2
+    volatile unsigned MDR1; // 0x20 mode definition register 1
+    volatile unsigned MDR2; // 0x24 mode definition register 2
     char pad2[0x18];
-    volatile uint32_t SCR; // 0x40 supplementary control register
-    volatile uint32_t SSR; // 0x44 supplementary status register
+    volatile unsigned SCR; // 0x40 supplementary control register
+    volatile unsigned SSR; // 0x44 supplementary status register
     char pad3[0x8];
-    volatile uint32_t MVR; // 0x50 module version register
-    volatile uint32_t SYSC; // 0x54 system configuration register
-    volatile uint32_t SYSS; // 0x58 system status register
-    volatile uint32_t WER; // 0x5C wakeup enable register
+    volatile unsigned MVR; // 0x50 module version register
+    volatile unsigned SYSC; // 0x54 system configuration register
+    volatile unsigned SYSS; // 0x58 system status register
+    volatile unsigned WER; // 0x5C wakeup enable register
     char pad4[0x4];
-    volatile uint32_t RXFIFO_LVL; // 0x64
-    volatile uint32_t TXFIFO_LVL; // 0x68
-    volatile uint32_t IER2; // 0x6C interrupt enable register 2
-    volatile uint32_t ISR2; // 0x70 interrupt status register 2
-    volatile uint32_t FREQ_SEL; // 0x74
+    volatile unsigned RXFIFO_LVL; // 0x64
+    volatile unsigned TXFIFO_LVL; // 0x68
+    volatile unsigned IER2; // 0x6C interrupt enable register 2
+    volatile unsigned ISR2; // 0x70 interrupt status register 2
+    volatile unsigned FREQ_SEL; // 0x74
     char pad5[0x8];
-    volatile uint32_t MDR3; // 0x80 mode definition register 3
-    volatile uint32_t TX_DMA_THRESHOLD; // 0x84
+    volatile unsigned MDR3; // 0x80 mode definition register 3
+    volatile unsigned TX_DMA_THRESHOLD; // 0x84
 };
 
 static_assert(sizeof(struct HW_UART) == 0x88, "padding");
 extern struct HW_UART HW_UART_4;
 
 struct HW_UART_CFGA {
-    volatile uint32_t DLL; // 0x00 divisor latches low
-    volatile uint32_t DLH; // 0x04 divisor latches high
-    volatile uint32_t IIR_FCR; // 0x08 interrupt identification register & FIFO control register
+    volatile unsigned DLL; // 0x00 divisor latches low
+    volatile unsigned DLH; // 0x04 divisor latches high
+    volatile unsigned IIR_FCR; // 0x08 interrupt identification register & FIFO control register
     char pad1[0x4];
-    volatile uint32_t MCR; // 0x10 modem control register
-    volatile uint32_t LSR; // 0x14 line status register
-    volatile uint32_t MSR_TCR; // 0x18 modem status register & transmission control register
-    volatile uint32_t SPR_TLR; // 0x1C scratchpad register & trigger level register
+    volatile unsigned MCR; // 0x10 modem control register
+    volatile unsigned LSR; // 0x14 line status register
+    volatile unsigned MSR_TCR; // 0x18 modem status register & transmission control register
+    volatile unsigned SPR_TLR; // 0x1C scratchpad register & trigger level register
     char pad2[0x18];
-    volatile uint32_t UASR; // 0x38 UART autobauding status register
+    volatile unsigned UASR; // 0x38 UART autobauding status register
 };
 
 static_assert(sizeof(struct HW_UART_CFGA) == 0x3C, "padding");
 extern struct HW_UART_CFGA HW_UART_4_CFGA;
 
 struct HW_UART_CFGB {
-    volatile uint32_t DLL; // 0x00 divisor latches low
-    volatile uint32_t DLH; // 0x04 divisor latches high
-    volatile uint32_t EFR; // 0x08 enhanced feature register
+    volatile unsigned DLL; // 0x00 divisor latches low
+    volatile unsigned DLH; // 0x04 divisor latches high
+    volatile unsigned EFR; // 0x08 enhanced feature register
     char pad1[0x4];
-    volatile uint32_t XON1_ADDR; // 0x10 XON1
-    volatile uint32_t XON2_ADDR; // 0x14 XON2
-    volatile uint32_t XOFF1_TCR; // 0x18 XOFF1 & transmission control register
-    volatile uint32_t XOFF2_TLR; // 0x1C XOFF2 & trigger level register
+    volatile unsigned XON1_ADDR; // 0x10 XON1
+    volatile unsigned XON2_ADDR; // 0x14 XON2
+    volatile unsigned XOFF1_TCR; // 0x18 XOFF1 & transmission control register
+    volatile unsigned XOFF2_TLR; // 0x1C XOFF2 & trigger level register
     char pad2[0x18];
-    volatile uint32_t UASR; // 0x38 UART autobauding status register
+    volatile unsigned UASR; // 0x38 UART autobauding status register
 };
 
 static_assert(sizeof(struct HW_UART_CFGB) == 0x3C, "padding");
 extern struct HW_UART_CFGB HW_UART_4_CFGB;
 
 struct HW_UART_OP {
-    volatile uint32_t RHR_THR; // 0x00 receive/transmit holding register
-    volatile uint32_t IER; // 0x04 interrupt enable register
-    volatile uint32_t IIR_FCR; // 0x08 interrupt identification register & FIFO control register
+    volatile unsigned RHR_THR; // 0x00 receive/transmit holding register
+    volatile unsigned IER; // 0x04 interrupt enable register
+    volatile unsigned IIR_FCR; // 0x08 interrupt identification register & FIFO control register
     char pad1[0x4];
-    volatile uint32_t MCR; // 0x10 modem control register
-    volatile uint32_t LSR; // 0x14 line status register
-    volatile uint32_t MSR_TCR; // 0x18 modem status register & transmission control register
-    volatile uint32_t SPR_TLR; // 0x1C scratchpad register & trigger level register
+    volatile unsigned MCR; // 0x10 modem control register
+    volatile unsigned LSR; // 0x14 line status register
+    volatile unsigned MSR_TCR; // 0x18 modem status register & transmission control register
+    volatile unsigned SPR_TLR; // 0x1C scratchpad register & trigger level register
 };
 
 static_assert(sizeof(struct HW_UART_OP) == 0x20, "padding");
@@ -581,20 +581,20 @@ extern struct HW_UART_OP HW_UART_4_OP;
 #define HW_ALE_PORT_FORWARD (3 << 0)
 
 struct HW_CPSW_ALE {
-    volatile uint32_t IDVER; // 0x0
+    volatile unsigned IDVER; // 0x0
     char pad1[4];
-    volatile uint32_t CONTROL; // 0x8
+    volatile unsigned CONTROL; // 0x8
     char pad2[4];
-    volatile uint32_t PRESCALE; // 0x10
+    volatile unsigned PRESCALE; // 0x10
     char pad3[4];
-    volatile uint32_t UNKNOWN_VLAN; // 0x18
+    volatile unsigned UNKNOWN_VLAN; // 0x18
     char pad4[4];
-    volatile uint32_t TBLCTL; // 0x20
+    volatile unsigned TBLCTL; // 0x20
     char pad5[0x10];
-    volatile uint32_t TBLW_2; // 0x34
-    volatile uint32_t TBLW_1; // 0x38
-    volatile uint32_t TBLW_0; // 0x3C
-    volatile uint32_t PORTCTL[6]; // 0x40-0x58
+    volatile unsigned TBLW_2; // 0x34
+    volatile unsigned TBLW_1; // 0x38
+    volatile unsigned TBLW_0; // 0x3C
+    volatile unsigned PORTCTL[6]; // 0x40-0x58
 };
 
 static_assert(sizeof(struct HW_CPSW_ALE) == 0x58, "padding");
@@ -611,42 +611,45 @@ extern struct HW_CPSW_ALE HW_CPSW_ALE;
 #define HW_CPDMA_HOST_PEND (1 << 1)
 #define HW_CPDMA_STAT_PEND (1 << 0)
 
+#define HW_CPDMA_EOI_RX 1
+#define HW_CPDMA_EOI_TX 2
+
 struct HW_CPSW_CPDMA {
-    volatile uint32_t TX_IDVER; // 0x0
-    volatile uint32_t TX_CONTROL; // 0x4
-    volatile uint32_t TX_TEARDOWN; // 0x8
+    volatile unsigned TX_IDVER; // 0x0
+    volatile unsigned TX_CONTROL; // 0x4
+    volatile unsigned TX_TEARDOWN; // 0x8
     char pad1[4];
-    volatile uint32_t RX_IDVER; // 0x10
-    volatile uint32_t RX_CONTROL; // 0x14
-    volatile uint32_t RX_TEARDOWN; // 0x18
-    volatile uint32_t CPDMA_SOFT_RESET; // 0x1c
-    volatile uint32_t DMACONTROL; // 0x20
-    volatile uint32_t DMASTATUS; // 0x24
-    volatile uint32_t RX_BUFFER_OFFSET; // 0x28
-    volatile uint32_t EMCONTROL; // 0x2c
-    volatile uint32_t TX_PRI_RATE[8]; // 0x30-0x50
+    volatile unsigned RX_IDVER; // 0x10
+    volatile unsigned RX_CONTROL; // 0x14
+    volatile unsigned RX_TEARDOWN; // 0x18
+    volatile unsigned CPDMA_SOFT_RESET; // 0x1c
+    volatile unsigned DMACONTROL; // 0x20
+    volatile unsigned DMASTATUS; // 0x24
+    volatile unsigned RX_BUFFER_OFFSET; // 0x28
+    volatile unsigned EMCONTROL; // 0x2c
+    volatile unsigned TX_PRI_RATE[8]; // 0x30-0x50
     char pad2[0x30];
-    volatile uint32_t TX_INTSTAT_RAW; // 0x80
-    volatile uint32_t TX_INTSTAT_MASKED; // 0x84
-    volatile uint32_t TX_INTMASK_SET; // 0x88
-    volatile uint32_t TX_INTMASK_CLEAR; // 0x8c
-    volatile uint32_t CPDMA_IN_VECTOR; // 0x90
-    volatile uint32_t CPDMA_EOI_VECTOR; // 0x94
+    volatile unsigned TX_INTSTAT_RAW; // 0x80
+    volatile unsigned TX_INTSTAT_MASKED; // 0x84
+    volatile unsigned TX_INTMASK_SET; // 0x88
+    volatile unsigned TX_INTMASK_CLEAR; // 0x8c
+    volatile unsigned CPDMA_IN_VECTOR; // 0x90
+    volatile unsigned CPDMA_EOI_VECTOR; // 0x94
     char pad3[8];
-    volatile uint32_t RX_INTSTAT_RAW; // 0xa0
-    volatile uint32_t RX_INTSTAT_MASKED; // 0xa4
-    volatile uint32_t RX_INTMASK_SET; // 0xa8
-    volatile uint32_t RX_INTMASK_CLEAR; // 0xac
-    volatile uint32_t DMA_INTSTAT_RAW; // 0xb0
-    volatile uint32_t DMA_INTSTAT_MASKED; // 0xb4
-    volatile uint32_t DMA_INTMASK_SET; // 0xb8
-    volatile uint32_t DMA_INTMASK_CLEAR; // 0xbc
-    volatile uint32_t RX_PENDTHRESH[8]; // 0xc0-0xE0
-    volatile uint32_t RX_FREEBUFFER[8]; // 0xe0-0x100
+    volatile unsigned RX_INTSTAT_RAW; // 0xa0
+    volatile unsigned RX_INTSTAT_MASKED; // 0xa4
+    volatile unsigned RX_INTMASK_SET; // 0xa8
+    volatile unsigned RX_INTMASK_CLEAR; // 0xac
+    volatile unsigned DMA_INTSTAT_RAW; // 0xb0
+    volatile unsigned DMA_INTSTAT_MASKED; // 0xb4
+    volatile unsigned DMA_INTMASK_SET; // 0xb8
+    volatile unsigned DMA_INTMASK_CLEAR; // 0xbc
+    volatile unsigned RX_PENDTHRESH[8]; // 0xc0-0xE0
+    volatile unsigned RX_FREEBUFFER[8]; // 0xe0-0x100
 };
 
 static_assert(sizeof(struct HW_CPSW_CPDMA) == 0x100, "padding");
-extern struct HW_CPSW_CPDMA HW_CPSW_CPDMA;
+static struct HW_CPSW_CPDMA *HW_CPSW_CPDMA = (struct HW_CPSW_CPDMA*) 0x4A100800;
 
 // flags for both rx & tx
 #define HW_ETH_START_OF_PKT (1 << 31)
@@ -680,18 +683,16 @@ extern struct HW_CPSW_CPDMA HW_CPSW_CPDMA;
 
 #define HW_ETH_MAX_LEN (1500+18)
 
-struct eth_frame;
-
 struct hw_buffer_descriptor {
-    volatile struct hw_buffer_descriptor *next;
-    volatile struct eth_frame *buffer;
-    volatile uint32_t offset_buf_len;
-    volatile uint32_t flags_pkt_len;
+    struct hw_buffer_descriptor *next;
+    void *buffer;
+    volatile unsigned offset_buf_len;
+    volatile unsigned flags_pkt_len;
 };
 
 extern struct hw_buffer_descriptor HW_BUFFER_DESCRIPTORS[512];
 static_assert(sizeof(struct hw_buffer_descriptor) == 16, "padding");
-static_assert(sizeof(HW_ETH_BUFFER) == 0x2000, "padding");
+static_assert(sizeof(HW_BUFFER_DESCRIPTORS) == 0x2000, "padding");
 
 struct HW_CPSW_STATERAM {
     volatile struct hw_buffer_descriptor * volatile TX_HDP[8]; // 0-0x20
@@ -704,53 +705,53 @@ static_assert(sizeof(struct HW_CPSW_STATERAM) == 0x80, "padding");
 extern struct HW_CPSW_STATERAM HW_CPSW_STATERAM;
 
 struct HW_CPSW_CPTS {
-    volatile uint32_t IDVER; // 0x00
-    volatile uint32_t CONTROL; // 0x04
-    volatile uint32_t RFTCLK_SEL; // 0x08
-    volatile uint32_t TS_PUSH; // 0x0c
-    volatile uint32_t TS_LOAD_VAL; // 0x10
-    volatile uint32_t TS_LOAD_EN; // 0x14
+    volatile unsigned IDVER; // 0x00
+    volatile unsigned CONTROL; // 0x04
+    volatile unsigned RFTCLK_SEL; // 0x08
+    volatile unsigned TS_PUSH; // 0x0c
+    volatile unsigned TS_LOAD_VAL; // 0x10
+    volatile unsigned TS_LOAD_EN; // 0x14
     char pad1[8];
-    volatile uint32_t INTSTAT_RAW; // 0x20
-    volatile uint32_t INTSTAT_MASKED; // 0x24
-    volatile uint32_t INT_ENABLE; // 0x28
+    volatile unsigned INTSTAT_RAW; // 0x20
+    volatile unsigned INTSTAT_MASKED; // 0x24
+    volatile unsigned INT_ENABLE; // 0x28
     char pad2[4];
-    volatile uint32_t EVENT_POP; // 0x30
-    volatile uint32_t EVENT_LOW; // 0x34
-    volatile uint32_t EVENT_HIGH; // 0x38
+    volatile unsigned EVENT_POP; // 0x30
+    volatile unsigned EVENT_LOW; // 0x34
+    volatile unsigned EVENT_HIGH; // 0x38
 };
 
 static_assert(sizeof(struct HW_CPSW_CPTS) == 0x3C, "padding");
 extern struct HW_CPSW_CPTS HW_CPSW_CPTS;
 
 struct HW_CPSW_PORT_0 {
-    volatile uint32_t CONTROL; // 0x0
+    volatile unsigned CONTROL; // 0x0
     char pad1[4];
-    volatile uint32_t MAX_BLKS; // 0x8
-    volatile uint32_t BLK_CNT; // 0xc
-    volatile uint32_t TX_IN_CTL; // 0x10
-    volatile uint32_t PORT_VLAN; // 0x14
-    volatile uint32_t TX_PRI_MAP; // 0x18
-    volatile uint32_t CPDMA_TX_PRI_MAP; // 0x1c
-    volatile uint32_t CPDMA_RX_CH_MAP; // 0x20
+    volatile unsigned MAX_BLKS; // 0x8
+    volatile unsigned BLK_CNT; // 0xc
+    volatile unsigned TX_IN_CTL; // 0x10
+    volatile unsigned PORT_VLAN; // 0x14
+    volatile unsigned TX_PRI_MAP; // 0x18
+    volatile unsigned CPDMA_TX_PRI_MAP; // 0x1c
+    volatile unsigned CPDMA_RX_CH_MAP; // 0x20
     char pad2[12];
-    volatile uint32_t RX_DSCP_PRI_MAP[8]; // 0x30-0x50
+    volatile unsigned RX_DSCP_PRI_MAP[8]; // 0x30-0x50
 };
 
 struct HW_CPSW_PORT {
-    volatile uint32_t CONTROL; // 0x0
+    volatile unsigned CONTROL; // 0x0
     char pad1[4];
-    volatile uint32_t MAX_BLKS; // 0x8
-    volatile uint32_t BLK_CNT; // 0xc
-    volatile uint32_t TX_IN_CTL; // 0x10
-    volatile uint32_t PORT_VLAN; // 0x14
-    volatile uint32_t TX_PRI_MAP; // 0x18
-    volatile uint32_t TS_SEQ_MTYPE; // 0x1C
-    volatile uint32_t SA_LO; // 0x20
-    volatile uint32_t SA_HI; // 0x24
-    volatile uint32_t SEND_PERCENT; // 0x28
+    volatile unsigned MAX_BLKS; // 0x8
+    volatile unsigned BLK_CNT; // 0xc
+    volatile unsigned TX_IN_CTL; // 0x10
+    volatile unsigned PORT_VLAN; // 0x14
+    volatile unsigned TX_PRI_MAP; // 0x18
+    volatile unsigned TS_SEQ_MTYPE; // 0x1C
+    volatile unsigned SA_LO; // 0x20
+    volatile unsigned SA_HI; // 0x24
+    volatile unsigned SEND_PERCENT; // 0x28
     char pad2[4];
-    volatile uint32_t RX_DSCP_PRI_MAP[8]; // 0x30-0x50
+    volatile unsigned RX_DSCP_PRI_MAP[8]; // 0x30-0x50
 };
 
 static_assert(sizeof(struct HW_CPSW_PORT_0) == 0x50, "padding");
@@ -775,17 +776,17 @@ extern struct HW_CPSW_PORT HW_CPSW_PORT_2;
 #define HW_SL_SOFT_RESET (1 << 0)
 
 struct HW_CPSW_SL {
-    volatile uint32_t IDVER; // 0x0
-    volatile uint32_t MACCONTROL; // 0x4
-    volatile uint32_t MACSTATUS; // 0x8
-    volatile uint32_t SOFT_RESET; // 0xc
-    volatile uint32_t RX_MAXLEN; // 0x10
-    volatile uint32_t BOFFTEST; // 0x14
-    volatile uint32_t RX_PAUSE; // 0x18
-    volatile uint32_t TX_PAUSE; // 0x1c
-    volatile uint32_t EMCONTROL; // 0x20
-    volatile uint32_t RX_PRI_MAP; // 0x24
-    volatile uint32_t TX_GAP; // 0x28
+    volatile unsigned IDVER; // 0x0
+    volatile unsigned MACCONTROL; // 0x4
+    volatile unsigned MACSTATUS; // 0x8
+    volatile unsigned SOFT_RESET; // 0xc
+    volatile unsigned RX_MAXLEN; // 0x10
+    volatile unsigned BOFFTEST; // 0x14
+    volatile unsigned RX_PAUSE; // 0x18
+    volatile unsigned TX_PAUSE; // 0x1c
+    volatile unsigned EMCONTROL; // 0x20
+    volatile unsigned RX_PRI_MAP; // 0x24
+    volatile unsigned TX_GAP; // 0x28
 };
 
 static_assert(sizeof(struct HW_CPSW_SL) == 0x2C, "padding");
@@ -798,19 +799,19 @@ extern struct HW_CPSW_SL HW_CPSW_SL_2;
 #define HW_SS_STAT_EN_PORT_2 (1 << 2)
 
 struct HW_CPSW_SS {
-    volatile uint32_t ID_VER; // 0x0
-    volatile uint32_t CONTROL; // 0x4
-    volatile uint32_t SOFT_RESET; // 0x8
-    volatile uint32_t STAT_PORT_EN; // 0xc
-    volatile uint32_t PTYPE; // 0x10
-    volatile uint32_t SOFT_IDLE; // 0x14
-    volatile uint32_t THRU_RATE; // 0x18
-    volatile uint32_t GAP_THRESH; // 0x1c
-    volatile uint32_t TX_START_WDS; // 0x20
-    volatile uint32_t FLOW_CONTROL; // 0x24
-    volatile uint32_t VLAN_LTYPE; // 0x28
-    volatile uint32_t TS_LTYPE; // 0x2c
-    volatile uint32_t DLR_LTYPE; // 0x30
+    volatile unsigned ID_VER; // 0x0
+    volatile unsigned CONTROL; // 0x4
+    volatile unsigned SOFT_RESET; // 0x8
+    volatile unsigned STAT_PORT_EN; // 0xc
+    volatile unsigned PTYPE; // 0x10
+    volatile unsigned SOFT_IDLE; // 0x14
+    volatile unsigned THRU_RATE; // 0x18
+    volatile unsigned GAP_THRESH; // 0x1c
+    volatile unsigned TX_START_WDS; // 0x20
+    volatile unsigned FLOW_CONTROL; // 0x24
+    volatile unsigned VLAN_LTYPE; // 0x28
+    volatile unsigned TS_LTYPE; // 0x2c
+    volatile unsigned DLR_LTYPE; // 0x30
 };
 
 static_assert(sizeof(struct HW_CPSW_SS) == 0x34, "padding");
@@ -851,27 +852,27 @@ extern struct HW_CPSW_SS HW_CPSW_SS;
 #define HW_WR_INT_PACE_RX_0 (1 << 16)
 
 struct HW_CPSW_WR {
-    volatile uint32_t IDVER; // 0x0
-    volatile uint32_t SOFT_RESET; // 0x04
-    volatile uint32_t CONTROL; // 0x08
-    volatile uint32_t INT_CONTROL; // 0x0c
+    volatile unsigned IDVER; // 0x0
+    volatile unsigned SOFT_RESET; // 0x04
+    volatile unsigned CONTROL; // 0x08
+    volatile unsigned INT_CONTROL; // 0x0c
     struct {
-        volatile uint32_t RX_THRESH;
-        volatile uint32_t RX;
-        volatile uint32_t TX;
-        volatile uint32_t MISC;
+        volatile unsigned RX_THRESH;
+        volatile unsigned RX;
+        volatile unsigned TX;
+        volatile unsigned MISC;
     } PORT_INT_ENABLE[3]; // 0x10-0x40
     struct {
-        volatile uint32_t RX_THRESH;
-        volatile uint32_t RX;
-        volatile uint32_t TX;
-        volatile uint32_t MISC;
+        volatile unsigned RX_THRESH;
+        volatile unsigned RX;
+        volatile unsigned TX;
+        volatile unsigned MISC;
     } PORT_INT_STATUS[3]; // 0x40-0x70
     struct {
-        volatile uint32_t RX;
-        volatile uint32_t TX;
+        volatile unsigned RX;
+        volatile unsigned TX;
     } PORT_INT_MAX[3]; // 0x70-0x88
-    volatile uint32_t RGMII_CTL; // 0x88
+    volatile unsigned RGMII_CTL; // 0x88
 };
 
 static_assert(sizeof(struct HW_CPSW_WR) == 0x8C, "padding");
@@ -896,22 +897,22 @@ extern struct HW_CPSW_WR HW_CPSW_WR;
 #define HW_MDIO_USERPHYSEL_ADDR(x) ((x) & 0xF)
 
 struct HW_MDIO {
-    volatile uint32_t REVID; // 0x0
-    volatile uint32_t CONTROL; // 0x4
-    volatile uint32_t ALIVE; // 0x8
-    volatile uint32_t LINK; // 0xC
-    volatile uint32_t LINKINTRAW; // 0x10
-    volatile uint32_t LINKINTMASKED; // 0x14
+    volatile unsigned REVID; // 0x0
+    volatile unsigned CONTROL; // 0x4
+    volatile unsigned ALIVE; // 0x8
+    volatile unsigned LINK; // 0xC
+    volatile unsigned LINKINTRAW; // 0x10
+    volatile unsigned LINKINTMASKED; // 0x14
     char pad1[8];
-    volatile uint32_t USERINTRAW; // 0x20
-    volatile uint32_t USERINTMASKED; // 0x24
-    volatile uint32_t USERINTMASKSET; // 0x28
-    volatile uint32_t USERINTMASKCLEAR; // 0x2C
+    volatile unsigned USERINTRAW; // 0x20
+    volatile unsigned USERINTMASKED; // 0x24
+    volatile unsigned USERINTMASKSET; // 0x28
+    volatile unsigned USERINTMASKCLEAR; // 0x2C
     char pad2[0x50];
-    volatile uint32_t USERACCESS0; // 0x80
-    volatile uint32_t USERPHYSEL0; // 0x84
-    volatile uint32_t USERACCESS1; // 0x88
-    volatile uint32_t USERPHYSEL1; // 0x8C
+    volatile unsigned USERACCESS0; // 0x80
+    volatile unsigned USERPHYSEL0; // 0x84
+    volatile unsigned USERACCESS1; // 0x88
+    volatile unsigned USERPHYSEL1; // 0x8C
 };
 
 #define MDIO_BASIC_CONTROL 0
@@ -939,64 +940,64 @@ enum hw_interrupt {
 };
 
 struct HW_INTC {
-    volatile uint32_t REVISION; // 0x0
+    volatile unsigned REVISION; // 0x0
     char pad[12];
-    volatile uint32_t SYSCONFIG; // 0x10
-    volatile uint32_t SYSSTATUS; // 0x14
+    volatile unsigned SYSCONFIG; // 0x10
+    volatile unsigned SYSSTATUS; // 0x14
     char pad2[0x28];
-    volatile uint32_t SIR_IRQ; // 0x40
-    volatile uint32_t SIR_FIQ; // 0x44
-    volatile uint32_t CONTROL; // 0x48
-    volatile uint32_t PROTECTION; // 0x4c
-    volatile uint32_t IDLE; // 0x50
+    volatile unsigned SIR_IRQ; // 0x40
+    volatile unsigned SIR_FIQ; // 0x44
+    volatile unsigned CONTROL; // 0x48
+    volatile unsigned PROTECTION; // 0x4c
+    volatile unsigned IDLE; // 0x50
     char pad3[12];
-    volatile uint32_t IRQ_PRIORITY; // 0x60
-    volatile uint32_t FIQ_PRIORITY; // 0x64
-    volatile uint32_t THRESHOLD; // 0x68
+    volatile unsigned IRQ_PRIORITY; // 0x60
+    volatile unsigned FIQ_PRIORITY; // 0x64
+    volatile unsigned THRESHOLD; // 0x68
     char pad4[0x14];
     struct {
-        volatile uint32_t ITR; // 0x00
-        volatile uint32_t MIR; // 0x04
-        volatile uint32_t MIR_CLEAR; // 0x08
-        volatile uint32_t MIR_SET; // 0x0C
-        volatile uint32_t ISR_SET; // 0x10
-        volatile uint32_t ISR_CLEAR; // 0x14
-        volatile uint32_t PENDING_IRQ; // 0x18
-        volatile uint32_t PENDING_FIQ; // 0x1C
+        volatile unsigned ITR; // 0x00
+        volatile unsigned MIR; // 0x04
+        volatile unsigned MIR_CLEAR; // 0x08
+        volatile unsigned MIR_SET; // 0x0C
+        volatile unsigned ISR_SET; // 0x10
+        volatile unsigned ISR_CLEAR; // 0x14
+        volatile unsigned PENDING_IRQ; // 0x18
+        volatile unsigned PENDING_FIQ; // 0x1C
     } BANK[4]; // 0x80-0x100
 
-    volatile uint32_t ILR[128]; // 0x100-0x300
+    volatile unsigned ILR[128]; // 0x100-0x300
 };
 
 static_assert(sizeof(struct HW_INTC) == 0x300, "padding");
 extern struct HW_INTC HW_INTC;
 
 struct HW_GPIO {
-    volatile uint32_t REVISION; // 0x0
+    volatile unsigned REVISION; // 0x0
     char pad1[12];
-    volatile uint32_t SYSCONFIG; // 0x10
+    volatile unsigned SYSCONFIG; // 0x10
     char pad2[12];
-	volatile uint32_t EOI; // 0x20
-    volatile uint32_t IRQSTATUS_RAW[2]; // 0x24-0x2C
-    volatile uint32_t IRQSTATUS[2]; // 0x2C-0x34
-    volatile uint32_t IRQSTATUS_SET[2]; // 0x34-0x3C
-    volatile uint32_t IRQSTATUS_CLR[2]; // 0x3C-0x44
-    volatile uint32_t IRQWAKEN[2]; // 0x44-0x4C
+	volatile unsigned EOI; // 0x20
+    volatile unsigned IRQSTATUS_RAW[2]; // 0x24-0x2C
+    volatile unsigned IRQSTATUS[2]; // 0x2C-0x34
+    volatile unsigned IRQSTATUS_SET[2]; // 0x34-0x3C
+    volatile unsigned IRQSTATUS_CLR[2]; // 0x3C-0x44
+    volatile unsigned IRQWAKEN[2]; // 0x44-0x4C
     char pad3[0xC8];
-    volatile uint32_t SYSSTATUS; // 0x114
+    volatile unsigned SYSSTATUS; // 0x114
     char pad4[0x18];
-    volatile uint32_t CTRL; // 0x130
-    volatile uint32_t INPUT_EN; // 0x134
-    volatile uint32_t DATAIN; // 0x138
-    volatile uint32_t DATAOUT; // 0x13C
-    volatile uint32_t LEVELDETECT[2]; // 0x140-0x148
-    volatile uint32_t RISINGDETECT; // 0x148
-    volatile uint32_t FALLINGDETECT; // 0x14C
-    volatile uint32_t DEBOUNCENABLE; // 0x150
-    volatile uint32_t DEBOUNCINGTIME; // 0x154
+    volatile unsigned CTRL; // 0x130
+    volatile unsigned INPUT_EN; // 0x134
+    volatile unsigned DATAIN; // 0x138
+    volatile unsigned DATAOUT; // 0x13C
+    volatile unsigned LEVELDETECT[2]; // 0x140-0x148
+    volatile unsigned RISINGDETECT; // 0x148
+    volatile unsigned FALLINGDETECT; // 0x14C
+    volatile unsigned DEBOUNCENABLE; // 0x150
+    volatile unsigned DEBOUNCINGTIME; // 0x154
     char pad5[0x38];
-    volatile uint32_t CLEARDATAOUT; // 0x190
-    volatile uint32_t SETDATAOUT; // 0x194
+    volatile unsigned CLEARDATAOUT; // 0x190
+    volatile unsigned SETDATAOUT; // 0x194
 };
 
 static_assert(sizeof(struct HW_GPIO) == 0x198, "padding");
@@ -1013,27 +1014,27 @@ extern struct HW_GPIO HW_GPIO_3;
 #define HW_1MS_TCLR_START (1 << 0)
 
 struct HW_DMTIMER_1MS {
-    volatile uint32_t TIDR; // 0x0
+    volatile unsigned TIDR; // 0x0
     char pad1[12];
-    volatile uint32_t TIOCP_CFG; // 0x10
-    volatile uint32_t TISTAT; // 0x14
-    volatile uint32_t TISR; // 0x18
-    volatile uint32_t TIER; // 0x1c
-    volatile uint32_t TWER; // 0x20
-    volatile uint32_t TCLR; // 0x24
-    volatile uint32_t TCRR; // 0x28
-    volatile uint32_t TLDR; // 0x2c
-    volatile uint32_t TTGR; // 0x30
-    volatile uint32_t TWPS; // 0x34
-    volatile uint32_t TMAR; // 0x38
-    volatile uint32_t TCAR1; // 0x3C
-    volatile uint32_t TSICR; // 0x40
-    volatile uint32_t TCAR2; // 0x44
-    volatile uint32_t TPIR; // 0x48
-    volatile uint32_t TNIR; // 0x4c
-    volatile uint32_t TCVR; // 0x50
-    volatile uint32_t TOCR; // 0x54
-    volatile uint32_t TOWR; // 0x58
+    volatile unsigned TIOCP_CFG; // 0x10
+    volatile unsigned TISTAT; // 0x14
+    volatile unsigned TISR; // 0x18
+    volatile unsigned TIER; // 0x1c
+    volatile unsigned TWER; // 0x20
+    volatile unsigned TCLR; // 0x24
+    volatile unsigned TCRR; // 0x28
+    volatile unsigned TLDR; // 0x2c
+    volatile unsigned TTGR; // 0x30
+    volatile unsigned TWPS; // 0x34
+    volatile unsigned TMAR; // 0x38
+    volatile unsigned TCAR1; // 0x3C
+    volatile unsigned TSICR; // 0x40
+    volatile unsigned TCAR2; // 0x44
+    volatile unsigned TPIR; // 0x48
+    volatile unsigned TNIR; // 0x4c
+    volatile unsigned TCVR; // 0x50
+    volatile unsigned TOCR; // 0x54
+    volatile unsigned TOWR; // 0x58
 };
 
 static_assert(sizeof(struct HW_DMTIMER_1MS) == 0x5C, "padding");

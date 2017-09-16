@@ -26,7 +26,7 @@ int main(int argc, char *argv[])
 
     fprintf(w, "extern unsigned long g_datasz;\n");
     fprintf(w, "extern const char g_data[];\n");
-    fprintf(w, "const char g_data[] = \\\n");
+    fprintf(w, "const char g_data[] = \"\"");
 
     unsigned totalsz = 0;
     uint8_t buf[16];
@@ -38,12 +38,12 @@ int main(int argc, char *argv[])
             break;
         }
 
-        fprintf(w, "\"");
+        fprintf(w, "\\\n\"");
         for (int i = 0; i < sz; i++)
         {
             fprintf(w, "\\x%02x", buf[i]);
         }
-        fprintf(w, "\" \\\n");
+        fprintf(w, "\"");
         totalsz += sz;
     }
     fprintf(w, ";\n\n");

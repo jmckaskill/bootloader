@@ -19,19 +19,19 @@ void led_wobble(void) {
     }
 }
 
-static void enable_module(volatile uint32_t *ctrl) {
+static void enable_module(volatile unsigned *ctrl) {
 	*ctrl |= HW_CM_MODULEMODE_ENABLE;
 	while ((*ctrl & HW_CM_MODULEMODE_MASK) != HW_CM_MODULEMODE_ENABLE) {
 	}
 }
 
-static void sw_wakeup(volatile uint32_t *status) {
+static void sw_wakeup(volatile unsigned *status) {
 	*status |= HW_CM_CLKTRCTRL_SW_WKUP;
 	while ((*status & HW_CM_CLKTRCTRL_MASK) != HW_CM_CLKTRCTRL_SW_WKUP){
 	}
 }
 
-static void wait_for_functional(volatile uint32_t *ctrl) {
+static void wait_for_functional(volatile unsigned *ctrl) {
 	while ((*ctrl & HW_CM_IDLEST_MASK) != HW_CM_IDLEST_FUNCTIONAL) {
 	}
 }
@@ -137,11 +137,19 @@ static void set_switch_to_ground() {
 
 #define MS_TO_TICKS(ms) ((ms)*32768/1000)
 
-static uint32_t tick_count() {
+static unsigned tick_count() {
 	return HW_DMTIMER_1MS.TCRR;
 }
 
-static void set_sleep(uint32_t target) {
+static unsigned timestamp_ms() {
+	// use uint64_t for increased range during the conversion
+	uint64_t tick = HW_DMTIMER_1MS.TCRR;
+	tick *= 1000;
+	tick /= 32768;
+	return (unsigned) tick;
+}
+
+static void set_sleep(unsigned target) {
 	HW_DMTIMER_1MS.TMAR = target;
 }
 
@@ -190,35 +198,6 @@ static void write_mdio(int phy, int key, int val) {
 	while (!(HW_MDIO.USERACCESS0 & HW_MDIO_GO)) {}
 }
 
-
-static const char g_testmsg[] =
-"\xff\xff\xff\xff\xff\xff\xb0\xd5\xcc\x6e\x63\x88\x08\x00\x45\x00" \
-"\x01\x88\x01\x00\x00\x00\x40\x11\x78\x66\x00\x00\x00\x00\xff\xff" \
-"\xff\xff\x00\x44\x00\x43\x01\x74\x11\xa0\x01\x01\x06\x00\x00\x00" \
-"\x00\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\xb0\xd5\xcc\x6e\x63\x88\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x63\x82\x53\x63\x3c\x0a\x41\x4d\x33\x33" \
-"\x35\x78\x20\x52\x4f\x4d\x3d\x51\x05\x01\x05\x01\x81\x40\x07\x03" \
-"\x13\x02\x01\x00\x12\x15\x01\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x14\x21\x01\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x15\x09" \
-"\x01\x86\x3d\x37\x8a\x00\x00\x00\x00\xff\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00\x00" \
-"\x00\x00\x00\x00\x00\x00";
-
 #define ETH_OFFSET (2 << 16)
 #define ETH_IP6 0x86DD
 #define IP6_TCP 6
@@ -250,13 +229,19 @@ struct tcp_frame {
 #define ICMP6_NEIGHBOR_SOLICITATION 135
 #define ICMP6_NEIGHBOR_ADVERTISEMENT 136
 
+#define ADVERTISE_OVERRIDE 0x20000000
+
 #define ALL_NODES_0 0xFF020000
 #define ALL_NODES_1 0
 #define ALL_NODES_2 0
-#define ALL_NODES_3 0
-#define ALL_NODES_4 1
+#define ALL_NODES_3 1
 
-#define ETH_MCAST_HI 0x3333
+#define LINK_LOCAL_0 0xFE800000
+#define LINK_LOCAL_1 0
+
+#define ETH_MCAST_0 0x3333
+
+#define ICMP6_OPTION_MAC 0x0208
 
 struct icmp6_frame {
 	uint8_t type;
@@ -265,12 +250,18 @@ struct icmp6_frame {
 	uint32_t body;
 };
 
+struct icmp6_advertisement {
+	uint8_t type;
+	uint8_t code;
+	uint16_t checksum;
+	uint32_t flags;
+	uint32_t addr[4];
+};
+
 struct eth_frame {
-	uint8_t padding[2];
-	uint16_t eth_dst_hi;
-	uint32_t eth_dst_lo;
-	uint16_t eth_src_hi;
-	uint32_t eth_src_lo;
+	uint16_t payloadsz; // padding for the driver, but used by the application
+	uint16_t eth_dst[3];
+	uint16_t eth_src[3];
 	uint16_t eth_type;
 	uint32_t ip6_header;
 	uint16_t ip6_length;
@@ -278,75 +269,116 @@ struct eth_frame {
 	uint8_t ip6_hop_limit;
 	uint32_t ip6_src[4];
 	uint32_t ip6_dst[4];
-	char payload[0x600 - 40 - 14 - 2];
+	char payload[0x5F0 - 40 - 14 - 2];
 };
 
-static_assert(sizeof(struct eth_frame) == 0x600, "padding");
+static_assert(sizeof(struct eth_frame) == 0x5F0, "padding");
 
-// about 49 KB out of 64KB of the L3 OCMC0 memory
-#define RX_FRAME_FIRST 0
-#define RX_FRAME_END 0x10
-#define TX_FRAME_FIRST 0x10
-#define TX_FRAME_END 0x20
+// use almost all of the 64KB of the L3 OCMC0 memory
+#define TX_FRAME_FIRST 0
+#define TX_FRAME_END 16
+#define RX_FRAME_FIRST 16
+#define RX_FRAME_END 43
 
+extern struct eth_frame g_eth_frames[RX_FRAME_END];
+static_assert(sizeof(g_eth_frames) <= 64*1024, "too many packets");
 
-extern struct eth_frame g_eth_frames[TX_FRAME_END];
-
-static int g_tx_next;
+static struct hw_buffer_descriptor *g_rx_next; // next frame to be received
 static struct hw_buffer_descriptor *g_rx_last;
 
-static int g_tx_next; // next frame to be sent
-static int g_tx_end; // last frame available to be sent + 1
+static struct hw_buffer_descriptor *g_tx_next; // first frame in the queue
 static struct hw_buffer_descriptor *g_tx_last; // last frame we handed off to the mac
+static int g_tx_free; // next frame if we want to send
 
 // gives the next index in the circular buffer
-#define NEXT_TX_FRAME(idx) (((((idx) - TX_FRAME_FIRST) + 1) & (TX_FRAME_END - TX_FRAME_FIRST)) + TX_FRAME_FIRST)
+#define NEXT_TX_FRAME(idx) (((((idx) - TX_FRAME_FIRST) + 1) % (TX_FRAME_END - TX_FRAME_FIRST)) + TX_FRAME_FIRST)
 
-#if 0
-static struct eth_frame *get_next_frame() {
-	if (g_tx_next == g_tx_end) {
-		return NULL;
-	}
-	return &g_eth_frames[g_tx_next]
-}
-
-static void send_frame(int sz) {
-	int idx = g_tx_next;
-	struct eth_frame *f = &g_eth_frames[idx];
-	struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[idx];
-
-	d->next = NULL;
-	d->buffer = f;
-	d->offset_buf_len = ETH_OFFSET | sz;
-	d->flags_pkt_len = HW_ETH_FULL_PKT | HW_ETH_OWNED_BY_PORT | sz;
-
-	if (!g_tx_last) {
-		HW_CPSW_STATERAM.TX_HDP[0] = d;
-	} else {
-		g_tx_last->next = d;
-		g_tx_last = d;
-	}
-}
-
-static int g_have_sent_initial;
-
-// in network byte order
-static uint16_t g_my_mac_hi;
-static uint32_t g_my_mac_lo;
+// in native byte order
+static uint16_t g_my_mac[3];
 static uint32_t g_my_ip[4];
 
-static void send_initial_messages() {
+static struct eth_frame *get_next_frame() {
+	struct eth_frame *f = &g_eth_frames[g_tx_free];
+	volatile struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[g_tx_free];
+	if (d == g_tx_next) {
+		return NULL; // we've run out of buffers to send
+	}
+
+	// fill out the default values
+	f->eth_src[0] = g_my_mac[0];
+	f->eth_src[1] = g_my_mac[1];
+	f->eth_src[2] = g_my_mac[2];
+	f->ip6_header = htonl(IP6_DEFAULT_HEADER);
+	f->ip6_hop_limit = IP6_DEFAULT_HOP_LIMIT;
+	f->ip6_src[0] = g_my_ip[0];
+	f->ip6_src[1] = g_my_ip[1];
+	f->ip6_src[2] = g_my_ip[2];
+	f->ip6_src[3] = g_my_ip[3];
+	
+	return f;
+}
+
+
+static void send_frame(struct eth_frame *f) {
+	// fill out the fixed fields
+	f->eth_type = htons(ETH_IP6);
+	f->ip6_length = htons(f->payloadsz);
+
+	int idx = f - g_eth_frames;
+	struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[idx];
+
+	int framesz = f->payloadsz + offsetof(struct eth_frame, payload) - offsetof(struct eth_frame, eth_dst);
+	d->next = NULL;
+	d->buffer = f;
+	d->offset_buf_len = ETH_OFFSET | framesz;
+	d->flags_pkt_len = HW_ETH_FULL_PKT | HW_ETH_OWNED_BY_PORT | framesz;
+	__sync_synchronize();
+
+	if (g_tx_next) {
+		g_tx_last->next = d;
+	} else {
+		// tx queue is empty
+		HW_CPSW_STATERAM.TX_HDP[0] = d;
+		g_tx_next = d;
+	}
+	
+	g_tx_last = d;
+	g_tx_free = NEXT_TX_FRAME(idx);
+}
+
+static void send_neighbor_advertisement() {
 	struct eth_frame *f = get_next_frame();
 
-	f->eth_dst_hi = htons(ETH_MCAST_HI);
-	f->eth_dst_lo = htonl(ALL_NODES_4);
-	f->eth_src_hi = g_my_mac_hi;
-	f->eth_src_lo = g_my_mac_lo;
-	f->eth_type = ETH_IP6;
-	f->ip6_header = IP6_DEFAULT_HEADER;
-	f->ip6_length = 
+	f->eth_dst[0] = htons(ETH_MCAST_0);
+	f->eth_dst[1] = htons(hi16(ALL_NODES_3));
+	f->eth_dst[2] = htons(lo16(ALL_NODES_3));
+	f->ip6_dst[0] = htonl(ALL_NODES_0);
+	f->ip6_dst[1] = htonl(ALL_NODES_1);
+	f->ip6_dst[2] = htonl(ALL_NODES_2);
+	f->ip6_dst[3] = htonl(ALL_NODES_3);
+	f->ip6_next_header = IP6_ICMP;
+
+	struct icmp6_advertisement *a = (struct icmp6_advertisement*) f->payload;
+	a->type = ICMP6_NEIGHBOR_ADVERTISEMENT;
+	a->code = 0;
+	a->checksum = 0;
+	a->flags = htonl(ADVERTISE_OVERRIDE);
+	a->addr[0] = g_my_ip[0];
+	a->addr[1] = g_my_ip[1];
+	a->addr[2] = g_my_ip[2];
+	a->addr[3] = g_my_ip[3];
+
+	uint16_t *u = (uint16_t*) (a + 1);
+	u[0] = htons(ICMP6_OPTION_MAC);
+	u[1] = g_my_mac[0];
+	u[2] = g_my_mac[1];
+	u[3] = g_my_mac[2];
+
+	f->payloadsz = 8 + sizeof(*a);
+
+	printf("%u send\n", timestamp_ms());
+	send_frame(f);
 }
-#endif
 
 static void clear_rx_descriptor(struct hw_buffer_descriptor *d) {
 	d->next = NULL;
@@ -370,8 +402,8 @@ static void enable_eth() {
 	HW_CPSW_WR.SOFT_RESET = 1;
 	HW_CPSW_WR.CONTROL = HW_WR_CONTROL_NO_STANDBY | HW_WR_CONTROL_NO_IDLE;
 	
-	HW_CPSW_CPDMA.CPDMA_SOFT_RESET = 1;
-	while (HW_CPSW_CPDMA.CPDMA_SOFT_RESET) {}
+	HW_CPSW_CPDMA->CPDMA_SOFT_RESET = 1;
+	while (HW_CPSW_CPDMA->CPDMA_SOFT_RESET) {}
 	
 	HW_CPSW_SL_1.SOFT_RESET = 1;
 	HW_CPSW_SL_2.SOFT_RESET = 1;
@@ -388,8 +420,22 @@ static void enable_eth() {
 
 	HW_CPSW_PORT_1.SA_LO = HW_CONTROL.mac[0].lo;
 	HW_CPSW_PORT_1.SA_HI = HW_CONTROL.mac[0].hi;
-	HW_CPSW_PORT_2.SA_LO = HW_CONTROL.mac[1].lo;
-	HW_CPSW_PORT_2.SA_HI = HW_CONTROL.mac[1].hi;
+
+	g_my_mac[0] = lo16(HW_CONTROL.mac[0].hi);
+	g_my_mac[1] = hi16(HW_CONTROL.mac[0].hi);
+	g_my_mac[2] = HW_CONTROL.mac[0].lo;
+
+	// generate our link-local IP from the mac address
+	// these are in network order
+	uint32_t iid_hi = 0xFF000000 | (HW_CONTROL.mac[0].hi & 0xFFFFFF);
+	uint32_t iid_lo = (HW_CONTROL.mac[0].lo << 16) | ((HW_CONTROL.mac[0].hi >> 16) & 0xFF00) | 0xFE;
+	// complement the U/L bit position
+	iid_hi = (iid_hi & ~2U) | (~iid_hi & 2U);
+
+	g_my_ip[0] = htonl(LINK_LOCAL_0);
+	g_my_ip[1] = htonl(LINK_LOCAL_1);
+	g_my_ip[2] = iid_hi;
+	g_my_ip[3] = iid_lo;
 
 	// main CPSW clock is 125 MHz. this gives an MDIO frequency of 2.5 MHz
 	// which matches what the ROM does and the max frequency of the PHY
@@ -403,42 +449,37 @@ static void enable_eth() {
 
 	// setup rx frames
 	for (int i = RX_FRAME_FIRST; i < RX_FRAME_END; i++) {
-		struct hw_eth_buffer *d = &HW_BUFFER_DESCRIPTORS[i];
+		struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[i];
 		struct eth_frame *f = &g_eth_frames[i];
-		h->buffer = f;
+		d->buffer = f;
 		clear_rx_descriptor(d);
 		
 		if (i > RX_FRAME_FIRST) {
-			HW_BUFFER_DESCRIPTORS[i-1].next = h;
+			HW_BUFFER_DESCRIPTORS[i-1].next = d;
 		}
 	}
+	g_rx_next = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
 	g_rx_last = &HW_BUFFER_DESCRIPTORS[RX_FRAME_END-1];
 
-	HW_CPSW_CPDMA.RX_BUFFER_OFFSET = offsetof(struct eth_frame, eth_dst);
-	HW_CPSW_CPDMA.RX_HDP[0] = &HW_BUFFER_DESCRIPTORS[0];
+	g_tx_next = NULL;
+	g_tx_free = TX_FRAME_FIRST;
 
-	// setup tx frames
-	g_tx_next = TX_FRAME_FIRST;
-	g_tx_end = TX_FRAME_END;
+	HW_CPSW_CPDMA->RX_BUFFER_OFFSET = offsetof(struct eth_frame, eth_dst);
+	HW_CPSW_STATERAM.RX_HDP[0] = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
 
-	// enable the rx interrupts
-	HW_CPSW_WR.INT_CONTROL = HW_WR_INT_PAGE_RX_0;
-	HW_CPSW_WR.PORT_INT_ENABLE[0].RX_THRESH = 1;
+	// enable rx interrupt
 	HW_CPSW_WR.PORT_INT_ENABLE[0].RX = 1;
-	HW_CPSW_WR.PORT_INT_MAX[0].RX = 1; // max 1 interrupt/ms
-	HW_CPSW_CPDMA.RX_INTMASK_SET = HW_CPDMA_RX_PEND_0 | HW_CPDMA_RX_THRESH_PEND_0;
-
-	HW_CPSW_CPDMA.RX_PENDTHRESH[0] = 2;
-	HW_CPSW_CPDMA.RX_FREEBUFFER[0] = RX_FRAME_END - RX_FRAME_FIRST;
-
-	enable_interrupt(HW_INT_ETH_RX_THRESHOLD);
+	HW_CPSW_CPDMA->RX_INTMASK_SET = HW_CPDMA_RX_PEND_0;
 	enable_interrupt(HW_INT_ETH_RX);
 
-	// enable the port
-	HW_CPSW_CPDMA.TX_CONTROL = HW_CPDMA_TX_EN;
-	HW_CPSW_CPDMA.RX_CONTROL = HW_CPDMA_RX_EN;
+	// enable tx interrupt
+	HW_CPSW_WR.PORT_INT_ENABLE[0].TX = 1;
+	HW_CPSW_CPDMA->TX_INTMASK_SET = HW_CPDMA_TX_PEND_0;
+	enable_interrupt(HW_INT_ETH_TX);
 
-	//g_have_sent_initial = 0;
+	// enable the port
+	HW_CPSW_CPDMA->TX_CONTROL = HW_CPDMA_TX_EN;
+	HW_CPSW_CPDMA->RX_CONTROL = HW_CPDMA_RX_EN;
 }
 
 static void wait_for_link() {
@@ -458,41 +499,67 @@ static void debug_putc(void* udata, char ch) {
 }
 
 static void process_frame(struct eth_frame *f, int sz) {
-	sz -= offsetof(struct eth_frame, u);
+	// sz does not include the padding bytes at the beginning
+	sz -= offsetof(struct eth_frame, payload) - offsetof(struct eth_frame, eth_dst);
 	if (sz < 0 || ntohs(f->eth_type) != ETH_IP6)  {
 		return;
 	}
 
-	printf("have frame from %04x%08x\n", f->eth_src_hi, f->eth_src_lo);
+	printf("%u have frame from %08x%08x%08x%08x to %08x%08x%08x%08x\n", 
+		timestamp_ms(),
+		ntohl(f->ip6_src[0]),
+		ntohl(f->ip6_src[1]),
+		ntohl(f->ip6_src[2]),
+		ntohl(f->ip6_src[3]),
+		ntohl(f->ip6_dst[0]),
+		ntohl(f->ip6_dst[1]),
+		ntohl(f->ip6_dst[2]),
+		ntohl(f->ip6_dst[3]));
 }
 
 void interrupt() {
-	int end = 0;
 	switch (HW_INTC.SIR_IRQ & HW_INTC_ACTIVE_IRQ_MASK) {
 	case HW_INT_TINT1_1MS: {
-			unsigned now = tick_count();
 			int sts = read_mdio(0, MDIO_BASIC_STATUS);
-			printf("timer %u %x\n", now, sts);
-#if 0
-			if (!g_have_sent_initial) {
-				send_initial_messages();
-				g_have_sent_initial = 1;
-			}
-#endif
+			printf("%u timer %x\n", timestamp_ms(), sts);
+			send_neighbor_advertisement();
 			// reset the timer interrupt
 			HW_DMTIMER_1MS.TISR |= HW_1MS_INT_COMPARE;
-			set_sleep(now + MS_TO_TICKS(1000));
+			set_sleep(tick_count() + MS_TO_TICKS(1000));
 		}
 		break;
-	case HW_INT_ETH_RX:
-		end = 1; // fallthrough
-	case HW_INT_ETH_RX_THRESHOLD: {
+	case HW_INT_ETH_TX: {
+			printf("%u send complete\n", timestamp_ms());
+			// update g_tx_next to wherever the mac got up to
+			struct hw_buffer_descriptor *d = g_tx_next;
+			struct hw_buffer_descriptor *last_processed = d;
+			while (d) {
+				unsigned flags = d->flags_pkt_len;
+				if (flags & HW_ETH_OWNED_BY_PORT) {
+					// port hasn't sent this yet
+					break;
+				}
+				last_processed = d;
+				d = d->next;
+				if (d && (flags & HW_ETH_END_OF_QUEUE)) {
+					// port ran out before we added the next one
+					// add it back in and keep on processing
+					HW_CPSW_STATERAM.TX_HDP[0] = d;
+				}
+			}
+
+			g_tx_next = d;
+			HW_CPSW_STATERAM.TX_CP[0] = last_processed;
+			HW_CPSW_CPDMA->CPDMA_EOI_VECTOR = HW_CPDMA_EOI_TX;
+		}
+		break;
+	case HW_INT_ETH_RX: {
 			// process each frame one by one, readding as we go
 			struct hw_buffer_descriptor *d = g_rx_next;
 			struct hw_buffer_descriptor *last = g_rx_last;
 
 			for (;;) {
-				uint32_t flags = d->flags_pkt_len;
+				unsigned flags = d->flags_pkt_len;
 				if (flags & HW_ETH_OWNED_BY_PORT) {
 					// we've processed all that are ready
 					break;
@@ -502,14 +569,14 @@ void interrupt() {
 					HW_CPSW_STATERAM.RX_HDP[0] = d->next;
 				}
 
-				if ((flags & (HW_ETH_FULL_PKT | HW_ETH_ERROR_MASK) == (HW_ETH_FULL_PKT | HW_ETH_NO_ERROR)) {
+				if ((flags & (HW_ETH_FULL_PKT | HW_ETH_ERROR_MASK)) == (HW_ETH_FULL_PKT | HW_ETH_NO_ERROR)) {
 					// we shouldn't be getting partial frames
 					// in case we do, drop them
 					int sz = d->offset_buf_len & 0xFFFF;
 					if (flags & HW_ETH_PASS_CRC) {
 						sz -= 4;
 					}
-					process_frame(d->buffer, sz);
+					process_frame((struct eth_frame*) d->buffer, sz);
 				}
 				
 				// readd the frame and move onto the next
@@ -523,7 +590,7 @@ void interrupt() {
 
 			g_rx_last = last;
 			g_rx_next = d;
-			HW_CPSW_CPDMA.CPDMA_EOI_VECTOR = end;
+			HW_CPSW_CPDMA->CPDMA_EOI_VECTOR = HW_CPDMA_EOI_RX;
 		}
 		break;
 	}
@@ -538,4 +605,5 @@ void setup() {
 	enable_dmtimer_1ms();
 	enable_eth();
 	wait_for_link();
+	printf("setup done\n");
 }

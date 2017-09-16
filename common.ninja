@@ -7,4 +7,5 @@ rule ld-script
 rule objcopy
  command = toolchain/host/bin/llvm-objcopy.exe $in $out
 
-build bootp-deploy-win32/deploy-data.c: run bin/$HOST/create-cdata.exe bin/linux-arm/bootloader.bin
+build bootp-deploy-win32/deploy-data.c: run bin/$HOST/create-cdata.exe $
+ bin/arm-debug/bootloader.bin

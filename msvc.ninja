@@ -4,7 +4,8 @@ INCLUDES = -I include -I include/hw -I include/armv7a/am335x
 
 include toolchain/host-win32.ninja
 include common.ninja
-subninja toolchain/target-linux-arm.ninja
+subninja toolchain/target-arm-debug.ninja
+subninja toolchain/target-arm-release.ninja
 subninja toolchain/target-win32-debug.ninja
 subninja toolchain/target-win32-release.ninja
 

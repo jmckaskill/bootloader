@@ -55,35 +55,40 @@ SECTIONS {
 
     .text : {
         KEEP(*(.text._start))
-        *(.text .text.*)
+        *(.text)
+        *(.text.*)
     }
 
     .rodata : {
         . = ALIGN(4);
-        *(.rodata .rodata.*)
+        *(.rodata)
+        *(.rodata.*)
+        *(.ARM.attributes)
     }
 
     .data : {
         . = ALIGN(4);
         *(.data*)
+        *(.ARM.exidx)
     }
 
     .bss : {
         . = ALIGN(4);
         _bss_start = .;
-        *(.bss*)
+        *(.bss.*)
         *(COMMON)
         _bss_end = .;
     }
 
-    // SRAM is 0x402F0400 - 0x402FFFFF
-    // OCMC0 is 0x40300000 - 0x4030FFFF
-    // SRAM is used for the program (bottom) and stack (top)
-    // OCMC0 is used for the ethernet data buffers (top) and stack (bottom)
-    // ethernet data buffers is x20 * x600 = xC000
+    /* SRAM is 0x402F0400 - 0x402FFFFF
+     * OCMC0 is 0x40300000 - 0x4030FFFF
+     * SRAM is used for the program (bottom) and stack (top)
+     * OCMC0 is used for the ethernet data buffers
+     * ethernet data buffers is 43 * x5F0 = xFF50
+     */
 
-    _stack_top   = 0x402FFFFF;
-    g_eth_frames = 0x40304000;
+    _stack_top   = 0x402FFFFC;
+    g_eth_frames = 0x40300000;
 
 	HW_CM_PER		  = 0x44E00000;
 	HW_CM_WAKEUP      = 0x44E00400;
@@ -110,7 +115,23 @@ SECTIONS {
     HW_CPSW_ALE       = 0x4A100D00;
     HW_CPSW_SL_1      = 0x4A100D80;
     HW_CPSW_SL_2      = 0x4A100DC0;
-    HW_ETH_BUFFER     = 0x4A102000;
+    HW_BUFFER_DESCRIPTORS = 0x4A102000;
+
+    .symtab : {
+        *(.symtab)
+    }
+
+    .strtab : {
+        *(.strtab)
+    }
+
+    .shstrtab : {
+        *(.shstrtab)
+    }
+
+    /DISCARD/ : {
+        *(.comment)
+    }
 
 /*
     /DISCARD/ : {
@@ -123,9 +144,9 @@ SECTIONS {
     */
 
 	/* catch any unknown sections and yell loudly about them */
-	/*
+    /*
     .orphan : { INPUT_SECTION_FLAGS (SHF_ALLOC) *(*) } :NONE
 	ASSERT( SIZEOF(.orphan) == 0, "unassigned sections!" )
-    */
+    */ 
 }
 
