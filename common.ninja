@@ -1,8 +1,8 @@
 LIBC = toolchain/lib/arm/libclang-rt.a
-LDFLAGS = --script bootloader/AM335x.lds -g
+LDFLAGS = -g
 
 rule rawlink
- command = toolchain/host/bin/ld.lld.exe $LDFLAGS $LIBC $in -o $out
+ command = toolchain/host/bin/ld.lld.exe $LDFLAGS $LIBC --script $in -o $out
  description = LD $out
 
 rule objcopy

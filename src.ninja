@@ -11,9 +11,9 @@ build $OBJ/main.o: ccdll bootloader/main.c
 build $OBJ/uart.o: ccdll bootloader/uart.c
 build $OBJ/uartConsole.o: ccdll bootloader/uartConsole.c
 build $OBJ/uart_irda_cir.o: ccdll bootloader/uart_irda_cir.c
-build $OBJ/tinyprintf.o: ccdll tinyprintf/tinyprintf.c
+build $OBJ/tinyprintf.o: ccdll printf/tinyprintf.c
 
-build bin/$TGT/bootloader.exe: rawlink $
+build bin/$TGT/bootloader.exe: rawlink bootloader/AM335x.lds $
  $OBJ/init.o $
  $OBJ/main.o $
  $OBJ/tinyprintf.o $

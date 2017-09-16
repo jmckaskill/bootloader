@@ -1,0 +1,10 @@
+SRC_NINJA = src.ninja
+TOOLCHAIN_DIR = toolchain
+INCLUDES = -I include -I include/hw -I include/armv7a/am335x
+
+include toolchain/host-gcc.ninja
+include common.ninja
+subninja toolchain/target-arm-debug.ninja
+subninja toolchain/target-arm-release.ninja
+
+default bin/arm-release/bootloader.exe

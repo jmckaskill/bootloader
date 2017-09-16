@@ -41,7 +41,7 @@
  *   __StackBase    - To be compatible with Linaro's semihosting support 
  *   __stack
  */
-ENTRY(_entry)
+ENTRY(_start)
 
 SECTIONS
 {   
