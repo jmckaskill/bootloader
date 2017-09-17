@@ -69,6 +69,9 @@ SECTIONS {
     .data : {
         . = ALIGN(4);
         *(.data*)
+    }
+
+    .ARM.exidx : {
         *(.ARM.exidx)
     }
 

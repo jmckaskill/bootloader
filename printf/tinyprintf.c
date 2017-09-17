@@ -20,7 +20,7 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "tinyprintf.h"
-#ifdef DEBUG_LOG_SUPPORT
+#ifdef DEBUG_LOG_ENABLED
 
 
 /*

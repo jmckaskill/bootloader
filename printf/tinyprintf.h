@@ -102,9 +102,9 @@ regs Kusti, 23.10.2004
 
 #include <stdarg.h>
 
-#define DEBUG_LOG_SUPPORT
+//#define DEBUG_LOG_ENABLED
 
-#ifndef DEBUG_LOG_SUPPORT
+#ifndef DEBUG_LOG_ENABLED
 static inline void do_debugf(const char *fmt, ...) {}
 #define debugf if (1) {} else do_debugf
 #else

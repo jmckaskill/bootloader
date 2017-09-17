@@ -48,7 +48,11 @@ int main(int argc, char *argv[])
 
         fprintf(w, "/* ");
         for (int i = 0; i < sz; i++) {
-            fprintf(w, "%c", (' ' <= buf[i] && buf[i] < 0x7F) ? buf[i] : '.');
+            if (' ' <= buf[i] && buf[i] < 0x7F && buf[i] != '*') {
+                fputc(buf[i], w);
+            } else {
+                fputc('.', w);
+            }
         }
         fprintf(w, " */");
     }

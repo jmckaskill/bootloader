@@ -4,9 +4,14 @@
 
 .code 32
 
+
+
 _start:
     // disable interrupts
     cpsid if
+
+    ldr r0, sctlr
+    mcr p15, 0, r0, c1, c0, 0
 
     ldr sp, stack_top
     bl setup
@@ -37,6 +42,12 @@ irq_entry:
     pop {r0-r4,r12,lr}
     subs PC, lr, #4
 
+#define DATA_CACHING (1 << 2)
+#define INSTRUCTION_CACHING (1 << 12)
+#define BRANCH_PREDICTION (1 << 11)
+
+sctlr:
+    .word DATA_CACHING|INSTRUCTION_CACHING|BRANCH_PREDICTION
 stack_top:
     .word 0x40300000;
 hw_intc_control:

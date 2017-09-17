@@ -1,8 +1,11 @@
 #include "am335x.h"
 #include "../printf/tinyprintf.h"
+#include "../mdns/mdns.h"
 #include <stdint.h>
 #include <assert.h>
 #include <stddef.h>
+#include <string.h>
+#include <inttypes.h>
 #include "endian.h"
 
 extern void interrupt();
@@ -76,6 +79,7 @@ static void enable_interconnects() {
 	while (!(HW_CM_PER->L4HS_status & HW_CM_L4HS_GCLK)) {}
 }
 
+#ifdef DEBUG_LOG_ENABLED
 enum uart_tx_select {
 	TX_UART4,
 	TX_UART5,
@@ -123,6 +127,7 @@ static void enable_uart4() {
 
 	// at this point we are in operational mode
 }
+#endif
 
 static void enable_gpio3() {
 	enable_module(&HW_CM_PER->GPIO3);
@@ -210,6 +215,7 @@ static void write_mdio(int phy, int key, int val) {
 #define IP6_DEFAULT_HEADER 0x60000000
 #define IP6_DEFAULT_HOP_LIMIT 255
 
+
 struct udp_frame {
 	uint8_t src_port[2];
 	uint8_t dst_port[2];
@@ -217,6 +223,8 @@ struct udp_frame {
 	uint8_t checksum[2];
 	uint8_t data[1];
 };
+
+#define UDP_FRAME_SIZE offsetof(struct udp_frame, data)
 
 struct tcp_frame {
 	uint8_t src_port[2];
@@ -230,12 +238,27 @@ struct tcp_frame {
 	uint8_t data[1];
 };
 
-#define ICMP6_NEIGHBOR_SOLICITATION 135
-#define ICMP6_NEIGHBOR_ADVERTISEMENT 136
+typedef struct {
+	uint8_t u[16];
+} ip6_addr_t;
+
+typedef struct {
+	uint8_t u[6];
+} mac_addr_t;
+
+#define ICMP6_NEIGHBOR_SOLICITATION 0x8700
+#define ICMP6_NEIGHBOR_ADVERTISEMENT 0x8800
+#define ICMP6_ECHO_REQUEST 0x8000
+#define ICMP6_ECHO_REPLY 0x8100
 
 #define ADVERTISE_OVERRIDE 0x20000000U
 
-static const uint128_t ALL_NODES = UINT128_C(0xFF02000000000000, 1);
+static const ip6_addr_t g_all_nodes = {{0xFF,2,0,0,0,0,0,0,0,0,0,0,0,0,0,1}};
+static const ip6_addr_t g_mdns      = {{0xFF,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0xFB}};
+static const mac_addr_t g_all_nodes_mac = {{0x33,0x33,0,0,0,1}};
+static const mac_addr_t g_mdns_mac      = {{0x33,0x33,0,0,0,0xFB}};
+
+#define MDNS_PORT 5353
 
 #define LINK_LOCAL_SUBNET UINT64_C(0xFE80000000000000)
 
@@ -246,33 +269,33 @@ static const uint128_t ALL_NODES = UINT128_C(0xFF02000000000000, 1);
 #define ICMP6_OPTION_MAC 2
 
 struct icmp6_frame {
-	uint8_t type;
-	uint8_t code;
+	uint8_t type_code[2];
 	uint8_t checksum[2];
 	uint8_t body[4];
 };
 
-struct icmp6_advertisement {
-	uint8_t type;
-	uint8_t code;
+struct icmp6_neighbor {
+	uint8_t type_code[2];
 	uint8_t checksum[2];
 	uint8_t flags[4];
-	uint8_t addr[16];
+	ip6_addr_t addr;
 };
 
 struct eth_frame {
 	uint8_t padding[2];
-	uint8_t eth_dst[6];
-	uint8_t eth_src[6];
+	mac_addr_t eth_dst;
+	mac_addr_t eth_src;
 	uint8_t eth_type[2];
 	uint8_t ip6_header[4];
 	uint8_t ip6_length[2];
 	uint8_t ip6_next_header;
 	uint8_t ip6_hop_limit;
-	uint8_t ip6_src[16];
-	uint8_t ip6_dst[16];
+	ip6_addr_t ip6_src;
+	ip6_addr_t ip6_dst;
 	uint8_t payload[0x5F0 - 40 - 14 - 2];
 };
+
+#define ETH_FRAME_SIZE (offsetof(struct eth_frame, payload) - offsetof(struct eth_frame, eth_dst))
 
 static_assert(sizeof(struct eth_frame) == 0x5F0, "padding");
 
@@ -295,8 +318,37 @@ static int g_tx_free; // next frame if we want to send
 // gives the next index in the circular buffer
 #define NEXT_TX_FRAME(idx) (((((idx) - TX_FRAME_FIRST) + 1) % (TX_FRAME_END - TX_FRAME_FIRST)) + TX_FRAME_FIRST)
 
-static uint64_t g_my_mac;
-static uint128_t g_my_ip;
+static void copy_mac(mac_addr_t *dst, const mac_addr_t *src) {
+	// we can rely on 16 bit alignment but no more
+	uint16_t *to = (uint16_t*) dst->u;
+	uint16_t *from = (uint16_t*) src->u;
+	to[0] = from[0];
+	to[1] = from[1];
+	to[2] = from[2];
+}
+
+static void copy_ip6(ip6_addr_t *dst, const ip6_addr_t *src) {
+	// ip6 addresses should be 32 bit aligned
+	uint32_t *to = (uint32_t*) dst->u;
+	uint32_t *from = (uint32_t*) src->u;
+	to[0] = from[0];
+	to[1] = from[1];
+	to[2] = from[2];
+	to[3] = from[3];
+}
+
+void copy_unaligned(void *dst, const void *src, size_t sz) {
+	uint8_t *to = (uint8_t*) dst;
+	uint8_t *from = (uint8_t*) src;
+	while (sz) {
+		*(to++) = *(from++);
+		sz--;
+	}
+}
+
+static uint64_t g_my_mac64;
+static mac_addr_t g_my_mac;
+static ip6_addr_t g_my_ip;
 static unsigned g_link;
 
 static struct eth_frame *get_next_frame() {
@@ -311,10 +363,10 @@ static struct eth_frame *get_next_frame() {
 	}
 
 	// fill out the default values
-	write_big_48(f->eth_src, g_my_mac);
+	copy_mac(&f->eth_src, &g_my_mac);
 	write_big_32(f->ip6_header, IP6_DEFAULT_HEADER);
 	f->ip6_hop_limit = IP6_DEFAULT_HOP_LIMIT;
-	write_big_128(f->ip6_src, g_my_ip);
+	copy_ip6(&f->ip6_src, &g_my_ip);
 	
 	return f;
 }
@@ -346,13 +398,14 @@ static void send_frame(int payloadsz) {
 	
 	g_tx_last = d;
 	g_tx_free = NEXT_TX_FRAME(idx);
+	debugf("\tsend\n");
 }
 
 static uint16_t ones_checksum(struct eth_frame *f, int payloadsz) {
 	uint32_t sum = 0;
 
 	// add the psuedo headers
-	uint8_t *p = f->ip6_src;
+	uint8_t *p = f->ip6_src.u;
 	for (int i = 0; i < 16; i++) {
 		sum += read_big_16(p + i * 2);
 	}
@@ -377,27 +430,45 @@ static uint16_t ones_checksum(struct eth_frame *f, int payloadsz) {
 static void send_neighbor_advertisement() {
 	struct eth_frame *f = get_next_frame();
 	if (f) {
-		write_big_48(f->eth_dst, ETH_MCAST | (ALL_NODES.low & ETH_MCAST_MASK));
-		write_big_128(f->ip6_dst, ALL_NODES);
+		copy_mac(&f->eth_dst, &g_all_nodes_mac);
+		copy_ip6(&f->ip6_dst, &g_all_nodes);
 		f->ip6_next_header = IP6_ICMP;
 
-		struct icmp6_advertisement *a = (struct icmp6_advertisement*) f->payload;
-		a->type = ICMP6_NEIGHBOR_ADVERTISEMENT;
-		a->code = 0;
+		struct icmp6_neighbor *a = (struct icmp6_neighbor*) f->payload;
+		write_big_16(a->type_code, ICMP6_NEIGHBOR_ADVERTISEMENT);
 		write_big_16(a->checksum, 0);
 		write_big_32(a->flags, ADVERTISE_OVERRIDE);
-		write_big_128(a->addr, g_my_ip);
+		copy_ip6(&a->addr, &g_my_ip);
 		
 		uint8_t *u = (uint8_t*) (a + 1);
 		u[0] = ICMP6_OPTION_MAC;
 		u[1] = 1; // length including header in 8 byte units
-		write_big_48(u+2, g_my_mac);
+		copy_unaligned(u+2, &g_my_mac, sizeof(g_my_mac));
 		u += 8;
 
 		int payloadsz = u - f->payload;
 		write_big_16(a->checksum, ones_checksum(f, payloadsz));
 
-		debugf("\tsend\n");
+		send_frame(payloadsz);
+	}
+}
+
+static void send_echo_reply(struct eth_frame *req, uint32_t idseq, const void *data, int sz) {
+	struct eth_frame *f = get_next_frame();
+	if (f) {
+		copy_mac(&f->eth_dst, &req->eth_src);
+		copy_ip6(&f->ip6_dst, &req->ip6_src);
+		f->ip6_next_header = IP6_ICMP;
+
+		struct icmp6_frame *a = (struct icmp6_frame*) f->payload;
+		write_big_16(a->type_code, ICMP6_ECHO_REPLY);
+		write_big_16(a->checksum, 0);
+		write_big_32(a->body, idseq);
+		copy_unaligned(a+1, data, sz);
+
+		int payloadsz = sizeof(*a) + sz;
+		write_big_16(a->checksum, ones_checksum(f, payloadsz));
+
 		send_frame(payloadsz);
 	}
 }
@@ -432,6 +503,58 @@ static void reset_rx_queue() {
 	HW_CPSW_STATERAM->RX_HDP[0] = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
 }
 
+static const char hex[] = "0123456789abcdef";
+
+static unsigned g_last_mdns;
+static struct emdns_service g_mdns_services[1] = {
+	EMDNS_SERVICE("\x05_http\x04_tcp\x05local\0", "\0", 80),
+};
+#define PFX "ethboot_"
+static char g_mdns_label[] = PFX "001122334455";
+static char g_mdns_host[] = "\0" PFX "001122334455\x05local\0";
+static struct emdns_responder g_mdns_responder = {
+	NULL, 0,
+	(emdns_ip6_t*) &g_my_ip, 1,
+	g_mdns_services, 1,
+	g_mdns_label, sizeof(g_mdns_label)-1,
+	(uint8_t*) g_mdns_host, sizeof(g_mdns_host)-1,
+};
+
+static void send_mdns_broadcast() {
+	struct eth_frame *f = get_next_frame();
+	if (f) {
+		copy_mac(&f->eth_dst, &g_mdns_mac);
+		copy_ip6(&f->ip6_dst, &g_mdns);
+		f->ip6_next_header = IP6_UDP;
+
+		struct udp_frame *udp = (struct udp_frame*) f->payload;
+		write_big_16(udp->src_port, MDNS_PORT);
+		write_big_16(udp->dst_port, MDNS_PORT);
+		int mdnssz = emdns_build_response(&g_mdns_responder, udp->data, HW_ETH_MAX_LEN - ETH_FRAME_SIZE - UDP_FRAME_SIZE);
+		int udpsz = mdnssz + UDP_FRAME_SIZE;
+		write_big_16(udp->length, udpsz);
+		write_big_16(udp->checksum, 0);
+		write_big_16(udp->checksum, ones_checksum(f, udpsz));
+
+		send_frame(udpsz);
+		g_last_mdns = tick_count();
+	}
+}
+
+static void init_mdns() {
+	char *label = g_mdns_label + sizeof(PFX) - 1;
+	char *host = g_mdns_host + 1 + sizeof(PFX) - 1;
+	for (int i = 0; i < 6; i++) {
+		host[2*i] = label[2*i] = hex[g_my_mac.u[i] >> 4];
+		host[2*i+1] = label[2*i+1] = hex[g_my_mac.u[i] & 15];
+	}
+	g_mdns_host[0] = sizeof(PFX)-1 + 12;
+
+	send_mdns_broadcast();
+}
+
+static int g_announce_left;
+
 static void check_link() {
 	unsigned link = HW_MDIO->LINK;
 	debugf("\tcheck link %x vs %x\n", link, g_link);
@@ -445,6 +568,8 @@ static void check_link() {
 		g_link = link;
 
 		send_neighbor_advertisement();
+		init_mdns();
+		g_announce_left = 2;
 	} else {
 		debugf("\tmdio link down\n");
 		disable_interrupt(HW_INT_ETH_RX);
@@ -510,18 +635,21 @@ static void enable_eth() {
 
 	// first byte on the wire is in hi bits 0-7
 	// so need to swap to native byte order
-	g_my_mac = swap_48(HW_CONTROL->mac[0].hi, HW_CONTROL->mac[0].lo);
+	g_my_mac64 = swap_48(HW_CONTROL->mac[0].hi, HW_CONTROL->mac[0].lo);
+	write_big_48(g_my_mac.u, g_my_mac64);
 
 	// now generate the interface ID from the mac
 	// complement the U/L bit position
-	uint64_t mac_ul = g_my_mac ^ ETH_UL_BIT;
+	uint64_t mac_ul = g_my_mac64 ^ ETH_UL_BIT;
 	// now split the bottom and top haves and put 0xFFFE in the middle
 	uint64_t iid = ((mac_ul & UINT64_C(0xFFFFFF000000)) << 16) 
 				 | UINT64_C(0xFFFE000000)
 				 | ((mac_ul & UINT64_C(0xFFFFFF)));
 
-	g_my_ip.low = iid;
-	g_my_ip.high = LINK_LOCAL_SUBNET;
+	uint128_t ip;
+	ip.low = iid;
+	ip.high = LINK_LOCAL_SUBNET;
+	write_big_128(g_my_ip.u, ip);
 
 	// main CPSW clock is 125 MHz. this gives an MDIO frequency of 2.5 MHz
 	// which matches what the ROM does and the max frequency of the PHY
@@ -561,19 +689,20 @@ static void enable_eth() {
 	g_link = 0;
 }
 
+#ifdef DEBUG_LOG_ENABLED
 static void debug_putc(void* udata, char ch) {
 	while ((HW_UART_4_OP->LSR & HW_UART_LSR_TX_EMPTY) != HW_UART_LSR_TX_EMPTY) {}
 	HW_UART_4_OP->RHR_THR = ch;
 }
+#endif
 
-static const char hex[] = "0123456789abcdef";
 
 #define ADDR_LEN (8*5)
-static char *print_addr(char *buf, const uint8_t *v) {
+static char *print_addr(char *buf, const ip6_addr_t *v) {
 	char *p = buf;
 	int section = -1; // -1,0,1 for before,in,after the compressed zero section
 	for (int i = 0; i < 16; i += 2) {
-		uint16_t u = read_big_16(v+i);
+		uint16_t u = read_big_16(v->u+i);
 		if (!u) {
 			if (section == 0) {
 				// we are in an already started zeroes section
@@ -615,10 +744,10 @@ static char *print_addr(char *buf, const uint8_t *v) {
 }
 
 #define MAC_LEN (6*3)
-static char *print_mac(char *buf, const uint8_t *v) {
+static char *print_mac(char *buf, const mac_addr_t *v) {
 	for (int i = 0; i < 6; i++) {
-		*(buf++) = hex[v[i] >> 4];
-		*(buf++) = hex[v[i] & 15];
+		*(buf++) = hex[v->u[i] >> 4];
+		*(buf++) = hex[v->u[i] & 15];
 		*(buf++) = ':';
 	}
 	buf[-1] = '\0';
@@ -635,11 +764,54 @@ static void process_frame(struct eth_frame *f, int sz) {
 	char ip6_src[ADDR_LEN], ip6_dst[ADDR_LEN];
 	char mac_src[MAC_LEN], mac_dst[MAC_LEN];
 
-	debugf("\thave frame from %s/%s to %s/%s\n", 
-		print_mac(mac_src, f->eth_src),
-		print_addr(ip6_src, f->ip6_src),
-		print_mac(mac_dst, f->eth_dst),
-		print_addr(ip6_dst, f->ip6_dst));
+	debugf("\thave frame from %s/%s to %s/%s size %d\n", 
+		print_mac(mac_src, &f->eth_src),
+		print_addr(ip6_src, &f->ip6_src),
+		print_mac(mac_dst, &f->eth_dst),
+		print_addr(ip6_dst, &f->ip6_dst),
+		sz);
+
+	switch (f->ip6_next_header) {
+	case IP6_UDP:
+		if (sz >= sizeof(struct udp_frame)) {
+			struct udp_frame *udp = (struct udp_frame*) f->payload;
+			int msgsz = sz - UDP_FRAME_SIZE;
+			int src_port = read_big_16(udp->src_port);
+			int dst_port = read_big_16(udp->dst_port);
+
+			debugf("\thave udp from %d to %d\n", src_port, dst_port);
+
+			if (src_port == MDNS_PORT
+			 && dst_port == MDNS_PORT
+			 && !memcmp(&f->ip6_dst, &g_mdns, sizeof(f->ip6_dst))
+			 && (tick_count() - g_last_mdns > MS_TO_TICKS(1000))
+			 && emdns_should_respond(&g_mdns_responder, udp->data, msgsz) == EMDNS_RESPOND) {
+				 send_mdns_broadcast();
+			}
+
+		}
+		break;
+	case IP6_ICMP:
+		if (sz >= sizeof(struct icmp6_frame)) {
+			struct icmp6_frame *icmp = (struct icmp6_frame*) f->payload;
+			unsigned type = read_big_16(icmp->type_code);
+			debugf("\thave icmp type %x\n", type);
+			switch (type) {
+			case ICMP6_ECHO_REQUEST:
+				send_echo_reply(f, read_big_32(icmp->body), icmp+1, sz - sizeof(*icmp));
+				break;
+			case ICMP6_NEIGHBOR_SOLICITATION:
+				if (sz >= sizeof(struct icmp6_neighbor)) {
+					struct icmp6_neighbor *n = (struct icmp6_neighbor*) f->payload;
+					if (!memcmp(&n->addr, &g_my_ip, sizeof(n->addr))) {
+						send_neighbor_advertisement();
+					}
+				}
+				break;
+			}
+		}
+		break;
+	}
 }
 
 void interrupt() {
@@ -648,7 +820,11 @@ void interrupt() {
 	switch (hwint) {
 	case HW_INT_TINT1_1MS: {
 			debugf("\ttimer\n");
-			send_neighbor_advertisement();
+			if (g_link && g_announce_left) {
+				send_neighbor_advertisement();
+				send_mdns_broadcast();
+				g_announce_left--;
+			}
 			// reset the timer interrupt
 			HW_DMTIMER_1MS->TISR |= HW_1MS_INT_COMPARE;
 			set_sleep(tick_count() + MS_TO_TICKS(1000));
@@ -686,7 +862,7 @@ void interrupt() {
 
 			for (;;) {
 				unsigned flags = d->flags_pkt_len;
-				printf("\thave rx packet flags %x\n", flags);
+				debugf("\thave rx packet flags %x\n", flags);
 				if (flags & HW_ETH_OWNED_BY_PORT) {
 					// we've processed all that are ready
 					break;
@@ -735,7 +911,7 @@ void interrupt() {
 void setup() {
 	enable_interconnects();
 
-#ifdef DEBUG_LOG_SUPPORT
+#ifdef DEBUG_LOG_ENABLED
 	enable_uart4();
 	init_printf(NULL, &debug_putc);
 #endif
