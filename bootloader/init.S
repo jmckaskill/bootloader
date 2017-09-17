@@ -8,17 +8,8 @@ _start:
     // disable interrupts
     cpsid if
 
-    // setup stack
-    ldr r0, stack_top
-    mov sp, r0
-
+    ldr sp, stack_top
     bl setup
-
-    // setup irq stack
-    mov r0, sp
-    msr cpsr_c, #0x12
-    mov sp, r0
-    msr cpsr_c, #0x13
 
     // set the exception base address
     ldr r0, =exception_table
@@ -33,7 +24,8 @@ loop:
     b loop
 
 irq_entry:
-    stmfd sp!,{r0-r4,r12,lr}
+    ldr sp, stack_top
+    push {r0-r4,r12,lr}
     bl interrupt
     // reset the interrupt controller
     mov r0, #1
@@ -41,12 +33,12 @@ irq_entry:
     str r0, [r1]
     // need to synchronize after resetting the peripherals
     // this way it's processed before the arm core returns from the interrupt
-    dsb
-    ldmfd sp!,{r0-r4,r12,lr}
+    dmb
+    pop {r0-r4,r12,lr}
     subs PC, lr, #4
 
 stack_top:
-    .word 0x402FFFFC;
+    .word 0x40300000;
 hw_intc_control:
     .word 0x48200048;
 

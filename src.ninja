@@ -18,7 +18,7 @@ build bin/$TGT/bootloader.exe: rawlink bootloader/AM335x.lds $
  $OBJ/main.o $
  $OBJ/tinyprintf.o $
 
-build bin/$TGT/bootloader.bin: objcopy bin/$TGT/bootloader.exe
+build bin/$TGT/bootloader.bin: objcopy ../ti/bootloader/Debug/bootloader.out
 build bin/$TGT/bootloader.MLO: run bin/$HOST/tiimage.exe bin/$TGT/bootloader.bin
 
 build $OBJ/deploy-data.o: ccdll bootp-deploy-win32/deploy-data.c

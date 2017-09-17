@@ -611,8 +611,11 @@ static_assert(sizeof(struct hw_cpsw_ale) == 0x58, "padding");
 #define HW_CPDMA_HOST_PEND (1 << 1)
 #define HW_CPDMA_STAT_PEND (1 << 0)
 
+#define HW_CPDMA_TEARDOWN_0 0
+
 #define HW_CPDMA_EOI_RX 1
 #define HW_CPDMA_EOI_TX 2
+#define HW_CPDMA_EOI_MISC 3
 
 struct hw_cpsw_cpdma {
     volatile unsigned TX_IDVER; // 0x0
@@ -682,6 +685,8 @@ static_assert(sizeof(struct hw_cpsw_cpdma) == 0x100, "padding");
 #define HW_ETH_HAS_VLAN (1 << 19)
 
 #define HW_ETH_MAX_LEN (1500+18)
+
+#define HW_CPDMA_TEARDOWN_COMPLETE ((struct hw_buffer_descriptor*) 0xFFFFFFFC)
 
 struct hw_buffer_descriptor {
     struct hw_buffer_descriptor *next;
@@ -844,8 +849,6 @@ static_assert(sizeof(struct hw_cpsw_ss) == 0x34, "padding");
 #define HW_WR_MISC_INT_HOST (1 << 2)
 #define HW_WR_MISC_INT_MDIO_LINK (1 << 1)
 #define HW_WR_MISC_INT_MDIO_USER (1 << 0)
-
-#define HW_WR_MISC_INT_DONE 3
 
 #define HW_WR_INT_PACE_RX_0 (1 << 16)
 

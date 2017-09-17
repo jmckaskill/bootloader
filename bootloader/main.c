@@ -153,8 +153,12 @@ static void set_sleep(unsigned target) {
 	HW_DMTIMER_1MS->TMAR = target;
 }
 
-static void enable_interrupt(enum hw_interrupt idx) {
+static inline void enable_interrupt(enum hw_interrupt idx) {
 	HW_INTC->BANK[idx >> 5].MIR_CLEAR |= 1 << ((unsigned)idx & 0x1F);
+}
+
+static inline void disable_interrupt(enum hw_interrupt idx) {
+	HW_INTC->BANK[idx >> 5].MIR_SET |= 1 << ((unsigned)idx & 0x1F);
 }
 
 static void enable_dmtimer_1ms() {
@@ -257,7 +261,7 @@ struct icmp6_advertisement {
 };
 
 struct eth_frame {
-	uint16_t payloadsz; // padding for the driver, but used by the application
+	uint8_t padding[2];
 	uint8_t eth_dst[6];
 	uint8_t eth_src[6];
 	uint8_t eth_type[2];
@@ -293,8 +297,13 @@ static int g_tx_free; // next frame if we want to send
 
 static uint64_t g_my_mac;
 static uint128_t g_my_ip;
+static unsigned g_link;
 
 static struct eth_frame *get_next_frame() {
+	if (!g_link) {
+		return NULL;
+	}
+
 	struct eth_frame *f = &HW_ETH_FRAMES[g_tx_free];
 	volatile struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[g_tx_free];
 	if (d == g_tx_next) {
@@ -311,15 +320,16 @@ static struct eth_frame *get_next_frame() {
 }
 
 
-static void send_frame(struct eth_frame *f) {
-	// fill out the fixed fields
-	write_big_16(f->eth_type, ETH_IP6);
-	write_big_16(f->ip6_length, f->payloadsz);
-
-	int idx = f - HW_ETH_FRAMES;
+static void send_frame(int payloadsz) {
+	int idx = g_tx_free;
+	struct eth_frame *f = &HW_ETH_FRAMES[idx];
 	struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[idx];
 
-	int framesz = f->payloadsz + offsetof(struct eth_frame, payload) - offsetof(struct eth_frame, eth_dst);
+	// fill out the fixed fields
+	write_big_16(f->eth_type, ETH_IP6);
+	write_big_16(f->ip6_length, payloadsz);
+
+	int framesz = payloadsz + offsetof(struct eth_frame, payload) - offsetof(struct eth_frame, eth_dst);
 	d->next = NULL;
 	d->buffer = f;
 	d->offset_buf_len = ETH_OFFSET | framesz;
@@ -338,27 +348,26 @@ static void send_frame(struct eth_frame *f) {
 	g_tx_free = NEXT_TX_FRAME(idx);
 }
 
-static uint16_t ones_checksum(struct eth_frame *f) {
+static uint16_t ones_checksum(struct eth_frame *f, int payloadsz) {
 	uint32_t sum = 0;
-	int sz = f->payloadsz;
 
 	// add the psuedo headers
 	uint8_t *p = f->ip6_src;
 	for (int i = 0; i < 16; i++) {
 		sum += read_big_16(p + i * 2);
 	}
-	sum += sz;
+	sum += payloadsz;
 	sum += f->ip6_next_header;
 
 	// add the upper layer header
 	p = f->payload;
-	for (int i = 0; i < sz / 2; i++) {
+	for (int i = 0; i < payloadsz / 2; i++) {
 		sum += read_big_16(p + i * 2);
 	}
 
 	// zero fill the last byte if unaligned
-	if (sz & 1) {
-		sum += p[sz-1] << 8;
+	if (payloadsz & 1) {
+		sum += p[payloadsz-1] << 8;
 	}
 
 	uint16_t sum16 = ((uint16_t) sum) + ((uint16_t) (sum >> 16));
@@ -367,29 +376,30 @@ static uint16_t ones_checksum(struct eth_frame *f) {
 
 static void send_neighbor_advertisement() {
 	struct eth_frame *f = get_next_frame();
+	if (f) {
+		write_big_48(f->eth_dst, ETH_MCAST | (ALL_NODES.low & ETH_MCAST_MASK));
+		write_big_128(f->ip6_dst, ALL_NODES);
+		f->ip6_next_header = IP6_ICMP;
 
-	write_big_48(f->eth_dst, ETH_MCAST | (ALL_NODES.low & ETH_MCAST_MASK));
-	write_big_128(f->ip6_dst, ALL_NODES);
-	f->ip6_next_header = IP6_ICMP;
+		struct icmp6_advertisement *a = (struct icmp6_advertisement*) f->payload;
+		a->type = ICMP6_NEIGHBOR_ADVERTISEMENT;
+		a->code = 0;
+		write_big_16(a->checksum, 0);
+		write_big_32(a->flags, ADVERTISE_OVERRIDE);
+		write_big_128(a->addr, g_my_ip);
+		
+		uint8_t *u = (uint8_t*) (a + 1);
+		u[0] = ICMP6_OPTION_MAC;
+		u[1] = 6; // length
+		write_big_48(u+2, g_my_mac);
+		u += 8;
 
-	struct icmp6_advertisement *a = (struct icmp6_advertisement*) f->payload;
-	a->type = ICMP6_NEIGHBOR_ADVERTISEMENT;
-	a->code = 0;
-	write_big_16(a->checksum, 0);
-	write_big_32(a->flags, ADVERTISE_OVERRIDE);
-	write_big_128(a->addr, g_my_ip);
-	
-	uint8_t *u = (uint8_t*) (a + 1);
-	u[0] = ICMP6_OPTION_MAC;
-	u[1] = 6; // length
-	write_big_48(u+2, g_my_mac);
-	u += 6;
+		int payloadsz = u - f->payload;
+		write_big_16(a->checksum, ones_checksum(f, payloadsz));
 
-	f->payloadsz = u - f->payload;
-	write_big_16(a->checksum, ones_checksum(f));
-
-	debugf("%u send\n", tick_ms());
-	send_frame(f);
+		debugf("\tsend\n");
+		send_frame(payloadsz);
+	}
 }
 
 static void clear_rx_descriptor(struct hw_buffer_descriptor *d) {
@@ -400,9 +410,67 @@ static void clear_rx_descriptor(struct hw_buffer_descriptor *d) {
 
 static uint64_t swap_48(unsigned hi32, unsigned lo16) {
 	uint8_t v[6];
-	write_big_32(v, hi32);
-	write_big_16(v+4, lo16);
-	return read_little_48(v);
+	write_little_32(v, hi32);
+	write_little_16(v+4, lo16);
+	return read_big_48(v);
+}
+
+static void reset_rx_queue() {
+	for (int i = RX_FRAME_FIRST; i < RX_FRAME_END; i++) {
+		struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[i];
+		struct eth_frame *f = &HW_ETH_FRAMES[i];
+		d->buffer = f;
+		clear_rx_descriptor(d);
+		
+		if (i > RX_FRAME_FIRST) {
+			HW_BUFFER_DESCRIPTORS[i-1].next = d;
+		}
+	}
+	g_rx_next = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
+	g_rx_last = &HW_BUFFER_DESCRIPTORS[RX_FRAME_END-1];
+	
+	HW_CPSW_STATERAM->RX_HDP[0] = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
+}
+
+static void check_link() {
+	unsigned link = HW_MDIO->LINK;
+	debugf("\tcheck link %x vs %x\n", link, g_link);
+
+	if (link == g_link) {
+		// no change
+	} else if (link) {
+		debugf("\tmdio link up\n");
+		enable_interrupt(HW_INT_ETH_RX);
+		enable_interrupt(HW_INT_ETH_TX);
+		g_link = link;
+
+		send_neighbor_advertisement();
+	} else {
+		debugf("\tmdio link down\n");
+		disable_interrupt(HW_INT_ETH_RX);
+		disable_interrupt(HW_INT_ETH_TX);
+
+		// clear the tx channel
+		struct hw_buffer_descriptor *d = g_tx_next;
+		if (d) {
+			HW_CPSW_CPDMA->TX_TEARDOWN = HW_CPDMA_TEARDOWN_0;
+			// wait for the mac to acknowledge the teardown
+			while (HW_CPSW_STATERAM->TX_CP[0] != HW_CPDMA_TEARDOWN_COMPLETE) {}
+			// write the teardown back to TX_CP to stop the interrupt
+			HW_CPSW_STATERAM->TX_CP[0] = HW_CPDMA_TEARDOWN_COMPLETE;
+			g_tx_next = NULL;
+			g_tx_last = NULL;
+			g_tx_free = TX_FRAME_FIRST;
+		}
+
+		// reset the rx channel
+		HW_CPSW_CPDMA->RX_TEARDOWN = HW_CPDMA_TEARDOWN_0;
+		while (HW_CPSW_STATERAM->RX_CP[0] != HW_CPDMA_TEARDOWN_COMPLETE) {}
+		HW_CPSW_STATERAM->RX_CP[0] = HW_CPDMA_TEARDOWN_COMPLETE;
+		reset_rx_queue();
+
+		g_link = link;
+	}
 }
 
 static void enable_eth() {
@@ -446,7 +514,7 @@ static void enable_eth() {
 
 	// now generate the interface ID from the mac
 	// complement the U/L bit position
-	uint64_t mac_ul = (g_my_mac & ~ETH_UL_BIT) | (~g_my_mac & ETH_UL_BIT);
+	uint64_t mac_ul = g_my_mac ^ ETH_UL_BIT;
 	// now split the bottom and top haves and put 0xFFFE in the middle
 	uint64_t iid = ((mac_ul & UINT64_C(0xFFFFFF000000)) << 16) 
 				 | UINT64_C(0xFFFE000000)
@@ -460,55 +528,37 @@ static void enable_eth() {
 	// this also puts the other fields back to default values
 	HW_MDIO->CONTROL = (HW_MDIO->CONTROL &~ HW_MDIO_CLKDIV_MASK) | HW_MDIO_CLKDIV(49);
 	HW_MDIO->CONTROL |= HW_MDIO_CONTROL_EN;
+	HW_MDIO->USERPHYSEL0 = HW_MDIO_USERPHYSEL_ADDR(0) | HW_MDIO_LINK_INT_EN;
+	HW_CPSW_WR->PORT_INT_ENABLE[0].MISC = HW_WR_MISC_INT_MDIO_LINK;
+	enable_interrupt(HW_INT_ETH_MISC);
 	
 	// setup the phy
 	write_mdio(0, MDIO_BASIC_CONTROL, MDIO_CTL_SOFT_RESET);
 	write_mdio(0, MDIO_BASIC_CONTROL, MDIO_CTL_AUTO_NEGOTIATION | MDIO_CTL_RESTART_AUTO);
 
-	// setup rx frames
-	for (int i = RX_FRAME_FIRST; i < RX_FRAME_END; i++) {
-		struct hw_buffer_descriptor *d = &HW_BUFFER_DESCRIPTORS[i];
-		struct eth_frame *f = &HW_ETH_FRAMES[i];
-		d->buffer = f;
-		clear_rx_descriptor(d);
-		
-		if (i > RX_FRAME_FIRST) {
-			HW_BUFFER_DESCRIPTORS[i-1].next = d;
-		}
-	}
-	g_rx_next = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
-	g_rx_last = &HW_BUFFER_DESCRIPTORS[RX_FRAME_END-1];
-
-	g_tx_next = NULL;
-	g_tx_free = TX_FRAME_FIRST;
-
-	HW_CPSW_CPDMA->RX_BUFFER_OFFSET = offsetof(struct eth_frame, eth_dst);
-	HW_CPSW_STATERAM->RX_HDP[0] = &HW_BUFFER_DESCRIPTORS[RX_FRAME_FIRST];
-
-	// enable rx interrupt
+	// setup rx
+	HW_CPSW_CPDMA->RX_CONTROL = HW_CPDMA_RX_EN;
 	HW_CPSW_WR->PORT_INT_ENABLE[0].RX = 1;
 	HW_CPSW_CPDMA->RX_INTMASK_SET = HW_CPDMA_RX_PEND_0;
-	enable_interrupt(HW_INT_ETH_RX);
-
-	// enable tx interrupt
+	HW_CPSW_CPDMA->RX_BUFFER_OFFSET = offsetof(struct eth_frame, eth_dst);
+	reset_rx_queue();
+	
+	// setup tx
+	g_tx_next = NULL;
+	g_tx_last = NULL;
+	g_tx_free = TX_FRAME_FIRST;
+	HW_CPSW_CPDMA->TX_CONTROL = HW_CPDMA_TX_EN;
 	HW_CPSW_WR->PORT_INT_ENABLE[0].TX = 1;
 	HW_CPSW_CPDMA->TX_INTMASK_SET = HW_CPDMA_TX_PEND_0;
-	enable_interrupt(HW_INT_ETH_TX);
-
-	// enable the port
-	HW_CPSW_CPDMA->TX_CONTROL = HW_CPDMA_TX_EN;
-	HW_CPSW_CPDMA->RX_CONTROL = HW_CPDMA_RX_EN;
-}
-
-static void wait_for_link() {
-	int sts;
-	do {
-		sts = read_mdio(0, MDIO_BASIC_STATUS);
-	} while (!(sts & MDIO_STS_LINK_UP));
-
-	debugf("mdio link changed 0x%x %x %x\n", sts, HW_MDIO->LINK, HW_MDIO->ALIVE);
+	
+	// enable the sliver
 	HW_CPSW_SL_1->MACCONTROL = HW_SL_MACCONTROL_MII_EN | HW_SL_MACCONTROL_FULL_DUPLEX;
 	while (!(HW_CPSW_SL_1->MACCONTROL & HW_SL_MACCONTROL_MII_EN)) {}
+	
+	// we don't enable the interrupts until the link comes online
+	// that way we always process the link change before any rx messages
+	// that come really early
+	g_link = 0;
 }
 
 static void debug_putc(void* udata, char ch) {
@@ -563,8 +613,7 @@ static void process_frame(struct eth_frame *f, int sz) {
 	char ip6_src[ADDR_LEN], ip6_dst[ADDR_LEN];
 	char mac_src[MAC_LEN], mac_dst[MAC_LEN];
 
-	debugf("%u have frame from %s/%s to %s/%s\n", 
-		tick_ms(),
+	debugf("\thave frame from %s/%s to %s/%s\n", 
 		print_mac(mac_src, f->eth_src),
 		print_addr(ip6_src, f->ip6_src),
 		print_mac(mac_dst, f->eth_dst),
@@ -572,10 +621,11 @@ static void process_frame(struct eth_frame *f, int sz) {
 }
 
 void interrupt() {
-	switch (HW_INTC->SIR_IRQ & HW_INTC_ACTIVE_IRQ_MASK) {
+	unsigned hwint = HW_INTC->SIR_IRQ & HW_INTC_ACTIVE_IRQ_MASK;
+	debugf("%u interrupt %u\n", tick_ms(), hwint);
+	switch (hwint) {
 	case HW_INT_TINT1_1MS: {
-			int sts = read_mdio(0, MDIO_BASIC_STATUS);
-			debugf("%u timer %x\n", tick_ms(), sts);
+			debugf("\ttimer\n");
 			send_neighbor_advertisement();
 			// reset the timer interrupt
 			HW_DMTIMER_1MS->TISR |= HW_1MS_INT_COMPARE;
@@ -583,7 +633,7 @@ void interrupt() {
 		}
 		break;
 	case HW_INT_ETH_TX: {
-			debugf("%u send complete\n", tick_ms());
+			debugf("\tsend complete\n");
 			// update g_tx_next to wherever the mac got up to
 			struct hw_buffer_descriptor *d = g_tx_next;
 			struct hw_buffer_descriptor *last_processed = d;
@@ -614,6 +664,7 @@ void interrupt() {
 
 			for (;;) {
 				unsigned flags = d->flags_pkt_len;
+				printf("\thave rx packet flags %x\n", flags);
 				if (flags & HW_ETH_OWNED_BY_PORT) {
 					// we've processed all that are ready
 					break;
@@ -644,7 +695,16 @@ void interrupt() {
 
 			g_rx_last = last;
 			g_rx_next = d;
+			HW_CPSW_STATERAM->RX_CP[0] = last;
 			HW_CPSW_CPDMA->CPDMA_EOI_VECTOR = HW_CPDMA_EOI_RX;
+		}
+		break;
+	case HW_INT_ETH_MISC: {
+			if (HW_CPSW_WR->PORT_INT_STATUS[0].MISC == HW_WR_MISC_INT_MDIO_LINK) {
+				check_link();
+				HW_MDIO->LINKINTRAW = 1;
+			}
+			HW_CPSW_CPDMA->CPDMA_EOI_VECTOR = HW_CPDMA_EOI_MISC;
 		}
 		break;
 	}
@@ -662,6 +722,6 @@ void setup() {
 	//set_switch_to_ground();
 	enable_dmtimer_1ms();
 	enable_eth();
-	wait_for_link();
+	check_link();
 	debugf("setup done\n");
 }
