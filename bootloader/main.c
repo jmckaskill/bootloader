@@ -390,7 +390,7 @@ static void send_neighbor_advertisement() {
 		
 		uint8_t *u = (uint8_t*) (a + 1);
 		u[0] = ICMP6_OPTION_MAC;
-		u[1] = 6; // length
+		u[1] = 1; // length including header in 8 byte units
 		write_big_48(u+2, g_my_mac);
 		u += 8;
 
@@ -571,24 +571,46 @@ static const char hex[] = "0123456789abcdef";
 #define ADDR_LEN (8*5)
 static char *print_addr(char *buf, const uint8_t *v) {
 	char *p = buf;
+	int section = -1; // -1,0,1 for before,in,after the compressed zero section
 	for (int i = 0; i < 16; i += 2) {
-		int acc = v[i] >> 4;
-		if (acc) {
-			*(p++) = hex[v[i] >> 4];
+		uint16_t u = read_big_16(v+i);
+		if (!u) {
+			if (section == 0) {
+				// we are in an already started zeroes section
+			} else if (section < 0) {
+				// we can start the zeroes section
+				if (i == 0) {
+					*(p++) = ':';
+				}
+				*(p++) = ':';
+				section = 0;
+			} else {
+				// we've already completed the zeroes section
+				*(p++) = '0';
+				*(p++) = ':';
+			}
+		} else {
+			if (section == 0) {
+				section = 1;
+			}
+			if (u < 0x10) {
+				goto print_1;
+			} else if (u < 0x100) {
+				goto print_2;
+			} else if (u < 0x1000) {
+				goto print_3;
+			}
+			*(p++) = hex[u >> 12];
+		print_3:
+			*(p++) = hex[(u >> 8) & 15];
+		print_2:
+			*(p++) = hex[(u >> 4) & 15];
+		print_1:
+			*(p++) = hex[u & 15];
+			*(p++) = ':';
 		}
-		acc += v[i] & 15;
-		if (acc) {
-			*(p++) = hex[v[i] & 15];
-		}
-		acc += v[i+1] >> 4;
-		if (acc) {
-			*(p++) = hex[v[i+1] >> 4];
-		}
-		acc += v[i+1] & 15;
-		*(p++) = hex[v[i+1] & 15];
-		*(p++) = ':';
 	}
-	p[-1] = '\0';
+	p[section ? -1 : 0] = '\0';
 	return buf;
 }
 
