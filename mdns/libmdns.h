@@ -38,5 +38,3 @@ struct emdns_responder {
 
 int emdns_should_respond(struct emdns_responder *r, const void *msg, int sz);
 int emdns_build_response(struct emdns_responder *r, void *buf, int sz);
-
-extern void copy_unaligned(void *dst, const void *src, size_t sz);

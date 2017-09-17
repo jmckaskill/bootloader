@@ -1,3 +1,5 @@
+#pragma once
+
 #include <stdint.h>
 #include <assert.h>
 
@@ -972,6 +974,14 @@ struct hw_intc {
 
 static_assert(sizeof(struct hw_intc) == 0x300, "padding");
 #define HW_INTC ((struct hw_intc*)0x48200000)
+
+static inline void hw_enable_interrupt(enum hw_interrupt idx) {
+	HW_INTC->BANK[idx >> 5].MIR_CLEAR |= 1 << ((unsigned)idx & 0x1F);
+}
+
+static inline void hw_disable_interrupt(enum hw_interrupt idx) {
+	HW_INTC->BANK[idx >> 5].MIR_SET |= 1 << ((unsigned)idx & 0x1F);
+}
 
 struct hw_gpio {
     volatile unsigned REVISION; // 0x0

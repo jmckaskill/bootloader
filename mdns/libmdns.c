@@ -1,7 +1,7 @@
-#include "mdns.h"
+#include "libmdns.h"
+#include "copy.h"
+#include "endian.h"
 #include <stdbool.h>
-#include <stddef.h>
-#include <string.h>
 
 #define MIN_MESSAGE_SIZE 512
 
@@ -44,36 +44,6 @@
 #define MAX_HOST_SIZE 255
 
 #define assert(x) do{}while(0)
-
-static inline void put_big_16(uint8_t *u, uint16_t v) {
-	u[0] = (uint8_t) (v >> 8);
-	u[1] = (uint8_t) v;
-}
-
-static inline void put_big_32(uint8_t *u, uint32_t v) {
-	u[0] = (uint8_t) (v >> 24);
-	u[1] = (uint8_t) (v >> 16);
-	u[2] = (uint8_t) (v >> 8);
-	u[3] = (uint8_t) (v);
-}
-
-static inline void put_little_32(uint8_t *p, uint32_t v) {
-	p[0] = (uint8_t) (v);
-	p[1] = (uint8_t) (v >> 8);
-	p[2] = (uint8_t) (v >> 16);
-	p[3] = (uint8_t) (v >> 24);
-}
-
-static inline uint16_t big_16(const uint8_t *u) {
-	return ((uint16_t) u[0] << 8) | ((uint16_t) u[1]);
-}
-
-static inline uint32_t big_32(const uint8_t *u) {
-	return ((uint32_t) u[0] << 24)
-		|  ((uint32_t) u[1] << 16)
-		|  ((uint32_t) u[2] << 8)
-		|  ((uint32_t) u[3]);
-}
 
 static uint8_t lower(uint8_t ch) {
     if ('A' <= ch && ch <= 'Z') {
@@ -320,17 +290,17 @@ static int encode_address(const uint8_t *host, int hostsz, bool is_ip6, const vo
 
 	uint8_t *p = buf + *off;
 	if (*hostoff) {
-		put_big_16(p, LABEL_PTR16 | *hostoff);
+		write_big_16(p, LABEL_PTR16 | *hostoff);
 		p += 2;
 	} else {
 		*hostoff = *off;
 		copy_unaligned(p, host, hostsz);
 		p += hostsz;
 	}
-	put_big_16(p, is_ip6 ? RTYPE_AAAA : RTYPE_A);
-	put_big_16(p + 2, RCLASS_IN_FLUSH);
-	put_big_32(p + 4, TTL_DEFAULT);
-	put_big_16(p + 8, datasz);
+	write_big_16(p, is_ip6 ? RTYPE_AAAA : RTYPE_A);
+	write_big_16(p + 2, RCLASS_IN_FLUSH);
+	write_big_32(p + 4, TTL_DEFAULT);
+	write_big_16(p + 8, datasz);
 	p += 10;
 	copy_unaligned(p, addr, datasz);
 	p += datasz;
@@ -357,15 +327,15 @@ static int encode_nsec(int ip4, int ip6, uint8_t *buf, int sz, int *off, int hos
 	}
 
 	uint8_t *p = buf + *off;
-	put_big_16(p, LABEL_PTR16 | hostoff);
-	put_big_16(p + 2, RTYPE_NSEC);
-	put_big_16(p + 4, RCLASS_IN_FLUSH);
-	put_big_32(p + 6, TTL_DEFAULT);
-	put_big_16(p + 10, datasz);
-	put_big_16(p + 12, LABEL_PTR16 | hostoff);
-	put_big_16(p + 14, bitmapsz);
+	write_big_16(p, LABEL_PTR16 | hostoff);
+	write_big_16(p + 2, RTYPE_NSEC);
+	write_big_16(p + 4, RCLASS_IN_FLUSH);
+	write_big_32(p + 6, TTL_DEFAULT);
+	write_big_16(p + 10, datasz);
+	write_big_16(p + 12, LABEL_PTR16 | hostoff);
+	write_big_16(p + 14, bitmapsz);
     p += 16;
-    put_little_32(p, bitmap);
+    write_little_32(p, bitmap);
     p += 4;
 
 	*off += reqsz;
@@ -395,16 +365,16 @@ static int encode_service(const char *label, size_t labelsz, const uint8_t *svc,
 	p += labelsz;
 	copy_unaligned(p, svc, svcsz);
 	p += svcsz;
-	put_big_16(p, RTYPE_SRV);
-	put_big_16(p + 2, RCLASS_IN_FLUSH);
-	put_big_32(p + 4, TTL_DEFAULT);
-	put_big_16(p + 8, (uint16_t) srvdatasz);
-	put_big_16(p + 10, PRIORITY_DEFAULT);
-	put_big_16(p + 12, WEIGHT_DEFAULT);
-	put_big_16(p + 14, port);
+	write_big_16(p, RTYPE_SRV);
+	write_big_16(p + 2, RCLASS_IN_FLUSH);
+	write_big_32(p + 4, TTL_DEFAULT);
+	write_big_16(p + 8, (uint16_t) srvdatasz);
+	write_big_16(p + 10, PRIORITY_DEFAULT);
+	write_big_16(p + 12, WEIGHT_DEFAULT);
+	write_big_16(p + 14, port);
 	p += 16;
 	if (*hostoff) {
-        put_big_16(p, LABEL_PTR16 | *hostoff);
+        write_big_16(p, LABEL_PTR16 | *hostoff);
         p += 2;
 	} else {
 		*hostoff = (int) (p - u);
@@ -413,22 +383,22 @@ static int encode_service(const char *label, size_t labelsz, const uint8_t *svc,
 	}
 
 	// TXT
-	put_big_16(p, LABEL_PTR16 | nameoff);
-	put_big_16(p + 2, RTYPE_TXT);
-	put_big_16(p + 4, RCLASS_IN_FLUSH);
-	put_big_32(p + 6, TTL_DEFAULT);
-	put_big_16(p + 10, (uint16_t) txtsz);
+	write_big_16(p, LABEL_PTR16 | nameoff);
+	write_big_16(p + 2, RTYPE_TXT);
+	write_big_16(p + 4, RCLASS_IN_FLUSH);
+	write_big_32(p + 6, TTL_DEFAULT);
+	write_big_16(p + 10, (uint16_t) txtsz);
     p += 12;
 	copy_unaligned(p, txt, txtsz);
 	p += txtsz;
 
 	// PTR
-	put_big_16(p, LABEL_PTR16 | svcoff);
-	put_big_16(p + 2, RTYPE_PTR);
-	put_big_16(p + 4, RCLASS_IN);
-	put_big_32(p + 6, TTL_DEFAULT);
-	put_big_16(p + 10, 2); /*datasz*/
-	put_big_16(p + 12, LABEL_PTR16 | nameoff);
+	write_big_16(p, LABEL_PTR16 | svcoff);
+	write_big_16(p + 2, RTYPE_PTR);
+	write_big_16(p + 4, RCLASS_IN);
+	write_big_32(p + 6, TTL_DEFAULT);
+	write_big_16(p + 10, 2); /*datasz*/
+	write_big_16(p + 12, LABEL_PTR16 | nameoff);
 	p += 14;
 
 	*poff += reqsz;
@@ -474,12 +444,12 @@ int emdns_build_response(struct emdns_responder *r, void *buf, int sz) {
         answers += 3;
     }
     
-    put_big_16(u, 0); // transaction id
-    put_big_16(u+2, FLAG_RESPONSE | FLAG_AUTHORITY);
-    put_big_16(u+4, 0); // questions
-    put_big_16(u+6, answers);
-    put_big_16(u+8, 0); // authority
-    put_big_16(u+10, 0); // additional 
+    write_big_16(u, 0); // transaction id
+    write_big_16(u+2, FLAG_RESPONSE | FLAG_AUTHORITY);
+    write_big_16(u+4, 0); // questions
+    write_big_16(u+6, answers);
+    write_big_16(u+8, 0); // authority
+    write_big_16(u+10, 0); // additional 
 
 	return off;
 }

@@ -20,7 +20,6 @@ Foundation, Inc., 59 Temple Place, Suite 330, Boston, MA  02111-1307  USA
 */
 
 #include "tinyprintf.h"
-#ifdef DEBUG_LOG_ENABLED
 
 
 /*
@@ -509,6 +508,4 @@ int tfp_sprintf(char *str, const char *format, ...)
   va_end(ap);
   return retval;
 }
-#endif
-
 #endif

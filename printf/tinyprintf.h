@@ -102,13 +102,6 @@ regs Kusti, 23.10.2004
 
 #include <stdarg.h>
 
-//#define DEBUG_LOG_ENABLED
-
-#ifndef DEBUG_LOG_ENABLED
-static inline void do_debugf(const char *fmt, ...) {}
-#define debugf if (1) {} else do_debugf
-#else
-
 /* Global configuration */
 
 /* Set this to 0 if you do not want to provide tfp_printf */
@@ -182,7 +175,6 @@ void init_printf(void *putp, putcf putf);
 void tfp_printf(char *fmt, ...) _TFP_SPECIFY_PRINTF_FMT(1, 2);
 # if TINYPRINTF_OVERRIDE_LIBC
 #  define printf tfp_printf
-#  define debugf tfp_printf
 # endif
 #endif
 
@@ -190,4 +182,3 @@ void tfp_printf(char *fmt, ...) _TFP_SPECIFY_PRINTF_FMT(1, 2);
 }
 #endif
 
-#endif
