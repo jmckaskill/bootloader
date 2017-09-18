@@ -193,16 +193,16 @@ int emdns_should_respond(struct emdns_responder *r, const void *msg, int sz) {
 		switch (rtype) {
 		case RTYPE_A:
 		case RTYPE_AAAA:
-			if (r->hostsz == namesz && equals_dns_name(r->host, name)) {
+			if (r->hostsz == (size_t) namesz && equals_dns_name(r->host, name)) {
 				return EMDNS_RESPOND;
 			}
 			break;
 		case RTYPE_SRV:
 		case RTYPE_TXT:
-			if (labelsz == r->labelsz && equals_dns_label(name + 1, (uint8_t*) r->label, labelsz)) {
+			if (r->labelsz == (size_t) labelsz && equals_dns_label(name + 1, (uint8_t*) r->label, labelsz)) {
 				for (size_t i = 0; i < r->svcn; i++) {
 					struct emdns_service *s = &r->svcv[i];
-					if (s->namesz == namesz - labelsz - 1 && equals_dns_name(s->name, name + labelsz + 1)) {
+					if (s->namesz == (size_t) (namesz - labelsz - 1) && equals_dns_name(s->name, name + labelsz + 1)) {
 						return EMDNS_RESPOND;
 					}
 				}
@@ -211,7 +211,7 @@ int emdns_should_respond(struct emdns_responder *r, const void *msg, int sz) {
 		case RTYPE_PTR:
 			for (size_t i = 0; i < r->svcn; i++) {
 				struct emdns_service *s = &r->svcv[i];
-				if (!s->respond && s->namesz == namesz && equals_dns_name(s->name, name)) {
+				if (!s->respond && s->namesz == (size_t) namesz && equals_dns_name(s->name, name)) {
 					s->respond = 1;
 					possible_answers++;
 				}
@@ -265,7 +265,7 @@ int emdns_should_respond(struct emdns_responder *r, const void *msg, int sz) {
 
 		for (size_t i = 0; i < r->svcn; i++) {
 			struct emdns_service *s = &r->svcv[i];
-			if (s->respond && svcsz == s->namesz && equals_dns_name(svc, s->name)) {
+			if (s->respond && s->namesz == (size_t) svcsz && equals_dns_name(svc, s->name)) {
 				if (--possible_answers == 0) {
 					return 0;
 				}
@@ -290,7 +290,7 @@ static int encode_address(const uint8_t *host, int hostsz, bool is_ip6, const vo
 
 	uint8_t *p = buf + *off;
 	if (*hostoff) {
-		write_big_16(p, LABEL_PTR16 | *hostoff);
+		write_big_16(p, LABEL_PTR16 | (uint16_t) *hostoff);
 		p += 2;
 	} else {
 		*hostoff = *off;
@@ -300,7 +300,7 @@ static int encode_address(const uint8_t *host, int hostsz, bool is_ip6, const vo
 	write_big_16(p, is_ip6 ? RTYPE_AAAA : RTYPE_A);
 	write_big_16(p + 2, RCLASS_IN_FLUSH);
 	write_big_32(p + 4, TTL_DEFAULT);
-	write_big_16(p + 8, datasz);
+	write_big_16(p + 8, (uint16_t) datasz);
 	p += 10;
 	copy_unaligned(p, addr, datasz);
 	p += datasz;
@@ -327,12 +327,12 @@ static int encode_nsec(int ip4, int ip6, uint8_t *buf, int sz, int *off, int hos
 	}
 
 	uint8_t *p = buf + *off;
-	write_big_16(p, LABEL_PTR16 | hostoff);
+	write_big_16(p, LABEL_PTR16 | (uint16_t) hostoff);
 	write_big_16(p + 2, RTYPE_NSEC);
 	write_big_16(p + 4, RCLASS_IN_FLUSH);
 	write_big_32(p + 6, TTL_DEFAULT);
 	write_big_16(p + 10, datasz);
-	write_big_16(p + 12, LABEL_PTR16 | hostoff);
+	write_big_16(p + 12, LABEL_PTR16 | (uint16_t) hostoff);
 	write_big_16(p + 14, bitmapsz);
     p += 16;
     write_little_32(p, bitmap);
@@ -374,7 +374,7 @@ static int encode_service(const char *label, size_t labelsz, const uint8_t *svc,
 	write_big_16(p + 14, port);
 	p += 16;
 	if (*hostoff) {
-        write_big_16(p, LABEL_PTR16 | *hostoff);
+        write_big_16(p, LABEL_PTR16 | (uint16_t) *hostoff);
         p += 2;
 	} else {
 		*hostoff = (int) (p - u);
@@ -383,7 +383,7 @@ static int encode_service(const char *label, size_t labelsz, const uint8_t *svc,
 	}
 
 	// TXT
-	write_big_16(p, LABEL_PTR16 | nameoff);
+	write_big_16(p, LABEL_PTR16 | (uint16_t) nameoff);
 	write_big_16(p + 2, RTYPE_TXT);
 	write_big_16(p + 4, RCLASS_IN_FLUSH);
 	write_big_32(p + 6, TTL_DEFAULT);
@@ -398,7 +398,7 @@ static int encode_service(const char *label, size_t labelsz, const uint8_t *svc,
 	write_big_16(p + 4, RCLASS_IN);
 	write_big_32(p + 6, TTL_DEFAULT);
 	write_big_16(p + 10, 2); /*datasz*/
-	write_big_16(p + 12, LABEL_PTR16 | nameoff);
+	write_big_16(p + 12, LABEL_PTR16 | (uint16_t) nameoff);
 	p += 14;
 
 	*poff += reqsz;

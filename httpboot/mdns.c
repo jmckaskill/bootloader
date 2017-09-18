@@ -34,7 +34,7 @@ void send_mdns_broadcast() {
 		write_big_16(udp->dst_port, MDNS_PORT);
 		int mdnssz = emdns_build_response(&g_mdns_responder, udp+1, MAX_UDP_SIZE);
 		int udpsz = mdnssz + sizeof(*udp);
-		write_big_16(udp->length, udpsz);
+		write_big_16(udp->length, (uint16_t) udpsz);
 		write_big_16(udp->checksum, 0);
 		write_big_16(udp->checksum, ones_checksum(ip, udpsz));
 

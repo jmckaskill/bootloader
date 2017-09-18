@@ -109,6 +109,6 @@ struct ip6_header *new_ip6_frame(const mac_addr_t *dst_mac, const ip6_addr_t *ds
 void send_ip6_frame(struct ip6_header *ip, int sz) {
 	// fill out the fixed fields
 	write_big_16(ip->eth_type, ETH_IP6);
-	write_big_16(ip->ip6_length, sz);
+	write_big_16(ip->ip6_length, (uint16_t) sz);
 	send_eth_frame(ip, sz + sizeof(*ip));
 }

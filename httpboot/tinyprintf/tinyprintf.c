@@ -91,11 +91,11 @@ static void _TFP_GCC_NO_INLINE_ ulli2a(
     while (num / d >= p->base)
         d *= p->base;
     while (d != 0) {
-        int dgt = num / d;
+        int dgt = (int) (num / d);
         num %= d;
         d /= p->base;
         if (n || dgt > 0 || d == 0) {
-            *bf++ = dgt + (dgt < 10 ? '0' : (p->uc ? 'A' : 'a') - 10);
+            *bf++ = (char) dgt + (dgt < 10 ? '0' : (p->uc ? 'A' : 'a') - 10);
             ++n;
         }
     }
@@ -121,11 +121,11 @@ static void uli2a(unsigned long int num, struct param *p)
     while (num / d >= p->base)
         d *= p->base;
     while (d != 0) {
-        int dgt = num / d;
+        int dgt = (int) (num / d);
         num %= d;
         d /= p->base;
         if (n || dgt > 0 || d == 0) {
-            *bf++ = dgt + (dgt < 10 ? '0' : (p->uc ? 'A' : 'a') - 10);
+            *bf++ = (char) dgt + (dgt < 10 ? '0' : (p->uc ? 'A' : 'a') - 10);
             ++n;
         }
     }
@@ -150,11 +150,11 @@ static void ui2a(unsigned int num, struct param *p)
     while (num / d >= p->base)
         d *= p->base;
     while (d != 0) {
-        int dgt = num / d;
+        int dgt = (int) (num / d);
         num %= d;
         d /= p->base;
         if (n || dgt > 0 || d == 0) {
-            *bf++ = dgt + (dgt < 10 ? '0' : (p->uc ? 'A' : 'a') - 10);
+            *bf++ = (char) dgt + (dgt < 10 ? '0' : (p->uc ? 'A' : 'a') - 10);
             ++n;
         }
     }
@@ -228,7 +228,7 @@ static void putchw(void *putp, putcf putf, struct param *p)
 
     /* Put actual buffer */
     bf = p->bf;
-    while ((ch = *bf++))
+    while ((ch = *bf++) != 0)
         putf(putp, ch);
 
     /* Fill with space to align to the left, after string */
@@ -249,7 +249,7 @@ void tfp_format(void *putp, putcf putf, const char *fmt, va_list va)
     char ch;
     p.bf = bf;
 
-    while ((ch = *(fmt++))) {
+    while ((ch = *(fmt++)) != 0) {
         if (ch != '%') {
             putf(putp, ch);
         } else {
@@ -264,7 +264,7 @@ void tfp_format(void *putp, putcf putf, const char *fmt, va_list va)
             p.sign = 0;
 
             /* Flags */
-            while ((ch = *(fmt++))) {
+            while ((ch = *(fmt++)) != 0) {
                 switch (ch) {
                 case '-':
                     p.align_left = 1;

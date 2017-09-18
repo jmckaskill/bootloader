@@ -165,16 +165,16 @@ static void reset_tcp(struct tcp_connection *c) {
 
 static void send_window(struct tcp_connection *c) {
     int off = 0;
-    int winsz = min(c->tx_left, c->tx_window);
+    size_t winsz = min(c->tx_left, c->tx_window);
     const char *data = c->tx_data;
     do {
-        int pktsz = min(winsz, c->tx_mss);
+        size_t pktsz = min(winsz, c->tx_mss);
         struct tcp_header *tcp = new_tcp_frame(c, off);
         copy_aligned_32(tcp+1, data, pktsz);
         if (c->tx_left == pktsz && c->tx_finished) {
             write_big_16(tcp->flags, TCP_ACK | TCP_FIN | ENCODE_TCP_OFFSET(sizeof(*tcp)));
         }
-        send_tcp_frame(tcp, pktsz);
+        send_tcp_frame(tcp, (int) pktsz);
         off += pktsz;
         data += pktsz;
         winsz -= pktsz;
@@ -193,13 +193,13 @@ static void process_connection(struct tcp_connection *c, struct tcp_header *tcp,
     uint32_t ack = big_32(tcp->ack_num);
     int32_t txdelta = (int32_t) (ack - c->tx_next);
 
-    if (txdelta < 0 || txdelta > c->tx_sent || ((txdelta < c->tx_left) && (txdelta & 3))) {
+    if (txdelta < 0 || (uint32_t) txdelta > (uint32_t) c->tx_sent || (((size_t) txdelta < c->tx_left) && (txdelta & 3))) {
         // out of order, duplicate, or invalid packet -> drop
         return;
     }
     if (txdelta > 0) {
         // the remote acknowledge some new data
-        c->tx_sent -= txdelta;
+        c->tx_sent -= (uint16_t) txdelta;
         c->tx_data += txdelta;
         c->tx_left -= txdelta;
         c->tx_tick = 0;
@@ -237,8 +237,8 @@ void process_tcp(struct ip6_header *ip, const void *msg, int sz) {
     struct tcp_header *tcp = (struct tcp_header*) msg;
     unsigned flags = big_16(tcp->flags);
     int hdrsz = DECODE_TCP_OFFSET(flags);
-    int src_port = big_16(tcp->src_port);
-    int dst_port = big_16(tcp->dst_port);
+    uint16_t src_port = big_16(tcp->src_port);
+    uint16_t dst_port = big_16(tcp->dst_port);
 
     if (hdrsz > sz || !src_port) {
         return;
