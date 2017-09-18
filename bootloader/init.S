@@ -5,7 +5,7 @@
 .code 32
 
 
-
+.sect ".init"
 _start:
     // disable interrupts
     cpsid if

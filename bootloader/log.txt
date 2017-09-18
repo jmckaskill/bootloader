@@ -1,0 +1,734 @@
+
+**** Build of configuration Release for project bootloader ****
+
+"C:\\ti\\ccsv6\\utils\\bin\\gmake" -k all 
+'Building file: C:/c/bootloader/bootloader/debug.c'
+'Invoking: GNU Compiler'
+"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/arm-none-eabi-gcc.exe" -c -mcpu=cortex-a8 -mtune=cortex-a8 -march=armv7-a -marm -fno-exceptions -Dam3357 -DNDEBUG -I"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/arm-none-eabi/include" -O2 -Os -g -gdwarf-3 -gstrict-dwarf -Wall -specs="nosys.specs" -std=c11 -fno-unwind-tables -MMD -MP -MF"debug.d" -MT"debug.o" -o"debug.o"  "C:/c/bootloader/bootloader/debug.c"
+'Finished building: C:/c/bootloader/bootloader/debug.c'
+' '
+'Building file: C:/c/bootloader/bootloader/eth.c'
+'Invoking: GNU Compiler'
+"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/arm-none-eabi-gcc.exe" -c -mcpu=cortex-a8 -mtune=cortex-a8 -march=armv7-a -marm -fno-exceptions -Dam3357 -DNDEBUG -I"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/arm-none-eabi/include" -O2 -Os -g -gdwarf-3 -gstrict-dwarf -Wall -specs="nosys.specs" -std=c11 -fno-unwind-tables -MMD -MP -MF"eth.d" -MT"eth.o" -o"eth.o"  "C:/c/bootloader/bootloader/eth.c"
+'Finished building: C:/c/bootloader/bootloader/eth.c'
+' '
+'Building file: C:/c/bootloader/bootloader/icmp6.c'
+'Invoking: GNU Compiler'
+"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/arm-none-eabi-gcc.exe" -c -mcpu=cortex-a8 -mtune=cortex-a8 -march=armv7-a -marm -fno-exceptions -Dam3357 -DNDEBUG -I"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/arm-none-eabi/include" -O2 -Os -g -gdwarf-3 -gstrict-dwarf -Wall -specs="nosys.specs" -std=c11 -fno-unwind-tables -MMD -MP -MF"icmp6.d" -MT"icmp6.o" -o"icmp6.o"  "C:/c/bootloader/bootloader/icmp6.c"
+'Finished building: C:/c/bootloader/bootloader/icmp6.c'
+' '
+'Building file: C:/c/bootloader/bootloader/ip6.c'
+'Invoking: GNU Compiler'
+"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/arm-none-eabi-gcc.exe" -c -mcpu=cortex-a8 -mtune=cortex-a8 -march=armv7-a -marm -fno-exceptions -Dam3357 -DNDEBUG -I"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/arm-none-eabi/include" -O2 -Os -g -gdwarf-3 -gstrict-dwarf -Wall -specs="nosys.specs" -std=c11 -fno-unwind-tables -MMD -MP -MF"ip6.d" -MT"ip6.o" -o"ip6.o"  "C:/c/bootloader/bootloader/ip6.c"
+'Finished building: C:/c/bootloader/bootloader/ip6.c'
+' '
+'Building file: C:/c/bootloader/bootloader/main.c'
+'Invoking: GNU Compiler'
+"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/arm-none-eabi-gcc.exe" -c -mcpu=cortex-a8 -mtune=cortex-a8 -march=armv7-a -marm -fno-exceptions -Dam3357 -DNDEBUG -I"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/arm-none-eabi/include" -O2 -Os -g -gdwarf-3 -gstrict-dwarf -Wall -specs="nosys.specs" -std=c11 -fno-unwind-tables -MMD -MP -MF"main.d" -MT"main.o" -o"main.o"  "C:/c/bootloader/bootloader/main.c"
+subdir_rules.mk:56: recipe for target 'main.o' failed
+In file included from C:/c/bootloader/bootloader/main.c:12:0:
+C:/c/bootloader/bootloader/tick.h: In function 'set_sleep':
+C:/c/bootloader/bootloader/tick.h:10:34: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline unsigned tick_ms() {
+                                  ^
+In file included from c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\string.h:11:0,
+                 from C:/c/bootloader/bootloader/main.c:17:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\reent.h:22:25: error: storage class specified for parameter '__ULong'
+ typedef unsigned __Long __ULong;
+                         ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\reent.h:49:3: error: expected specifier-qualifier-list before '__ULong'
+   __ULong _x[1];
+   ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\reent.h:76:2: error: expected specifier-qualifier-list before '__ULong'
+  __ULong _fntypes;                    /* type of exit routine -
+  ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\reent.h:285:26: error: storage class specified for parameter '__FILE'
+ typedef struct __sFILE   __FILE;
+                          ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\reent.h:293:3: error: expected specifier-qualifier-list before '__FILE'
+   __FILE *_iobs;
+   ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\reent.h:576:3: error: expected specifier-qualifier-list before '__FILE'
+   __FILE *_stdin, *_stdout, *_stderr;
+   ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\reent.h:762:23: error: storage class specified for parameter '_impure_ptr'
+ extern struct _reent *_impure_ptr __ATTRIBUTE_IMPURE_PTR__;
+                       ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\reent.h:763:30: error: storage class specified for parameter '_global_impure_ptr'
+ extern struct _reent *_CONST _global_impure_ptr __ATTRIBUTE_IMPURE_PTR__;
+                              ^
+C:/c/bootloader/bootloader/main.c:19:13: error: storage class specified for parameter 'interrupt'
+ extern void interrupt();
+             ^
+C:/c/bootloader/bootloader/main.c:20:13: error: storage class specified for parameter 'setup'
+ extern void setup();
+             ^
+C:/c/bootloader/bootloader/main.c:22:12: error: storage class specified for parameter 'g_announce_left'
+ static int g_announce_left;
+            ^
+C:/c/bootloader/bootloader/main.c:24:20: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void ethernet_up() {
+                    ^
+C:/c/bootloader/bootloader/main.c:31:22: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void ethernet_down() {
+                      ^
+C:/c/bootloader/bootloader/main.c:37:72: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ int should_accept_connection(struct ip6_header *ip, uint16_t dst_port) {
+                                                                        ^
+C:/c/bootloader/bootloader/main.c:41:19: error: storage class specified for parameter 'hello_world'
+ static const char hello_world[] = "HTTP/1.1 OK\r\nContent-Length:14\r\n\r\nHello World!\r\n";
+                   ^
+C:/c/bootloader/bootloader/main.c:41:1: error: parameter 'hello_world' is initialized
+ static const char hello_world[] = "HTTP/1.1 OK\r\nContent-Length:14\r\n\r\nHello World!\r\n";
+ ^
+C:/c/bootloader/bootloader/main.c:43:73: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ int process_tcp_data(struct tcp_connection *c, const void *msg, int sz) {
+                                                                         ^
+C:/c/bootloader/bootloader/main.c:60:80: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void process_ip6(struct ip6_header *ip, uint8_t type, const void *msg, int sz) {
+                                                                                ^
+C:/c/bootloader/bootloader/main.c:85:18: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void interrupt() {
+                  ^
+C:/c/bootloader/bootloader/main.c:114:14: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void setup() {
+              ^
+In file included from C:/c/bootloader/bootloader/main.c:12:0:
+C:/c/bootloader/bootloader/tick.h:8:6: error: old-style parameter declarations in prototyped function definition
+ void set_sleep(unsigned target)
+      ^
+C:/c/bootloader/bootloader/main.c:121:1: error: expected '{' at end of input
+ }
+ ^
+gmake: *** [main.o] Error 1
+'Building file: C:/c/bootloader/bootloader/mdns.c'
+'Invoking: GNU Compiler'
+"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/arm-none-eabi-gcc.exe" -c -mcpu=cortex-a8 -mtune=cortex-a8 -march=armv7-a -marm -fno-exceptions -Dam3357 -DNDEBUG -I"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/arm-none-eabi/include" -O2 -Os -g -gdwarf-3 -gstrict-dwarf -Wall -specs="nosys.specs" -std=c11 -fno-unwind-tables -MMD -MP -MF"mdns.d" -MT"mdns.o" -o"mdns.o"  "C:/c/bootloader/bootloader/mdns.c"
+subdir_rules.mk:63: recipe for target 'mdns.o' failed
+In file included from C:/c/bootloader/bootloader/mdns.c:3:0:
+C:/c/bootloader/bootloader/tick.h: In function 'set_sleep':
+C:/c/bootloader/bootloader/tick.h:10:34: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline unsigned tick_ms() {
+                                  ^
+In file included from c:\c\bootloader\printf\tinyprintf.h:103:0,
+                 from C:/c/bootloader/bootloader/debug.h:2,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\lib\gcc\arm-none-eabi\4.9.3\include\stdarg.h:40:27: error: storage class specified for parameter '__gnuc_va_list'
+ typedef __builtin_va_list __gnuc_va_list;
+                           ^
+In file included from c:\c\bootloader\printf\tinyprintf.h:103:0,
+                 from C:/c/bootloader/bootloader/debug.h:2,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\lib\gcc\arm-none-eabi\4.9.3\include\stdarg.h:98:24: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'va_list'
+ typedef __gnuc_va_list va_list;
+                        ^
+In file included from c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:13:0,
+                 from c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:62,
+                 from c:\c\bootloader\printf\tinyprintf.h:128,
+                 from C:/c/bootloader/bootloader/debug.h:2,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\lock.h:6:13: error: storage class specified for parameter '_LOCK_T'
+ typedef int _LOCK_T;
+             ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\lock.h:7:13: error: storage class specified for parameter '_LOCK_RECURSIVE_T'
+ typedef int _LOCK_RECURSIVE_T;
+             ^
+In file included from c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:62:0,
+                 from c:\c\bootloader\printf\tinyprintf.h:128,
+                 from C:/c/bootloader/bootloader/debug.h:2,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:16:14: error: storage class specified for parameter '_off_t'
+ typedef long _off_t;
+              ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:20:15: error: storage class specified for parameter '__dev_t'
+ typedef short __dev_t;
+               ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:24:24: error: storage class specified for parameter '__uid_t'
+ typedef unsigned short __uid_t;
+                        ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:27:24: error: storage class specified for parameter '__gid_t'
+ typedef unsigned short __gid_t;
+                        ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:31:1: error: expected declaration specifiers before '__extension__'
+ __extension__ typedef long long _off64_t;
+ ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:39:14: error: storage class specified for parameter '_fpos_t'
+ typedef long _fpos_t;  /* XXX must match off_t in <sys/types.h> */
+              ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:55:23: error: storage class specified for parameter '_ssize_t'
+ typedef __SIZE_TYPE__ _ssize_t;
+                       ^
+In file included from c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:67:0,
+                 from c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:62,
+                 from c:\c\bootloader\printf\tinyprintf.h:128,
+                 from C:/c/bootloader/bootloader/debug.h:2,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\lib\gcc\arm-none-eabi\4.9.3\include\stddef.h:353:23: error: storage class specified for parameter 'wint_t'
+ typedef __WINT_TYPE__ wint_t;
+                       ^
+In file included from c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:62:0,
+                 from c:\c\bootloader\printf\tinyprintf.h:128,
+                 from C:/c/bootloader/bootloader/debug.h:2,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:76:5: error: expected specifier-qualifier-list before 'wint_t'
+     wint_t __wch;
+     ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:79:3: error: storage class specified for parameter '_mbstate_t'
+ } _mbstate_t;
+   ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:83:27: error: expected '=', ',', ';', 'asm' or '__attribute__' before '_flock_t'
+ typedef _LOCK_RECURSIVE_T _flock_t;
+                           ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\_types.h:88:15: error: storage class specified for parameter '_iconv_t'
+ typedef void *_iconv_t;
+               ^
+In file included from c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:72:0,
+                 from c:\c\bootloader\printf\tinyprintf.h:128,
+                 from C:/c/bootloader/bootloader/debug.h:2,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\machine\types.h:19:18: error: storage class specified for parameter '__off_t'
+ typedef long int __off_t;
+                  ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\machine\types.h:20:13: error: storage class specified for parameter '__pid_t'
+ typedef int __pid_t;
+             ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\machine\types.h:22:1: error: expected declaration specifiers before '__extension__'
+ __extension__ typedef long long int __loff_t;
+ ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\machine\types.h:28:15: error: storage class specified for parameter '__suseconds_t'
+ typedef long  __suseconds_t; /* microseconds (signed) */
+               ^
+In file included from c:\c\bootloader\printf\tinyprintf.h:128:0,
+                 from C:/c/bootloader/bootloader/debug.h:2,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:95:23: error: storage class specified for parameter 'u_char'
+ typedef unsigned char u_char;
+                       ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:99:24: error: storage class specified for parameter 'u_short'
+ typedef unsigned short u_short;
+                        ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:103:22: error: storage class specified for parameter 'u_int'
+ typedef unsigned int u_int;
+                      ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:107:23: error: storage class specified for parameter 'u_long'
+ typedef unsigned long u_long;
+                       ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:113:24: error: storage class specified for parameter 'ushort'
+ typedef unsigned short ushort;  /* System V compatibility */
+                        ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:114:22: error: storage class specified for parameter 'uint'
+ typedef unsigned int uint;  /* System V compatibility */
+                      ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:115:23: error: storage class specified for parameter 'ulong'
+ typedef unsigned long ulong;  /* System V compatibility */
+                       ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:119:19: error: storage class specified for parameter 'clock_t'
+ typedef _CLOCK_T_ clock_t;
+                   ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:124:18: error: storage class specified for parameter 'time_t'
+ typedef _TIME_T_ time_t;
+                  ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:129:14: error: storage class specified for parameter 'daddr_t'
+ typedef long daddr_t;
+              ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:133:16: error: storage class specified for parameter 'caddr_t'
+ typedef char * caddr_t;
+                ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:142:24: error: storage class specified for parameter 'ino_t'
+ typedef unsigned short ino_t;
+                        ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:171:16: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'off_t'
+ typedef _off_t off_t;
+                ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:172:17: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'dev_t'
+ typedef __dev_t dev_t;
+                 ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:173:17: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'uid_t'
+ typedef __uid_t uid_t;
+                 ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:174:17: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'gid_t'
+ typedef __gid_t gid_t;
+                 ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:180:13: error: storage class specified for parameter 'pid_t'
+ typedef int pid_t;
+             ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:188:14: error: storage class specified for parameter 'key_t'
+ typedef long key_t;
+              ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:190:18: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'ssize_t'
+ typedef _ssize_t ssize_t;
+                  ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:204:22: error: storage class specified for parameter 'mode_t'
+ typedef unsigned int mode_t _ST_INT32;
+                      ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:209:24: error: storage class specified for parameter 'nlink_t'
+ typedef unsigned short nlink_t;
+                        ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:231:14: error: storage class specified for parameter 'fd_mask'
+ typedef long fd_mask;
+              ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:240:2: error: expected specifier-qualifier-list before 'fd_mask'
+  fd_mask fds_bits[howmany(FD_SETSIZE, NFDBITS)];
+  ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:241:3: error: storage class specified for parameter '_types_fd_set'
+ } _types_fd_set;
+   ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:262:21: error: storage class specified for parameter 'clockid_t'
+ typedef _CLOCKID_T_ clockid_t;
+                     ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:267:19: error: storage class specified for parameter 'timer_t'
+ typedef _TIMER_T_ timer_t;
+                   ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:271:23: error: storage class specified for parameter 'useconds_t'
+ typedef unsigned long useconds_t;
+                       ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:274:23: error: expected '=', ',', ';', 'asm' or '__attribute__' before 'suseconds_t'
+ typedef __suseconds_t suseconds_t;
+                       ^
+c:\ti\ccsv6\tools\compiler\gcc-arm-none-eabi-4_9-2015q3\arm-none-eabi\include\sys\types.h:278:19: error: storage class specified for parameter 'sbintime_t'
+ typedef __int64_t sbintime_t;
+                   ^
+In file included from C:/c/bootloader/bootloader/debug.h:2:0,
+                 from C:/c/bootloader/bootloader/mdns.c:4:
+c:\c\bootloader\printf\tinyprintf.h:144:16: error: storage class specified for parameter 'putcf'
+ typedef void (*putcf) (void *, char);
+                ^
+c:\c\bootloader\printf\tinyprintf.h:156:29: error: expected declaration specifiers or '...' before 'putcf'
+ void tfp_format(void *putp, putcf putf, const char *fmt, va_list va);
+                             ^
+c:\c\bootloader\printf\tinyprintf.h:156:58: error: unknown type name 'va_list'
+ void tfp_format(void *putp, putcf putf, const char *fmt, va_list va);
+                                                          ^
+c:\c\bootloader\printf\tinyprintf.h:159:60: error: unknown type name 'va_list'
+ int tfp_vsnprintf(char *str, size_t size, const char *fmt, va_list ap);
+                                                            ^
+c:\c\bootloader\printf\tinyprintf.h:162:46: error: unknown type name 'va_list'
+ int tfp_vsprintf(char *str, const char *fmt, va_list ap);
+                                              ^
+c:\c\bootloader\printf\tinyprintf.h:174:30: error: expected declaration specifiers or '...' before 'putcf'
+ void init_printf(void *putp, putcf putf);
+                              ^
+In file included from C:/c/bootloader/bootloader/mdns.c:4:0:
+C:/c/bootloader/bootloader/debug.h:16:19: error: storage class specified for parameter 'hex'
+ extern const char hex[];
+                   ^
+C:/c/bootloader/bootloader/mdns.c:8:25: error: storage class specified for parameter 'g_mdns'
+ static const ip6_addr_t g_mdns      = {{0xFF,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0xFB}};
+                         ^
+C:/c/bootloader/bootloader/mdns.c:8:1: error: parameter 'g_mdns' is initialized
+ static const ip6_addr_t g_mdns      = {{0xFF,2,0,0,0,0,0,0,0,0,0,0,0,0,0,0xFB}};
+ ^
+C:/c/bootloader/bootloader/mdns.c:9:25: error: storage class specified for parameter 'g_mdns_mac'
+ static const mac_addr_t g_mdns_mac      = {{0x33,0x33,0,0,0,0xFB}};
+                         ^
+C:/c/bootloader/bootloader/mdns.c:9:1: error: parameter 'g_mdns_mac' is initialized
+ static const mac_addr_t g_mdns_mac      = {{0x33,0x33,0,0,0,0xFB}};
+ ^
+C:/c/bootloader/bootloader/mdns.c:13:17: error: storage class specified for parameter 'g_last_mdns'
+ static unsigned g_last_mdns;
+                 ^
+C:/c/bootloader/bootloader/mdns.c:14:29: error: storage class specified for parameter 'g_mdns_services'
+ static struct emdns_service g_mdns_services[1] = {
+                             ^
+C:/c/bootloader/bootloader/mdns.c:14:15: error: parameter 'g_mdns_services' is initialized
+ static struct emdns_service g_mdns_services[1] = {
+               ^
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: braces around scalar initializer
+  EMDNS_SERVICE("\x05_http\x04_tcp\x05local\0", "\0", 80),
+  ^
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: (near initialization for 'g_mdns_services')
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: initialization from incompatible pointer type
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: (near initialization for 'g_mdns_services')
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: excess elements in scalar initializer
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: (near initialization for 'g_mdns_services')
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: excess elements in scalar initializer
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: (near initialization for 'g_mdns_services')
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: excess elements in scalar initializer
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: (near initialization for 'g_mdns_services')
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: excess elements in scalar initializer
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: (near initialization for 'g_mdns_services')
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: excess elements in scalar initializer
+C:/c/bootloader/bootloader/mdns.c:15:2: warning: (near initialization for 'g_mdns_services')
+C:/c/bootloader/bootloader/mdns.c:18:13: error: storage class specified for parameter 'g_mdns_label'
+ static char g_mdns_label[] = PFX "001122334455";
+             ^
+C:/c/bootloader/bootloader/mdns.c:18:1: error: parameter 'g_mdns_label' is initialized
+ static char g_mdns_label[] = PFX "001122334455";
+ ^
+C:/c/bootloader/bootloader/mdns.c:19:13: error: storage class specified for parameter 'g_mdns_host'
+ static char g_mdns_host[] = "\0" PFX "001122334455\x05local\0";
+             ^
+C:/c/bootloader/bootloader/mdns.c:19:1: error: parameter 'g_mdns_host' is initialized
+ static char g_mdns_host[] = "\0" PFX "001122334455\x05local\0";
+ ^
+C:/c/bootloader/bootloader/mdns.c:20:31: error: storage class specified for parameter 'g_mdns_responder'
+ static struct emdns_responder g_mdns_responder = {
+                               ^
+C:/c/bootloader/bootloader/mdns.c:20:15: error: parameter 'g_mdns_responder' is initialized
+ static struct emdns_responder g_mdns_responder = {
+               ^
+C:/c/bootloader/bootloader/mdns.c:28:28: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void send_mdns_broadcast() {
+                            ^
+C:/c/bootloader/bootloader/mdns.c:45:91: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void process_mdns(struct ip6_header *ip, struct udp_header *udp, const void *msg, int sz) {
+                                                                                           ^
+C:/c/bootloader/bootloader/mdns.c:55:18: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void init_mdns() {
+                  ^
+In file included from C:/c/bootloader/bootloader/mdns.c:3:0:
+C:/c/bootloader/bootloader/tick.h:8:6: error: old-style parameter declarations in prototyped function definition
+ void set_sleep(unsigned target)
+      ^
+C:/c/bootloader/bootloader/mdns.c:65:1: error: expected '{' at end of input
+ }
+ ^
+gmake: *** [mdns.o] Error 1
+'Building file: C:/c/bootloader/bootloader/tcp.c'
+'Invoking: GNU Compiler'
+"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/arm-none-eabi-gcc.exe" -c -mcpu=cortex-a8 -mtune=cortex-a8 -march=armv7-a -marm -fno-exceptions -Dam3357 -DNDEBUG -I"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/arm-none-eabi/include" -O2 -Os -g -gdwarf-3 -gstrict-dwarf -Wall -specs="nosys.specs" -std=c11 -fno-unwind-tables -MMD -MP -MF"tcp.d" -MT"tcp.o" -o"tcp.o"  "C:/c/bootloader/bootloader/tcp.c"
+subdir_rules.mk:77: recipe for target 'tcp.o' failed
+In file included from C:/c/bootloader/bootloader/tcp.c:2:0:
+C:/c/bootloader/bootloader/tick.h: In function 'set_sleep':
+C:/c/bootloader/bootloader/tick.h:10:34: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline unsigned tick_ms() {
+                                  ^
+In file included from C:/c/bootloader/bootloader/tcp.c:4:0:
+c:\c\bootloader\mdns\copy.h:4:74: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline void copy_unaligned(void *dst, const void *src, size_t sz) {
+                                                                          ^
+c:\c\bootloader\mdns\copy.h:13:72: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline void copy_aligned_32(void *dst, const void *src, int sz) {
+                                                                        ^
+C:/c/bootloader/bootloader/tcp.c:11:31: error: storage class specified for parameter 'g_open'
+ static struct tcp_connection *g_open;
+                               ^
+C:/c/bootloader/bootloader/tcp.c:14:30: error: storage class specified for parameter 'g_connections'
+ static struct tcp_connection g_connections[MAX_CONNECTIONS];
+                              ^
+C:/c/bootloader/bootloader/tcp.c:16:17: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void init_tcp() {
+                 ^
+C:/c/bootloader/bootloader/tcp.c:23:48: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static struct tcp_connection *new_connection() {
+                                                ^
+C:/c/bootloader/bootloader/tcp.c:34:94: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static struct tcp_connection *find_connection(struct ip6_header *ip, struct tcp_header *tcp) {
+                                                                                              ^
+C:/c/bootloader/bootloader/tcp.c:47:64: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static void send_tcp_frame(struct tcp_header *tcp, int datasz) {
+                                                                ^
+C:/c/bootloader/bootloader/tcp.c:54:112: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static void send_reset(const mac_addr_t *mac, const ip6_addr_t *ip, uint16_t remote_port, uint16_t local_port) {
+                                                                                                                ^
+C:/c/bootloader/bootloader/tcp.c:73:76: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static struct tcp_header *new_tcp_frame(struct tcp_connection *c, int off) {
+                                                                            ^
+C:/c/bootloader/bootloader/tcp.c:92:97: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static void accept_tcp(struct tcp_connection *c, struct ip6_header *ip, struct tcp_header *tcp) {
+                                                                                                 ^
+C:/c/bootloader/bootloader/tcp.c:158:49: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static void reset_tcp(struct tcp_connection *c) {
+                                                 ^
+C:/c/bootloader/bootloader/tcp.c:166:51: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static void send_window(struct tcp_connection *c) {
+                                                   ^
+C:/c/bootloader/bootloader/tcp.c:186:108: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static void process_connection(struct tcp_connection *c, struct tcp_header *tcp, const void *data, int sz) {
+                                                                                                            ^
+C:/c/bootloader/bootloader/tcp.c:232:66: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void process_tcp(struct ip6_header *ip, const void *msg, int sz) {
+                                                                  ^
+In file included from C:/c/bootloader/bootloader/tcp.c:2:0:
+C:/c/bootloader/bootloader/tick.h:8:6: error: old-style parameter declarations in prototyped function definition
+ void set_sleep(unsigned target)
+      ^
+C:/c/bootloader/bootloader/tcp.c:267:1: error: expected '{' at end of input
+ }
+ ^
+gmake: *** [tcp.o] Error 1
+'Building file: C:/c/bootloader/bootloader/tick.c'
+'Invoking: GNU Compiler'
+"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/bin/arm-none-eabi-gcc.exe" -c -mcpu=cortex-a8 -mtune=cortex-a8 -march=armv7-a -marm -fno-exceptions -Dam3357 -DNDEBUG -I"C:/ti/ccsv6/tools/compiler/gcc-arm-none-eabi-4_9-2015q3/arm-none-eabi/include" -O2 -Os -g -gdwarf-3 -gstrict-dwarf -Wall -specs="nosys.specs" -std=c11 -fno-unwind-tables -MMD -MP -MF"tick.d" -MT"tick.o" -o"tick.o"  "C:/c/bootloader/bootloader/tick.c"
+subdir_rules.mk:84: recipe for target 'tick.o' failed
+In file included from C:/c/bootloader/bootloader/tick.c:1:0:
+C:/c/bootloader/bootloader/tick.h: In function 'set_sleep':
+C:/c/bootloader/bootloader/tick.h:10:34: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline unsigned tick_ms() {
+                                  ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:75:1: warning: empty declaration
+ struct hw_cm_per {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:149:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cm_per) == 0x154, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:171:1: warning: empty declaration
+ struct hw_cm_wakeup {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:229:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cm_wakeup) == 0xDC, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:234:1: warning: empty declaration
+ struct hw_cm_dpll {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:253:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cm_dpll) == 0x40, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:276:1: warning: empty declaration
+ struct hw_control {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:470:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_control) == 0x1448, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:505:1: warning: empty declaration
+ struct hw_uart {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:530:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_uart) == 0x88, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:533:1: warning: empty declaration
+ struct hw_uart_cfga {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:546:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_uart_cfga) == 0x3C, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:549:1: warning: empty declaration
+ struct hw_uart_cfgb {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:562:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_uart_cfgb) == 0x3C, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:565:1: warning: empty declaration
+ struct hw_uart_op {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:576:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_uart_op) == 0x20, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:585:1: warning: empty declaration
+ struct hw_cpsw_ale {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:602:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_ale) == 0x58, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:622:1: warning: empty declaration
+ struct hw_cpsw_cpdma {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:656:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_cpdma) == 0x100, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:693:1: warning: empty declaration
+ struct hw_buffer_descriptor {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:701:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_buffer_descriptor) == 16, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:703:1: warning: empty declaration
+ struct hw_cpsw_stateram {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:710:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_stateram) == 0x80, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:713:1: warning: empty declaration
+ struct hw_cpsw_cpts {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:730:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_cpts) == 0x3C, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:732:1: warning: empty declaration
+ struct hw_cpsw_port_0 {
+ ^
+C:/c/bootloader/bootloader/am335x.h:746:1: warning: empty declaration
+ struct hw_cpsw_port {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:762:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_port_0) == 0x50, "padding");
+ ^
+C:/c/bootloader/bootloader/am335x.h:763:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_port) == 0x50, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:783:1: warning: empty declaration
+ struct hw_cpsw_sl {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:797:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_sl) == 0x2C, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:806:1: warning: empty declaration
+ struct hw_cpsw_ss {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:822:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_ss) == 0x34, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:857:1: warning: empty declaration
+ struct hw_cpsw_wr {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:881:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_cpsw_wr) == 0x8C, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:902:1: warning: empty declaration
+ struct hw_mdio {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:931:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_mdio) == 0x90, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:937:1: warning: empty declaration
+ enum hw_interrupt {
+ ^
+C:/c/bootloader/bootloader/am335x.h:945:1: warning: empty declaration
+ struct hw_intc {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:975:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_intc) == 0x300, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:978:63: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline void hw_enable_interrupt(enum hw_interrupt idx) {
+                                                               ^
+C:/c/bootloader/bootloader/am335x.h:982:64: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline void hw_disable_interrupt(enum hw_interrupt idx) {
+                                                                ^
+C:/c/bootloader/bootloader/am335x.h:986:1: warning: empty declaration
+ struct hw_gpio {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:1014:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_gpio) == 0x198, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/board.h:3:0,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:1027:1: warning: empty declaration
+ struct hw_dmtimer_1ms {
+ ^
+In file included from C:/c/bootloader/bootloader/am335x.h:4:0,
+                 from C:/c/bootloader/bootloader/board.h:3,
+                 from C:/c/bootloader/bootloader/tick.c:2:
+C:/c/bootloader/bootloader/am335x.h:1051:1: error: expected declaration specifiers before '_Static_assert'
+ static_assert(sizeof(struct hw_dmtimer_1ms) == 0x5C, "padding");
+ ^
+In file included from C:/c/bootloader/bootloader/tick.c:2:0:
+C:/c/bootloader/bootloader/board.h:7:59: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline void enable_module(volatile unsigned *ctrl) {
+                                                           ^
+C:/c/bootloader/bootloader/board.h:13:57: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline void sw_wakeup(volatile unsigned *status) {
+                                                         ^
+C:/c/bootloader/bootloader/board.h:19:65: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ static inline void wait_for_functional(volatile unsigned *ctrl) {
+                                                                 ^
+C:/c/bootloader/bootloader/tick.c:4:18: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void init_tick() {
+                  ^
+C:/c/bootloader/bootloader/tick.c:26:23: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ unsigned tick_count() {
+                       ^
+C:/c/bootloader/bootloader/tick.c:30:33: error: expected '=', ',', ';', 'asm' or '__attribute__' before '{' token
+ void set_sleep(unsigned target) {
+                                 ^
+In file included from C:/c/bootloader/bootloader/tick.c:1:0:
+C:/c/bootloader/bootloader/tick.h:8:6: error: old-style parameter declarations in prototyped function definition
+ void set_sleep(unsigned target)
+      ^
+C:/c/bootloader/bootloader/tick.c:32:1: error: expected '{' at end of input
+ }
+ ^
+gmake: *** [tick.o] Error 1
+gmake: Target 'all' not remade because of errors.
+
+**** Build Finished ****

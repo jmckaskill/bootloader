@@ -22,3 +22,11 @@ void init_tick() {
 	// the internal timer matches the comparison register
 	HW_DMTIMER_1MS->TCLR |= HW_1MS_TCLR_COMPARE_EN | HW_1MS_TCLR_START;
 }
+
+unsigned tick_count() {
+	return HW_DMTIMER_1MS->TCRR;
+}
+
+void set_sleep(unsigned target) {
+	HW_DMTIMER_1MS->TMAR = target;
+}

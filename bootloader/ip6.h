@@ -1,6 +1,7 @@
 #pragma once
 #include "../mdns/endian.h"
 #include <stdint.h>
+#include <assert.h>
 
 #define ETH_OFFSET (2 << 16)
 #define ETH_IP6 0x86DD
@@ -10,12 +11,14 @@
 #define IP6_DEFAULT_HOP_LIMIT 255
 
 
-typedef struct {
+typedef union {
 	uint8_t u[16];
+	uint32_t u32[4];
 } ip6_addr_t;
 
-typedef struct {
+typedef union {
 	uint8_t u[6];
+	uint16_t u16[3];
 } mac_addr_t;
 
 
@@ -25,6 +28,8 @@ typedef struct {
 #define ETH_MCAST_MASK UINT64_C(0x0000FFFFFFFF)
 #define ETH_UL_BIT     UINT64_C(0x020000000000)
 
+#pragma pack(push)
+#pragma pack(1)
 struct ip6_header {
     mac_addr_t eth_dst;
     mac_addr_t eth_src;
@@ -36,6 +41,9 @@ struct ip6_header {
     ip6_addr_t ip6_src;
     ip6_addr_t ip6_dst;
 };
+#pragma pack(pop)
+
+static_assert(sizeof(struct ip6_header) == 54, "padding");
 
 #define MAX_ETH_SIZE 1514 // doesn't include the trailing crc
 
@@ -47,6 +55,7 @@ struct udp_header {
 	uint8_t checksum[2];
 };
 
+static_assert(sizeof(struct udp_header) == 8, "padding");
 #define MAX_UDP_SIZE (MAX_ETH_SIZE - sizeof(struct ip6_header) - sizeof(struct udp_header))
 
 #define PRINT_MAC_LEN (6*3)

@@ -20,6 +20,7 @@ struct eth_buffer {
 };
 
 #define HW_ETH_BUFFERS ((struct eth_buffer*)0x40300000)
+static_assert(sizeof(struct eth_buffer) == 0x5F0, "padding");
 static_assert(sizeof(struct eth_buffer) * RX_BUFFER_END <= 64*1024, "too many packets");
 
 static struct hw_buffer_descriptor *g_rx_next; // next frame to be received

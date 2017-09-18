@@ -1,4 +1,3 @@
-#include "am335x.h"
 #include "../printf/tinyprintf.h"
 
 #include "../mdns/copy.h"
@@ -7,10 +6,11 @@
 #include "tcp.h"
 #include "icmp6.h"
 #include "debug.h"
-#include "eth.h"
 #include "ip6.h"
+#include "eth.h"
 #include "board.h"
 #include "tick.h"
+#include "am335x.h"
 #include <stdint.h>
 #include <assert.h>
 #include <stddef.h>
@@ -32,8 +32,29 @@ void ethernet_down() {
 	g_announce_left = 0;
 }
 
+#define HTTP_PORT 80
+
 int should_accept_connection(struct ip6_header *ip, uint16_t dst_port) {
-	return dst_port == 80;
+	return dst_port == HTTP_PORT;
+}
+
+static const char ALIGNED_32 hello_world[] = "HTTP/1.1 OK\r\nContent-Length:14\r\n\r\nHello World!\r\n";
+
+int process_tcp_data(struct tcp_connection *c, const void *msg, int sz) {
+	switch (c->local_port) {
+	case HTTP_PORT:
+		if (sz && c->tx_left) {
+			// pipelines are not supported
+			return -1;
+		}
+		if (sz) {
+			c->tx_data = hello_world;
+			c->tx_left = sizeof(hello_world) - 1;
+		}
+		return 0;
+	}
+
+	return -1;
 }
 
 void process_ip6(struct ip6_header *ip, uint8_t type, const void *msg, int sz) {

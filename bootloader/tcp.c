@@ -1,6 +1,12 @@
 #include "tcp.h"
+#include "tick.h"
 #include "../mdns/endian.h"
+#include "../mdns/copy.h"
 #include <stddef.h>
+
+#ifndef min
+#define min(a,b) ((a) < (b) ? (a) : (b))
+#endif
 
 static struct tcp_connection *g_open;
 
@@ -26,8 +32,8 @@ static struct tcp_connection *new_connection() {
 }
 
 static struct tcp_connection *find_connection(struct ip6_header *ip, struct tcp_header *tcp) {
-	uint16_t src = big_16(&tcp->src_port);
-	uint16_t dst = big_16(&tcp->dst_port);
+	uint16_t src = big_16(tcp->src_port);
+	uint16_t dst = big_16(tcp->dst_port);
     
     for (struct tcp_connection *c = g_open; c != NULL; c = c->next) {
 		if (c->local_port == dst && c->remote_port == src && ip6_equals(&ip->ip6_src, &c->remote_addr)) {
@@ -39,7 +45,7 @@ static struct tcp_connection *find_connection(struct ip6_header *ip, struct tcp_
 }
 
 static void send_tcp_frame(struct tcp_header *tcp, int datasz) {
-    struct ip6_header *ip = (struct ip6_header*) (tcp-1);
+    struct ip6_header *ip = (struct ip6_header*) tcp - 1;
 	int tcpsz = datasz + sizeof(*tcp);
 	write_big_16(tcp->checksum, ones_checksum(ip, tcpsz));
 	send_eth_frame(tcpsz);
@@ -48,7 +54,7 @@ static void send_tcp_frame(struct tcp_header *tcp, int datasz) {
 static void send_reset(const mac_addr_t *mac, const ip6_addr_t *ip, uint16_t remote_port, uint16_t local_port) {
 	struct ip6_header *rep = new_eth_frame(mac, ip, IP6_TCP);
 	if (!rep) {
-		return NULL;
+		return;
 	}
 
 	struct tcp_header *tcp = (struct tcp_header*) (rep+1);
@@ -64,7 +70,7 @@ static void send_reset(const mac_addr_t *mac, const ip6_addr_t *ip, uint16_t rem
 	send_tcp_frame(tcp, 0);
 }
 
-static struct tcp_header *new_tcp_frame(struct tcp_connection *c) {
+static struct tcp_header *new_tcp_frame(struct tcp_connection *c, int off) {
 	struct ip6_header *ip = new_eth_frame(&c->remote_mac, &c->remote_addr, IP6_TCP);
 	if (!ip) {
 		return NULL;
@@ -73,8 +79,8 @@ static struct tcp_header *new_tcp_frame(struct tcp_connection *c) {
 	struct tcp_header *tcp = (struct tcp_header*) (ip+1);
 	write_big_16(tcp->src_port, c->local_port);
 	write_big_16(tcp->dst_port, c->remote_port);
-	write_big_32(tcp->seq_num, (uint32_t) (c->local_seq + c->sent));
-	write_big_32(tcp->ack_num, c->remote_seq);
+	write_big_32(tcp->seq_num, c->tx_next + off);
+	write_big_32(tcp->ack_num, c->rx_next);
 	write_big_16(tcp->flags, TCP_ACK | ENCODE_TCP_OFFSET(sizeof(*tcp)));
 	write_big_16(tcp->window, TCP_DEFAULT_WINDOW);
 	write_big_16(tcp->checksum, 0);
@@ -86,11 +92,16 @@ static struct tcp_header *new_tcp_frame(struct tcp_connection *c) {
 static void accept_tcp(struct tcp_connection *c, struct ip6_header *ip, struct tcp_header *tcp) {
 	copy_mac(&c->remote_mac, &ip->eth_src);
 	copy_ip6(&c->remote_addr, &ip->ip6_src);
-	c->remote_port = big_16(tcp->src_port);
-	c->remote_seq = big_32(tcp->seq_num);
-	c->remote_mss = TCP_DEFAULT_MSS;
-	c->remote_window = big_16(tcp->window);
-	c->local_seq = 0;
+    c->remote_port = big_16(tcp->src_port);
+    c->local_port = big_16(tcp->dst_port);
+    c->rx_next = big_32(tcp->seq_num) + 1;
+    c->tx_next = TCP_DEFAULT_ISS;
+	c->tx_window = big_16(tcp->window);
+    c->tx_mss = TCP_DEFAULT_MSS;
+    c->tx_sent = 0;
+    c->tx_tick = 0;
+    c->tx_data = NULL;
+    c->tx_left = 0;
 
 	// process TCP options
 	uint8_t *opt = (uint8_t*) (tcp+1);
@@ -109,7 +120,9 @@ static void accept_tcp(struct tcp_connection *c, struct ip6_header *ip, struct t
 		switch (opt[0]) {
 		case TCP_OPT_MSS:
 			if (len == 2) {
-				c->remote_mss = big_16(opt+2);
+                // round the mss down to a multiple of 32 bits to keep
+                // sequence numbers aligned
+				c->tx_mss = big_16(opt+2) & ~3U;
 			}
 			break;
 		}
@@ -118,15 +131,16 @@ static void accept_tcp(struct tcp_connection *c, struct ip6_header *ip, struct t
 
 	// send the SYN+ACK reply
 
-	struct tcp_header *rep = new_tcp_frame(c);
+	struct tcp_header *rep = new_tcp_frame(c, 0);
 	if (!rep) {
 		return;
 	}
 
 	c->open = 1;
 	c->connected = 0;
-	c->in_finished = 0;
-    c->out_finished = 0;
+	c->rx_finished = 0;
+    c->tx_finished = 0;
+    c->tx_next++; // the ack number is the initial sequence number + 1
 
     c->next = g_open;
     c->prev = NULL;
@@ -137,8 +151,8 @@ static void accept_tcp(struct tcp_connection *c, struct ip6_header *ip, struct t
 	opt[1] = 4; // option length
 	write_big_16(opt+2, TCP_DEFAULT_MSS);
 
-	write_big_16(tcp->flags, TCP_SYN | TCP_ACK | ENCODE_TCP_OFFSET(sizeof(*tcp) + 4));
-	send_tcp_frame(tcp, 4);
+	write_big_16(rep->flags, TCP_SYN | TCP_ACK | ENCODE_TCP_OFFSET(sizeof(*rep) + 4));
+	send_tcp_frame(rep, 4);
 }
 
 static void reset_tcp(struct tcp_connection *c) {
@@ -149,30 +163,70 @@ static void reset_tcp(struct tcp_connection *c) {
 	}
 }
 
+static void send_window(struct tcp_connection *c) {
+    int off = 0;
+    int winsz = min(c->tx_left, c->tx_window);
+    const uint8_t *data = c->tx_data;
+    do {
+        int pktsz = min(winsz, c->tx_mss);
+        struct tcp_header *tcp = new_tcp_frame(c, off);
+        copy_aligned_32(tcp+1, data, pktsz);
+        if (c->tx_left == pktsz && c->tx_finished) {
+            write_big_16(tcp->flags, TCP_ACK | TCP_FIN | ENCODE_TCP_OFFSET(sizeof(*tcp)));
+        }
+        send_tcp_frame(tcp, pktsz);
+        off += pktsz;
+        data += pktsz;
+        winsz -= pktsz;
+    } while (winsz);
+
+    c->tx_tick = tick_count();
+}
+
 static void process_connection(struct tcp_connection *c, struct tcp_header *tcp, const void *data, int sz) {
-#if 0
-// TODO
-	uint32_t remote_seq = big_32(req->seq_num);
-	if (remote_seq != c->remote_seq) {
-		return NULL;
-	}
+    unsigned flags = big_32(tcp->flags);
+    if (flags & TCP_RESET) {
+        c->open = 0;
+        return;
+    }
 
-	unsigned flags = big_16(req->flags);
-	int hdrsz = DECODE_TCP_OFFSET(flags);
-	if (hdrsz < sizeof(*req)) {
-		reset_tcp(c);
-		return NULL;
-	}
+    uint32_t ack = big_32(tcp->ack_num);
+    int32_t txdelta = (int32_t) (ack - c->tx_next);
 
-	*msgsz -= hdrsz;
-	c->remote_seq += *msgsz;
-	
-	uint32_t local_seq = big_32(req->ack_num) - c->seq_base;
+    if (txdelta < 0 || txdelta > c->tx_sent) {
+        // out of order, duplicate, or invalid packet -> drop
+        return;
+    }
+    if (txdelta > 0) {
+        // the remote acknowledge some new data
+        c->tx_sent -= txdelta;
+        c->tx_data += txdelta;
+        c->tx_left -= txdelta;
+        c->tx_tick = 0;
+    }
 
+    uint32_t seq = big_32(tcp->seq_num);
+    int32_t rxdelta = (int32_t) (seq - c->rx_next);
+    if (rxdelta) {
+        // out of order packet or dropped packet
+        // rate limit these so we don't resend the window on
+        // every packet we receive
+        if (tick_count() - c->tx_tick < MS_TO_TICKS(100)) {
+            send_window(c);
+        }
+        return;
+    }
 
-	// send the ACK reply
-	struct tcp_header *tcp = new_tcp_frame(c);
-#endif
+    if (sz || (!c->rx_finished && (flags & TCP_FIN)) || !c->connected) {
+        c->connected = 1;
+        c->rx_next += sz;
+        c->rx_finished = (flags & TCP_FIN) != 0;
+        if (process_tcp_data(c, data, sz)) {
+            reset_tcp(c);
+            return;
+        }
+        send_window(c);
+    }
 }
 
 void process_tcp(struct ip6_header *ip, const void *msg, int sz) {
@@ -181,7 +235,7 @@ void process_tcp(struct ip6_header *ip, const void *msg, int sz) {
     }
 
     struct tcp_header *tcp = (struct tcp_header*) msg;
-    unsigned flags = big_16(tcp->flags) & TCP_FLAGS_MASK;
+    unsigned flags = big_16(tcp->flags);
     int hdrsz = DECODE_TCP_OFFSET(flags);
     int src_port = big_16(tcp->src_port);
     int dst_port = big_16(tcp->dst_port);
