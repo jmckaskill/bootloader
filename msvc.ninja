@@ -2,6 +2,9 @@ SRC_NINJA = src.ninja
 TOOLCHAIN_DIR = toolchain
 INCLUDES = -I include -I include/hw -I include/armv7a/am335x
 
+rule objcopy
+ command = toolchain/host/bin/llvm-objcopy.exe $in $out
+ 
 include toolchain/host-win32.ninja
 include common.ninja
 subninja toolchain/target-arm-debug.ninja

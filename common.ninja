@@ -5,8 +5,6 @@ rule rawlink
  command = toolchain/host/bin/ld.lld.exe $LDFLAGS $LIBC --script $in -o $out
  description = LD $out
 
-rule objcopy
- command = toolchain/host/bin/llvm-objcopy.exe $in $out
 
 build bootp-deploy-win32/deploy-data.c: run bin/$HOST/create-cdata.exe $
- bin/arm-release/bootloader.bin
+ bin/arm-release/httpboot-am335x.bin
