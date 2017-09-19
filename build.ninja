@@ -3,7 +3,7 @@ TOOLCHAIN_DIR = toolchain
 INCLUDES = -I include -I include/hw -I include/armv7a/am335x
 
 rule objcopy
- command = arm-none-eabi-objcopy --strip-debug $in $out
+ command = arm-none-eabi-objcopy -O binary --strip-all $in $out
 
 include toolchain/host-gcc.ninja
 include common.ninja

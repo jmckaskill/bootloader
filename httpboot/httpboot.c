@@ -28,7 +28,8 @@ int should_accept_connection(struct ip6_header *ip, uint16_t dst_port) {
 	return dst_port == HTTP_PORT;
 }
 
-static const char ALIGNED_32 hello_world[] = "HTTP/1.1 OK\r\nContent-Length:14\r\n\r\nHello World!\r\n";
+extern unsigned long g_httpboot_index_html_sz;
+extern const char g_httpboot_index_html[];
 
 int process_tcp_data(struct tcp_connection *c, const void *msg, int sz) {
 	switch (c->local_port) {
@@ -38,8 +39,8 @@ int process_tcp_data(struct tcp_connection *c, const void *msg, int sz) {
 			return -1;
 		}
 		if (sz) {
-			c->tx_data = hello_world;
-			c->tx_left = sizeof(hello_world) - 1;
+			c->tx_data = g_httpboot_index_html;
+			c->tx_left = g_httpboot_index_html_sz;
 		}
 		return 0;
 	}

@@ -11,21 +11,54 @@ build $OBJ/icmp6.o: cc httpboot/icmp6.c
 build $OBJ/ip6.o: cc httpboot/ip6.c
 build $OBJ/mdns.o: cc httpboot/mdns.c
 build $OBJ/tcp.o: cc httpboot/tcp.c
-build $OBJ/libmdns.o: cc httpboot/mdns/libmdns.c
-build $OBJ/tinyprintf.o: cc httpboot/tinyprintf/tinyprintf.c
+build $OBJ/index.html.o: cc httpboot/index.html.c
 
-build $OBJ/arm/init.o: cc httpboot/hw/arm/init.S
+build $OBJ/am335x/init.o: cc httpboot/hw/am335x/init.S
 build $OBJ/am335x/board.o: cc httpboot/hw/am335x/board.c
 build $OBJ/am335x/debug.o: cc httpboot/hw/am335x/debug.c
 build $OBJ/am335x/eth.o: cc httpboot/hw/am335x/eth.c
 build $OBJ/am335x/interrupt.o: cc httpboot/hw/am335x/interrupt.c
 build $OBJ/am335x/tick.o: cc httpboot/hw/am335x/tick.c
 
-build $OBJ/unit_test/board.o: cc httpboot/hw/unit_test/board.c
-build $OBJ/unit_test/debug.o: cc httpboot/hw/unit_test/debug.c
-build $OBJ/unit_test/eth.o: cc httpboot/hw/unit_test/eth.c
-build $OBJ/unit_test/main.o: cc httpboot/hw/unit_test/main.c
-build $OBJ/unit_test/tick.o: cc httpboot/hw/unit_test/tick.c
+build $OBJ/libmdns.o: cc httpboot/mdns/libmdns.c
+
+build $OBJ/tinyprintf.o: cc httpboot/tinyprintf/tinyprintf.c
+
+build $OBJ/zlib/adler32.o: cc zlib-1.2.11/adler32.c
+build $OBJ/zlib/compress.o: cc zlib-1.2.11/compress.c
+build $OBJ/zlib/crc32.o: cc zlib-1.2.11/crc32.c
+build $OBJ/zlib/deflate.o: cc zlib-1.2.11/deflate.c
+build $OBJ/zlib/gzclose.o: cc zlib-1.2.11/gzclose.c
+build $OBJ/zlib/gzlib.o: cc zlib-1.2.11/gzlib.c
+build $OBJ/zlib/gzread.o: cc zlib-1.2.11/gzread.c
+build $OBJ/zlib/gzwrite.o: cc zlib-1.2.11/gzwrite.c
+build $OBJ/zlib/infback.o: cc zlib-1.2.11/infback.c
+build $OBJ/zlib/inffast.o: cc zlib-1.2.11/inffast.c
+build $OBJ/zlib/inflate.o: cc zlib-1.2.11/inflate.c
+build $OBJ/zlib/inftrees.o: cc zlib-1.2.11/inftrees.c
+build $OBJ/zlib/trees.o: cc zlib-1.2.11/trees.c
+build $OBJ/zlib/uncompr.o: cc zlib-1.2.11/uncompr.c
+build $OBJ/zlib/zutil.o: cc zlib-1.2.11/zutil.c
+
+build $OBJ/create-http-cdata.o: cc utils/create-http-cdata.c
+
+build bin/$TGT/zlib.lib: lib $
+ $OBJ/zlib/adler32.o $
+ $OBJ/zlib/compress.o $
+ $OBJ/zlib/crc32.o $
+ $OBJ/zlib/deflate.o $
+ $OBJ/zlib/infback.o $
+ $OBJ/zlib/inffast.o $
+ $OBJ/zlib/inflate.o $
+ $OBJ/zlib/inftrees.o $
+ $OBJ/zlib/trees.o $
+ $OBJ/zlib/uncompr.o $
+ $OBJ/zlib/zutil.o $
+
+build bin/$TGT/create-http-cdata.exe: clink $
+ $OBJ/create-http-cdata.o $
+ bin/$TGT/zlib.lib $
+
 
 build bin/$TGT/httpboot-am335x.bin: objcopy bin/$TGT/httpboot-am335x.exe
 build bin/$TGT/httpboot-am335x.exe: rawlink httpboot/hw/am335x/linker.ld $
@@ -36,26 +69,15 @@ build bin/$TGT/httpboot-am335x.exe: rawlink httpboot/hw/am335x/linker.ld $
  $OBJ/tcp.o $
  $OBJ/libmdns.o $
  $OBJ/tinyprintf.o $
- $OBJ/arm/init.o $
+ $OBJ/index.html.o $
+ $OBJ/am335x/init.o $
  $OBJ/am335x/board.o $
  $OBJ/am335x/debug.o $
  $OBJ/am335x/eth.o $
  $OBJ/am335x/interrupt.o $
  $OBJ/am335x/tick.o $
 
-build bin/$TGT/httpboot-unit_test.exe: clink $
- $OBJ/httpboot.o $
- $OBJ/icmp6.o $
- $OBJ/ip6.o $
- $OBJ/mdns.o $
- $OBJ/tcp.o $
- $OBJ/libmdns.o $
- $OBJ/tinyprintf.o $
- $OBJ/unit_test/board.o $
- $OBJ/unit_test/debug.o $
- $OBJ/unit_test/eth.o $
- $OBJ/unit_test/main.o $
- $OBJ/unit_test/tick.o $
+
 
 
 build $OBJ/deploy-data.o: cc bootp-deploy-win32/deploy-data.c
