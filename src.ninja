@@ -11,6 +11,10 @@ build $OBJ/icmp6.o: cc httpboot/icmp6.c
 build $OBJ/ip6.o: cc httpboot/ip6.c
 build $OBJ/mdns.o: cc httpboot/mdns.c
 build $OBJ/tcp.o: cc httpboot/tcp.c
+
+build $OBJ/libmdns.o: cc httpboot/mdns/libmdns.c
+build $OBJ/tinyprintf.o: cc httpboot/tinyprintf/tinyprintf.c
+
 build $OBJ/index.html.o: cc httpboot/index.html.c
 
 build $OBJ/am335x/init.o: cc httpboot/hw/am335x/init.S
@@ -20,9 +24,13 @@ build $OBJ/am335x/eth.o: cc httpboot/hw/am335x/eth.c
 build $OBJ/am335x/interrupt.o: cc httpboot/hw/am335x/interrupt.c
 build $OBJ/am335x/tick.o: cc httpboot/hw/am335x/tick.c
 
-build $OBJ/libmdns.o: cc httpboot/mdns/libmdns.c
+build $OBJ/tcp_test.o: cc httpboot/tcp_test.c
 
-build $OBJ/tinyprintf.o: cc httpboot/tinyprintf/tinyprintf.c
+build $OBJ/unit_test/board.o: cc httpboot/hw/unit_test/board.c
+build $OBJ/unit_test/debug.o: cc httpboot/hw/unit_test/debug.c
+build $OBJ/unit_test/eth.o: cc httpboot/hw/unit_test/eth.c
+build $OBJ/unit_test/main.o: cc httpboot/hw/unit_test/main.c
+build $OBJ/unit_test/tick.o: cc httpboot/hw/unit_test/tick.c
 
 build $OBJ/zlib/adler32.o: cc zlib-1.2.11/adler32.c
 build $OBJ/zlib/compress.o: cc zlib-1.2.11/compress.c
@@ -78,6 +86,19 @@ build bin/$TGT/httpboot-am335x.exe: rawlink httpboot/hw/am335x/linker.ld $
  $OBJ/am335x/tick.o $
 
 
+build bin/$TGT/httpboot-unit_test.exe: clink $
+ $OBJ/icmp6.o $
+ $OBJ/ip6.o $
+ $OBJ/mdns.o $
+ $OBJ/tcp.o $
+ $OBJ/libmdns.o $
+ $OBJ/tinyprintf.o $
+ $OBJ/unit_test/board.o $
+ $OBJ/unit_test/debug.o $
+ $OBJ/unit_test/eth.o $
+ $OBJ/unit_test/main.o $
+ $OBJ/unit_test/tick.o $
+ $OBJ/tcp_test.o $
 
 
 build $OBJ/deploy-data.o: cc bootp-deploy-win32/deploy-data.c

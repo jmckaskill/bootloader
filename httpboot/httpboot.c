@@ -34,13 +34,13 @@ extern const char g_httpboot_index_html[];
 int process_tcp_data(struct tcp_connection *c, const void *msg, int sz) {
 	switch (c->local_port) {
 	case HTTP_PORT:
-		if (sz && c->tx_left) {
+		if (sz && c->tx_size) {
 			// pipelines are not supported
 			return -1;
 		}
 		if (sz) {
 			c->tx_data = g_httpboot_index_html;
-			c->tx_left = g_httpboot_index_html_sz;
+			c->tx_size = g_httpboot_index_html_sz;
 		}
 		return 0;
 	}
@@ -56,13 +56,13 @@ void process_eth_frame(void *frame, int fsz) {
 
 	void *msg = ip + 1;
 	int sz = fsz - sizeof(*ip);
-	
+
 #ifdef DEBUG_LOG_ENABLED
 	char ip6_src[PRINT_ADDR_LEN], ip6_dst[PRINT_ADDR_LEN];
 	char mac_src[PRINT_MAC_LEN], mac_dst[PRINT_MAC_LEN];
 #endif
 
-	debugf("\thave frame from %s/%s to %s/%s size %d\n", 
+	debugf("\thave frame from %s/%s to %s/%s size %d\n",
 		print_mac(mac_src, &ip->eth_src),
 		print_addr(ip6_src, &ip->ip6_src),
 		print_mac(mac_dst, &ip->eth_dst),
@@ -105,13 +105,13 @@ void setup() {
 	// complement the U/L bit position
 	uint64_t mac_ul = big_48(g_my_mac.u) ^ ETH_UL_BIT;
 	// now split the bottom and top halves and put 0xFFFE in the middle
-	uint64_t iid = ((mac_ul & UINT64_C(0xFFFFFF000000)) << 16) 
+	uint64_t iid = ((mac_ul & UINT64_C(0xFFFFFF000000)) << 16)
 				 | UINT64_C(0xFFFE000000)
 				 | ((mac_ul & UINT64_C(0xFFFFFF)));
 
     write_big_64(g_my_ip.u, LINK_LOCAL_SUBNET);
 	write_big_64(g_my_ip.u+8, iid);
-	
+
 	check_ethernet_link();
 	debugf("setup done\n");
 }

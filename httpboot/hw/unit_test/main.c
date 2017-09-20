@@ -3,7 +3,7 @@
 extern void setup();
 
 int main() {
-    setup();
-    test_tcp();
-    return 0;
+    int err = 0;
+    err += test_tcp();
+    return err;
 }

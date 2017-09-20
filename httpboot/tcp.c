@@ -22,9 +22,9 @@ void init_tcp() {
     g_tcp_timeout = tick_count() + UINT32_MAX / 2;
 }
 
-static void update_tcp_timeout(struct tcp_connection *c, unsigned new_timeout) {
-    unsigned old_timeout = c->tx_timeout;
-    c->tx_timeout = new_timeout;
+static void update_tcp_timeout(struct tcp_connection *conn, unsigned new_timeout) {
+    unsigned old_timeout = conn->tx_timeout;
+    conn->tx_timeout = new_timeout;
 
     if (g_tcp_timeout != old_timeout) {
         return;
@@ -59,7 +59,7 @@ static struct tcp_connection *new_connection() {
 static struct tcp_connection *find_connection(struct ip6_header *ip, struct tcp_header *tcp) {
 	uint16_t src = big_16(tcp->src_port);
 	uint16_t dst = big_16(tcp->dst_port);
-    
+
     for (struct tcp_connection *c = g_open; c != NULL; c = c->next) {
 		if (c->local_port == dst && c->remote_port == src && ip6_equals(&ip->ip6_src, &c->remote_addr)) {
 			return c;
@@ -105,11 +105,11 @@ static void send_reset(const mac_addr_t *mac, const ip6_addr_t *ip, uint16_t rem
 	write_big_16(tcp->window, 0);
 	write_big_16(tcp->checksum, 0);
 	write_big_16(tcp->urgent, 0);
-	
+
 	send_tcp_frame(tcp, 0);
 }
 
-static struct tcp_header *new_tcp_frame(struct tcp_connection *c, unsigned flags, int off) {
+static struct tcp_header *new_tcp_frame(struct tcp_connection *c, uint16_t flags, int off) {
 	struct ip6_header *ip = new_ip6_frame(&c->remote_mac, &c->remote_addr, IP6_TCP);
 	if (!ip) {
 		return NULL;
@@ -138,12 +138,12 @@ static void send_syn_ack(struct tcp_connection *c) {
 
 static void send_tx_data(struct tcp_connection *c) {
     int off = 0;
-    int winsz = min(c->tx_left, c->tx_window);
-    const char *data = c->tx_data;
+    int winsz = min(c->tx_size, c->tx_window);
+    const char *data = (char*) c->tx_data;
 
     do {
         int pktsz = min(winsz, TCP_DEFAULT_MSS);
-        int fin = (c->tx_left == pktsz && c->finishing);
+        int fin = (c->tx_size == pktsz && c->finishing);
         struct tcp_header *tcp = new_tcp_frame(c, fin ? (TCP_FIN|TCP_ACK) : TCP_ACK, off);
         copy_aligned_32(tcp+1, data, pktsz);
         send_tcp_frame(tcp, pktsz);
@@ -160,9 +160,9 @@ static void accept_connection(struct tcp_connection *c, struct ip6_header *ip, s
 	copy_ip6(&c->remote_addr, &ip->ip6_src);
     c->remote_port = big_16(tcp->src_port);
     c->local_port = big_16(tcp->dst_port);
-    
+
     c->rx_next = big_32(tcp->seq_num) + 1;
-    
+
     c->tx_next = TCP_DEFAULT_ISS;
 	c->tx_window = big_16(tcp->window);
     c->tx_sent = 0;
@@ -170,7 +170,7 @@ static void accept_connection(struct tcp_connection *c, struct ip6_header *ip, s
     c->tx_retries = 0;
 
     c->tx_data = NULL;
-    c->tx_left = 0;
+    c->tx_size = 0;
 
     c->connected = 0;
     c->finishing = 0;
@@ -179,7 +179,7 @@ static void accept_connection(struct tcp_connection *c, struct ip6_header *ip, s
     c->next = g_open;
     c->prev = NULL;
     g_open = c;
-    
+
     send_syn_ack(c);
 }
 
@@ -202,7 +202,7 @@ static void process_connection(struct tcp_connection *c, struct tcp_header *tcp,
         // old ack -> old message -> drop
         return;
 
-    } else if (txdelta > c->tx_sent || ((txdelta != c->tx_left) && (txdelta % c->tx_window))) {
+    } else if (txdelta > c->tx_sent || ((txdelta != c->tx_size) && (txdelta % c->tx_window))) {
         // invalid or unreasonable ack
         // this protects us against slow acknowledgers, unalign acks, etc
         reset_connection(c);
@@ -219,15 +219,15 @@ static void process_connection(struct tcp_connection *c, struct tcp_header *tcp,
 
     if (txdelta) {
         // the remote acknowledged some new data
-        c->tx_sent -= txdelta;
-        c->tx_data += txdelta;
-        c->tx_left -= txdelta;
+        c->tx_sent -= (uint16_t) txdelta;
+        c->tx_data = (char*) c->tx_data + txdelta;
+        c->tx_size -= txdelta;
         c->tx_retries = 0;
     }
 
     uint32_t seq = big_32(tcp->seq_num);
     int32_t rxdelta = (int32_t) (seq - c->rx_next);
-    
+
     if (rxdelta) {
         // out of order packet or dropped packet -> ignore
         // we'll send out the update window shortly which will
@@ -235,14 +235,14 @@ static void process_connection(struct tcp_connection *c, struct tcp_header *tcp,
     } else {
         int callback = sz;
         c->rx_next += sz;
-        
+
         if (!c->connected) {
             // we've finished the SYN-SYN/ACK-ACK sequence
             // we need to increment the ack number to acknowledge
             c->connected = 1;
             c->rx_next++;
             callback = 1;
-        } else if (c->tx_data && !c->tx_left) {
+        } else if (c->tx_data && !c->tx_size) {
             // we've ran out of data to send
             // give the user a chance to send more
             c->tx_data = NULL;
@@ -279,8 +279,8 @@ void process_tcp(struct ip6_header *ip, const void *msg, int sz) {
     struct tcp_header *tcp = (struct tcp_header*) msg;
     unsigned flags = big_16(tcp->flags);
     int hdrsz = DECODE_TCP_OFFSET(flags);
-    int src_port = big_16(tcp->src_port);
-    int dst_port = big_16(tcp->dst_port);
+    uint16_t src_port = big_16(tcp->src_port);
+    uint16_t dst_port = big_16(tcp->dst_port);
 
     if (hdrsz > sz || !src_port) {
         return;

@@ -24,6 +24,7 @@ int main(int argc, char *argv[])
         return 4;
     }
 
+
     fprintf(w, "extern unsigned long g_datasz;\n");
     fprintf(w, "extern const char g_data[];\n");
     fprintf(w, "const char g_data[] = \"\"");

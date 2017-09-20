@@ -1,0 +1,158 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" ToolsVersion="14.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <ItemGroup Label="ProjectConfigurations">
+    <ProjectConfiguration Include="Release|Win32">
+      <Configuration>Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="Debug|Win32">
+      <Configuration>Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ARM-Debug|Win32">
+      <Configuration>ARM-Debug</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+    <ProjectConfiguration Include="ARM-Release|Win32">
+      <Configuration>ARM-Release</Configuration>
+      <Platform>Win32</Platform>
+    </ProjectConfiguration>
+  </ItemGroup>
+  <ItemGroup>
+    <ClCompile Include="./httpboot.c" />
+    <ClCompile Include="./hw/am335x/board.c" />
+    <ClCompile Include="./hw/am335x/debug.c" />
+    <ClCompile Include="./hw/am335x/eth.c" />
+    <ClCompile Include="./hw/am335x/interrupt.c" />
+    <ClCompile Include="./hw/am335x/tick.c" />
+    <ClCompile Include="./hw/unit_test/board.c" />
+    <ClCompile Include="./hw/unit_test/debug.c" />
+    <ClCompile Include="./hw/unit_test/eth.c" />
+    <ClCompile Include="./hw/unit_test/main.c" />
+    <ClCompile Include="./hw/unit_test/tick.c" />
+    <ClCompile Include="./icmp6.c" />
+    <ClCompile Include="./index.html.c" />
+    <ClCompile Include="./ip6.c" />
+    <ClCompile Include="./mdns/libmdns.c" />
+    <ClCompile Include="./mdns.c" />
+    <ClCompile Include="./tcp.c" />
+    <ClCompile Include="./tcp_test.c" />
+    <ClCompile Include="./tinyprintf/test/printf.c" />
+    <ClCompile Include="./tinyprintf/test/sprintf.c" />
+    <ClCompile Include="./tinyprintf/tinyprintf.c" />
+  </ItemGroup>
+  <ItemGroup>
+    <ClInclude Include="./hw/am335x/common.h" />
+    <ClInclude Include="./hw/am335x/hw.h" />
+    <ClInclude Include="./hw/am335x/interrupt.h" />
+    <ClInclude Include="./hw/board.h" />
+    <ClInclude Include="./hw/copy.h" />
+    <ClInclude Include="./hw/debug.h" />
+    <ClInclude Include="./hw/endian.h" />
+    <ClInclude Include="./hw/eth.h" />
+    <ClInclude Include="./hw/tick.h" />
+    <ClInclude Include="./hw/unit_test/unit_test.h" />
+    <ClInclude Include="./icmp6.h" />
+    <ClInclude Include="./ip6.h" />
+    <ClInclude Include="./mdns/libmdns.h" />
+    <ClInclude Include="./mdns.h" />
+    <ClInclude Include="./tcp.h" />
+    <ClInclude Include="./tinyprintf/tinyprintf.h" />
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="./index.html" />
+  </ItemGroup>
+  <PropertyGroup Label="Globals">
+    <ProjectGuid>{836C3A4F-E1F6-4BFA-863C-34FB3FA82F6F}</ProjectGuid>
+    <Keyword>MakeFileProj</Keyword>
+    <ProjectName>bin - httpboot-unit_test.exe</ProjectName>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.Default.props" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>true</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARM-Release|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARM-Debug|Win32'" Label="Configuration">
+    <ConfigurationType>Makefile</ConfigurationType>
+    <UseDebugLibraries>false</UseDebugLibraries>
+    <PlatformToolset>v140</PlatformToolset>
+  </PropertyGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.props" />
+  <ImportGroup Label="ExtensionSettings">
+  </ImportGroup>
+  <ImportGroup Label="Shared">
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='ARM-Release|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <ImportGroup Label="PropertySheets" Condition="'$(Configuration)|$(Platform)'=='ARM-Debug|Win32'">
+    <Import Project="$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props" Condition="exists('$(UserRootDir)\Microsoft.Cpp.$(Platform).user.props')" Label="LocalAppDataPlatform" />
+  </ImportGroup>
+  <PropertyGroup Label="UserMacros" />
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\win32-release\httpboot-unit_test.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32;NDEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/win32-release/httpboot-unit_test.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-release/httpboot-unit_test.exe &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/win32-release/httpboot-unit_test.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-release/httpboot-unit_test.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\win32-debug\httpboot-unit_test.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>WIN32</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/win32-debug/httpboot-unit_test.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-debug/httpboot-unit_test.exe &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/win32-debug/httpboot-unit_test.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/win32-debug/httpboot-unit_test.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(SolutionDir);$(ProjectDir)</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARM-Release|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\arm-release\httpboot-unit_test.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>__linux__;__arm__;NDEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/arm-release/httpboot-unit_test.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/arm-release/httpboot-unit_test.exe &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/arm-release/httpboot-unit_test.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/arm-release/httpboot-unit_test.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(SolutionDir);$(ProjectDir);$(SolutionDir)\toolchain\lib\arm\include;$(SolutionDir)\toolchain\host\lib\clang\4.0.1\include</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='ARM-Debug|Win32'">
+    <NMakeOutput>$(SolutionDir)\bin\arm-debug\httpboot-unit_test.exe</NMakeOutput>
+    <NMakePreprocessorDefinitions>__linux__;__arm__;DEBUG</NMakePreprocessorDefinitions>
+    <NMakeBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/arm-debug/httpboot-unit_test.exe</NMakeBuildCommandLine>
+    <NMakeReBuildCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/arm-debug/httpboot-unit_test.exe &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja bin/arm-debug/httpboot-unit_test.exe</NMakeReBuildCommandLine>
+    <NMakeCleanCommandLine>"c:\Program Files\git\usr\bin\sh.exe" --login $(SolutionDir)\toolchain\install.sh $(SolutionDir)\toolchain &amp;&amp; $(SolutionDir)\toolchain\host\bin\ninja -C $(SolutionDir) -f msvc.ninja -t clean bin/arm-debug/httpboot-unit_test.exe</NMakeCleanCommandLine>
+    <NMakeIncludeSearchPath>$(SolutionDir);$(ProjectDir);$(SolutionDir)\toolchain\lib\arm\include;$(SolutionDir)\toolchain\host\lib\clang\4.0.1\include</NMakeIncludeSearchPath>
+    <IntDir>$(SolutionDir)\obj\$(Configuration)\</IntDir>
+    <SourcePath />
+    <ExcludePath />
+  </PropertyGroup>
+  <ItemDefinitionGroup>
+  </ItemDefinitionGroup>
+  <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
+  <ImportGroup Label="ExtensionTargets">
+  </ImportGroup>
+</Project>

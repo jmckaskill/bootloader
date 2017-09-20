@@ -8,6 +8,10 @@
 #define min(a,b) ((a) < (b) ? (a) : (b))
 #endif
 
+#ifdef _MSC_VER
+#define strncasecmp(a,b,n) _strnicmp(a,b,n)
+#endif
+
 #define GZIP_ENCODING 16
 
 static void print_data(FILE *w, const uint8_t *buf, int sz) {
@@ -84,8 +88,8 @@ static void to_csymbol(char *buf, const char *fn, int fsz) {
     *(buf++) = 'g';
     *(buf++) = '_';
     for (int i = 0; i < fsz; i++) {
-        if (('a' <= fn[i] && fn[i] <= 'z') 
-        || ('A' <= fn[i] && fn[i] <= 'Z') 
+        if (('a' <= fn[i] && fn[i] <= 'z')
+        || ('A' <= fn[i] && fn[i] <= 'Z')
         || ('0' <= fn[i] && fn[i] <= '9')) {
             *(buf++) = fn[i];
         } else {
@@ -153,16 +157,16 @@ int main(int argc, char *argv[]) {
     char csym[32+3/*g_\0*/];
     to_csymbol(csym, in, min(strlen(in), 32));
 
-    
+
     struct buffer b = {0};
     z_stream stream = {0};
     deflateInit2(&stream, Z_BEST_COMPRESSION, Z_DEFLATED, 15+GZIP_ENCODING, 9, Z_DEFAULT_STRATEGY);
     deflate_file(&b, &stream, r);
     deflateEnd(&stream);
-    
-    
+
+
     char hdr[128];
-    int hsz = sprintf(hdr, 
+    int hsz = sprintf(hdr,
         "HTTP/1.1 OK\r\n"
         "Content-Type:%s\r\n"
         "Content-Encoding:gzip\r\n"
@@ -170,11 +174,14 @@ int main(int argc, char *argv[]) {
         "\r\n",
         content_type(in),
         b.sz);
-        
+
+    fprintf(w, "#ifdef __arm__\n");
+    fprintf(w, "#define ALIGNED __attribute((aligned(4)))\n");
+    fprintf(w, "#endif\n");
     fprintf(w, "extern unsigned long %s_sz;\n", csym);
     fprintf(w, "extern const char %s[];\n", csym);
     fprintf(w, "unsigned long %s_sz = %d;\n", csym, hsz + b.sz);
-    fprintf(w, "const char __attribute((aligned(4))) %s[] = \"\"", csym);
+    fprintf(w, "const char ALIGNED %s[] = \"\"", csym);
     print_data(w, (uint8_t*) hdr, hsz);
     print_data(w, b.p, b.sz);
     fprintf(w, ";\n\n");

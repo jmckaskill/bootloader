@@ -4,7 +4,7 @@ INCLUDES = -I include -I include/hw -I include/armv7a/am335x
 
 rule objcopy
  command = toolchain/host/bin/arm-none-eabi-objcopy.exe -O binary --strip-all $in $out
- 
+
 include toolchain/host-win32.ninja
 include common.ninja
 subninja toolchain/target-arm-debug.ninja
@@ -12,4 +12,8 @@ subninja toolchain/target-arm-release.ninja
 subninja toolchain/target-win32-debug.ninja
 subninja toolchain/target-win32-release.ninja
 
-default bin/win32-debug/bootp-deploy-win32.exe
+default $
+ bin/win32-debug/bootp-deploy-win32.exe $
+ bin/win32-debug/httpboot-unit_test.exe $
+
+

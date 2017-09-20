@@ -19,8 +19,8 @@ struct tcp_connection {
 	uint8_t tx_retries;
 
 	// must be 32 bit aligned
-	const char *tx_data;
-	size_t tx_left;
+	const void *tx_data;
+	int tx_size;
 
 	unsigned open : 1;
 	unsigned connected : 1;
