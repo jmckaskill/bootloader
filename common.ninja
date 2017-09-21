@@ -7,7 +7,7 @@ rule rawlink
 
 
 build bootp-deploy-win32/deploy-data.c: run bin/$HOST/create-cdata.exe $
- bin/arm-release/httpboot-am335x.bin
+ bin/arm-debug/httpboot-am335x.bin
 
 build httpboot/index.html.c: run bin/$HOST/create-http-cdata.exe $
  httpboot/index.html

@@ -96,7 +96,8 @@ void on_tick() {
 extern void setup();
 
 void setup() {
-	init_board();
+	init_cpu();
+	init_memory();
 	init_debug();
 	init_tick();
 	init_ethernet(g_my_mac.u);

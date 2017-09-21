@@ -169,6 +169,17 @@ static_assert(sizeof(struct hw_cm_per) == 0x154, "padding");
 // L4 always on clocks
 #define HW_CM_L4_AON_GCLK (1 << 2)
 
+#define HW_CM_MN_BYPASS_MODE (4 << 0)
+#define HW_CM_IN_MN_BYPASS (1 << 8)
+#define HW_CM_LOCK_MODE (7 << 0)
+#define HW_CM_DPLL_LOCKED (1 << 0)
+
+#define HW_CM_DPLL_MULT(mul) ((mul) << 8)
+#define HW_CM_DPLL_DIV(div) (((div) - 1) << 0)
+
+#define HW_CM_M2_ENABLED (1 << 9)
+#define HW_CM_M2_DIV(div) ((div) << 0)
+
 struct hw_cm_wakeup {
 	volatile unsigned CLKSTCTRL; //   (0x0)
 	volatile unsigned CONTROL_CLKCTRL; //   (0x4)
@@ -273,6 +284,20 @@ static_assert(sizeof(struct hw_cm_dpll) == 0x40, "padding");
 
 #define HW_CONTROL_GMII_1 (0 << 0)
 #define HW_CONTROL_GMII_2 (0 << 2)
+
+#define HW_VTP_ENABLE (1 << 6)
+#define HW_VTP_READY (1 << 5)
+#define HW_VTP_FILTER_4 (3 << 1)
+#define HW_VTP_CLRZ (1 << 0)
+
+#define HW_DDR_IOCTL_IMPEDENCE_3 (3 << 0)
+#define HW_DDR_IOCTL_SLEW_1 (1 << 3)
+#define HW_DDR_IOCTL_CLK_IMPEDENCE_4 (4 << 5)
+#define HW_DDR_IOCTL_CLK_SLEW_1 (1 << 8)
+
+#define HW_DDR_MDDR_SEL (1 << 28)
+
+#define HW_DDR_CKE_EMIF_CONTROLLED (1 << 0)
 
 struct hw_control {
     volatile unsigned revision; // 0x0)
@@ -1045,4 +1070,182 @@ struct hw_dmtimer_1ms {
 
 static_assert(sizeof(struct hw_dmtimer_1ms) == 0x5C, "padding");
 #define HW_DMTIMER_1MS ((struct hw_dmtimer_1ms*)0x44E31000)
+
+#define HW_TIM_1_RP(clks) (((clks) - 1) << 25)
+#define HW_TIM_1_RCD(clks) (((clks) - 1) << 21)
+#define HW_TIM_1_WR(clks) (((clks) - 1) << 17)
+#define HW_TIM_1_RAS(clks) (((clks) - 1) << 12)
+#define HW_TIM_1_RC(clks) (((clks) - 1) << 6)
+#define HW_TIM_1_RRD(clks) (((clks) - 1) << 3)
+#define HW_TIM_1_WTR(clks) (((clks) - 1) << 0)
+#define HW_TIM_2_XP(clks) (((clks) - 1) << 28)
+#define HW_TIM_2_ODT(clks) ((clks) << 25)
+#define HW_TIM_2_XSNR(clks) (((clks) - 1) << 16)
+#define HW_TIM_2_XSRD(clks) (((clks) - 1) << 6)
+#define HW_TIM_2_RTP(clks) (((clks) - 1) << 3)
+#define HW_TIM_2_CKE(clks) (((clks) - 1) << 0)
+#define HW_TIM_3_ZQCS(clks) (((clks) - 1) << 15)
+#define HW_TIM_3_RFC(clks) (((clks) - 1) << 4)
+#define HW_TIM_3_FIXED (0xF | (5 << 28))
+
+#define HW_REFRESH_RATE(clks) ((clks) << 0)
+
+#define HW_ZQ_CS0_ONLY (1 << 30)
+#define HW_ZQ_ZQCL_ON_EXIT (1 << 28)
+#define HW_ZQ_ZQINIT_MUL(mul) (((mul)-1) << 18)
+#define HW_ZQ_ZQCL_MUL(mul) (((mul)-1) << 16)
+#define HW_ZQ_ZQCS_MUL(mul) (((mul)-1) << 0)
+
+#define HW_SDCFG_DDR3 (3 << 29)
+#define HW_SDCFG_IBANK_LOWER_BITS (0 << 27)
+#define HW_SDCFG_TERM_RZQ_4 (1 << 24)
+#define HW_SDCFG_DIFFERENTIAL_DQS (1 << 23)
+#define HW_SDCFG_DYNAMIC_ODT_RZQ_2 (2 << 21)
+#define HW_SDCFG_DRIVE_RZQ_6 (0 << 18)
+#define HW_SDCFG_CWL_5 (0 << 16)
+#define HW_SDCFG_16_BIT (1 << 14)
+#define HW_SDCFG_CL_6 (4 << 10)
+#define HW_SDCFG_ROW_15_BITS (6 << 7)
+#define HW_SDCFG_IBANK_8_BANKS (3 << 4)
+#define HW_SDCFG_EBANK_1_CHIP (0 << 3)
+#define HW_SDCFG_PAGE_10_BITS (2 << 0)
+
+#define HW_SDCFG2_EBANK_HIGHER_BITS (1 << 27)
+
+#define HW_EMIF_READY (1 << 2)
+
+#define HW_DDR_PHY_DYNAMIC_POWER_DOWN (1 << 20)
+#define HW_DDR_PHY_READ_LATENCY(clks) (((clks) + 1) << 0)
+
+struct hw_emif {
+    volatile unsigned MOD_ID_REV; // 0x0
+    volatile unsigned STATUS; // 0x4
+    volatile unsigned SDRAM_CONFIG; // 0x8
+    volatile unsigned SDRAM_CONFIG_2; // 0xC
+    volatile unsigned SDRAM_REF_CTRL; // 0x10
+    volatile unsigned SDRAM_REF_CTRL_SHDW; // 0x14
+    volatile unsigned SDRAM_TIM_1; // 0x18
+    volatile unsigned SDRAM_TIM_1_SHDW; // 0x1C
+    volatile unsigned SDRAM_TIM_2; // 0x20
+    volatile unsigned SDRAM_TIM_2_SHDW; // 0x24
+    volatile unsigned SDRAM_TIM_3; // 0x28
+    volatile unsigned SDRAM_TIM_3_SHDW; // 0x2C
+    volatile unsigned LPDDR_NVM_TIM2; // 0x30
+    volatile unsigned LPDDR_NVM_TIM_SHDW2; // 0x34
+    volatile unsigned PWR_MGMT_CTRL; // 0x38
+    volatile unsigned PWR_MGMT_CTRL_SHDW; // 0x3C
+    volatile unsigned LPDDR_MODE_REG_DATA2; // 0x40
+    char pad[12];
+    volatile unsigned LPDDR_MODE_REG_CFG2; // 0x50
+    volatile unsigned L3_CONFIG; // 0x54
+    volatile unsigned L3_CONFIG_VAL_1; // 0x58
+    volatile unsigned L3_CONFIG_VAL_2; // 0x5C
+    volatile unsigned IODFT_TLGC; // 0x60
+    char pad2[0x1C];
+    volatile unsigned PERF_CNT_1; // 0x80
+    volatile unsigned PERF_CNT_2; // 0x84
+    volatile unsigned PERF_CNT_CFG; // 0x88
+    volatile unsigned PERF_CNT_SEL; // 0x8C
+    volatile unsigned PERF_CNT_TIM; // 0x90
+    char pad3[4];
+    volatile unsigned READ_IDLE_CTRL; // 0x98
+    volatile unsigned READ_IDLE_CTRL_SHDW; // 0x9C
+    char pad4[4];
+    volatile unsigned IRQSTATUS_RAW_SYS; // 0xA4
+    volatile unsigned IRQSTATUS_RAW_LL; // 0xA8
+    volatile unsigned IRQSTATUS_SYS; // 0xAC
+    volatile unsigned IRQSTATUS_LL; // 0xB0
+    volatile unsigned IRQENABLE_SET_SYS; // 0xB4
+    volatile unsigned IRQENABLE_SET_LL; // 0xB8
+    volatile unsigned IRQENABLE_CLR_SYS; // 0xBC
+    volatile unsigned IRQENABLE_CLR_LL; // 0xC0
+    char pad5[4];
+    volatile unsigned ZQ_CONFIG; // 0xC8
+    volatile unsigned TEMP_ALERT_CONFIG; // 0xCC
+    volatile unsigned L3_ERR_LOG; // 0xD0
+    char pad6[0x10];
+    volatile unsigned DDR_PHY_CTRL_1; // 0xE4
+    volatile unsigned DDR_PHY_CTRL_1_SHDW; // 0xE8
+    volatile unsigned DDR_PHY_CTRL_2; // 0xEC
+};
+
+static_assert(sizeof(struct hw_emif) == 0xF0, "padding");
+#define HW_EMIF ((struct hw_emif*) 0x4C000000)
+
+struct hw_ddr {
+    struct {
+        char pad0[0x1C];
+        volatile unsigned SLAVE_RATIO; // 0x1C-0x1C = 0
+        char pad1[8];
+        volatile unsigned DLL_LOCK_DIFF; // 0x28-0x1C = 0x0C
+        volatile unsigned INVERT_CLKOUT; // 0x2C-0x1C = 0x10
+        char pad2[4];
+    } CMD[3]; // 0-0x34, 0x34-0x68, & 0x68-0x9C
+    struct {
+        char pad0[0x2C];
+        volatile unsigned RD_DQS_SLAVE_RATIO; // 0xC8, 0x16C
+        char pad1[0x10];
+        volatile unsigned WR_DQS_SLAVE_RATIO; // 0xDC, 0x180
+        char pad2[0x10];
+        volatile unsigned WRLVL_INIT_RATIO; // 0xF0, 0x194
+        char pad3[4];
+        volatile unsigned WRLVL_INIT_MODE; // 0xF8, 0x19C
+        volatile unsigned GATELVL_INIT_RATIO; // 0xFC, 0x1A0
+        char pad4[4];
+        volatile unsigned GATELVL_INIT_MODE; // 0x104, 0x1A8
+        volatile unsigned FIFO_WE_SLAVE_RATIO; // 0x108, 0x1AC
+        char pad5[0x10];
+        volatile unsigned DQ_OFFSET; // 0x11C, 0x1C0
+        volatile unsigned WR_DATA_SLAVE_RATIO; // 0x120, 0x1C4
+        char pad6[0x10];
+        volatile unsigned USE_RANK0_DELAYS; // 0x134, 0x1D8
+        volatile unsigned DLL_LOCK_DIFF; // 0x138, 0x1DC
+        char pad7[4];
+    } DATA[2]; // 0xA4 long
+};
+
+static_assert(sizeof(struct hw_ddr) == 0x1E4, "padding");
+#define HW_DDR ((struct hw_ddr*) 0x44E12000)
+
+struct hw_mmc {
+    char pad2[0x110];
+    volatile unsigned SYSCONFIG; // 0x110
+    volatile unsigned SYSSTATUS; // 0x114
+    char pad3[12];
+    volatile unsigned CSRE; // 0x124
+    volatile unsigned SYSTEST; // 0x128
+    volatile unsigned CON; // 0x12C
+    volatile unsigned PWCNT; // 0x130
+    char pad4[0xCC];
+    volatile unsigned SDMASA; // 0x200
+    volatile unsigned BLK; // 0x204
+    volatile unsigned ARG; // 0x208
+    volatile unsigned CMD; // 0x20C
+    volatile unsigned RSP_10; // 0x210
+    volatile unsigned RSP_32; // 0x214
+    volatile unsigned RSP_54; // 0x218
+    volatile unsigned RSP_76; // 0x21C
+    volatile unsigned DATA; // 0x220
+    volatile unsigned PSTATE; // 0x224
+    volatile unsigned HCTL; // 0x228
+    volatile unsigned SYSCTL; // 0x22C
+    volatile unsigned STAT; // 0x230
+    volatile unsigned IE; // 0x234
+    volatile unsigned ISE; // 0x238
+    volatile unsigned AC12; // 0x23C
+    volatile unsigned CAPA; // 0x240
+    char pad5[4];
+    volatile unsigned CUR_CAPA; // 0x248
+    char pad6[4];
+    volatile unsigned FE; // 0x250
+    volatile unsigned ADMAES; // 0x254
+    volatile unsigned ADMASAL; // 0x258
+    char pad7[0xA0];
+    volatile unsigned REV; // 0x2FC
+};
+
+static_assert(sizeof(struct hw_mmc) == 0x300, "padding");
+#define HW_MMC_0 ((struct hw_mmc*) 0x48060000)
+#define HW_MMC_1 ((struct hw_mmc*) 0x481D8000)
+#define HW_MMC_2 ((struct hw_mmc*) 0x47810000)
 

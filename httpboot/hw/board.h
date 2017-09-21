@@ -1,3 +1,4 @@
 #pragma once
 
-void init_board();
+void init_cpu();
+void init_memory();

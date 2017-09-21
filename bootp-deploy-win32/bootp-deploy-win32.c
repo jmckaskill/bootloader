@@ -12,7 +12,7 @@ void bootp_callback(void *udata, struct bootp_client *c) {
 }
 
 int main() {
-	bootp_start(11, NULL, &bootp_callback);
+	bootp_start(24, NULL, &bootp_callback);
 	Sleep(INFINITE);
 	return 0;
 }
